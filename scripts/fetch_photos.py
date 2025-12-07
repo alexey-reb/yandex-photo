@@ -62,7 +62,7 @@ def main():
         return
     
     # Папки для сканирования (можно расширить список)
-    folders_to_scan = ["/Test", "/model_001", "/model_002"]
+    folders_to_scan = ["/Test/model_001", "/Test/model_002"]
     
     all_photos = {
         "last_updated": datetime.utcnow().isoformat() + "Z",
