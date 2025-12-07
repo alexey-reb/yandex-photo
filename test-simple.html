@@ -1,38 +1,208 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Яндекс.Диск фото</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .photo-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            margin: 20px 0;
+        }
+        .url-box {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow-wrap: break-word;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .info {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
 <body>
-    <h1>Тест загрузки фото</h1>
-    
-    <div id="photos"></div>
-    
-    <script>
-        // Прямые ссылки из вашего JSON (скопируйте из photos.json)
-        const photos = [
-            {
-                name: "Photo2.jpg",
-                url: "https://downloader.disk.yandex.ru/preview/bef84f0bfcc58c986c19bc9640ddbb1de9fafa81d1b510d8e9c25cd48d75f094/inf/ya7cmzhnoK3iRIsryPEgoeZqJktOMu1w5w_Fnamxi5mgl7I9hekfI6OUR7y06WFzGpdUDo9vW2uDH5IdhjmD1Q%3D%3D?uid=312146104&filename=Photo2.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=312146104&tknv=v3&size=XXXL&crop=0"
-            },
-            {
-                name: "portrait.jpg",
-                url: "https://downloader.disk.yandex.ru/preview/3f6a1898f7a86985b9b669a3ff48c89a8e9ccdcd7a71e6fb7c3e20ad66c355e7/inf/cZD67ox3tPR4QbSBcpepRp6iLnjuL93b8fzWdX9DcK0qStUu89g5-PgHASs0SG4mHiY4Ar19x2u-jbNjyhI0ug%3D%3D?uid=312146104&filename=portrait.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=312146104&tknv=v3&size=XXXL&crop=0"
-            }
-        ];
+    <div class="test-container">
+        <h1>🖼️ Тест отображения фото с Яндекс.Диска</h1>
         
-        let html = '';
-        photos.forEach(photo => {
-            html += `
-                <div style="margin: 20px;">
-                    <h3>${photo.name}</h3>
-                    <img src="${photo.url}" 
-                         alt="${photo.name}" 
-                         style="max-width: 300px; border: 1px solid #ccc;"
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Ошибка+загрузки'">
-                    <p><a href="${photo.url}" target="_blank">Открыть оригинал</a></p>
-                </div>
-            `;
+        <div class="info">
+            <p><strong>Цель теста:</strong> проверить, отображаются ли фото с Яндекс.Диска на GitHub Pages.</p>
+            <p>Если фото показывается - ссылки работают. Если нет - нужен другой подход.</p>
+        </div>
+        
+        <div class="photo-container">
+            <h2>Тест 1: Прямая ссылка на фото</h2>
+            <div class="url-box">
+                https://disk.yandex.ru/i/gkMhqDb7CF6q5w
+            </div>
+            
+            <div id="status1" class="status">Загрузка...</div>
+            
+            <img id="photo1" 
+                 src="https://disk.yandex.ru/i/gkMhqDb7CF6q5w" 
+                 alt="Тестовое фото с Яндекс.Диска"
+                 onload="document.getElementById('status1').innerHTML = '✅ Фото загружено'; document.getElementById('status1').className = 'status success';"
+                 onerror="document.getElementById('status1').innerHTML = '❌ Ошибка загрузки: CORS или доступ запрещен'; document.getElementById('status1').className = 'status error';">
+            
+            <p>ID фото: gkMhqDb7CF6q5w</p>
+        </div>
+        
+        <div class="photo-container">
+            <h2>Тест 2: Альтернативный способ (через downloader)</h2>
+            <div class="url-box">
+                https://downloader.disk.yandex.ru/disk/gkMhqDb7CF6q5w
+            </div>
+            
+            <div id="status2" class="status">Загрузка...</div>
+            
+            <img id="photo2" 
+                 src="https://downloader.disk.yandex.ru/disk/gkMhqDb7CF6q5w" 
+                 alt="Тест через downloader"
+                 onload="document.getElementById('status2').innerHTML = '✅ Фото загружено'; document.getElementById('status2').className = 'status success';"
+                 onerror="document.getElementById('status2').innerHTML = '❌ Ошибка загрузки'; document.getElementById('status2').className = 'status error';">
+        </div>
+        
+        <div class="photo-container">
+            <h2>Тест 3: Кнопка для принудительной проверки</h2>
+            <button onclick="reloadImages()">🔄 Перезагрузить все фото</button>
+            <button onclick="openDirect()">🔗 Открыть оригинал в новой вкладке</button>
+            
+            <div id="console" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-family: monospace; font-size: 12px;"></div>
+        </div>
+        
+        <div class="info">
+            <h3>Что проверяем:</h3>
+            <ul>
+                <li>CORS политики Яндекс.Диска</li>
+                <li>Доступность фото для внешних сайтов</li>
+                <li>Работу на GitHub Pages</li>
+            </ul>
+            
+            <h3>Возможные результаты:</h3>
+            <ul>
+                <li><strong>✅ Фото показывается</strong> - можно использовать прямые ссылки</li>
+                <li><strong>❌ Ошибка CORS</strong> - нужно скачивать фото в репозиторий</li>
+                <li><strong>⏳ Загружается медленно</strong> - можно использовать CDN или оптимизацию</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const consoleDiv = document.getElementById('console');
+            const time = new Date().toLocaleTimeString();
+            consoleDiv.innerHTML += `[${time}] ${message}<br>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        function reloadImages() {
+            log('Перезагрузка изображений...');
+            
+            const img1 = document.getElementById('photo1');
+            const img2 = document.getElementById('photo2');
+            
+            // Сбрасываем статусы
+            document.getElementById('status1').innerHTML = 'Перезагрузка...';
+            document.getElementById('status1').className = 'status';
+            document.getElementById('status2').innerHTML = 'Перезагрузка...';
+            document.getElementById('status2').className = 'status';
+            
+            // Перезагружаем с уникальным параметром для избежания кэша
+            const timestamp = new Date().getTime();
+            img1.src = `https://disk.yandex.ru/i/gkMhqDb7CF6q5w?t=${timestamp}`;
+            img2.src = `https://downloader.disk.yandex.ru/disk/gkMhqDb7CF6q5w?t=${timestamp}`;
+            
+            log('Изображения перезагружены');
+        }
+        
+        function openDirect() {
+            window.open('https://disk.yandex.ru/i/gkMhqDb7CF6q5w', '_blank');
+            log('Открыта оригинальная ссылка в новой вкладке');
+        }
+        
+        // Проверяем при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Страница загружена');
+            log(`User Agent: ${navigator.userAgent}`);
+            log(`Текущий домен: ${window.location.hostname}`);
+            
+            // Проверяем доступность через fetch
+            fetch('https://disk.yandex.ru/i/gkMhqDb7CF6q5w', { mode: 'no-cors' })
+                .then(() => log('Fetch запрос отправлен (no-cors mode)'))
+                .catch(err => log(`Fetch ошибка: ${err.message}`));
         });
         
-        document.getElementById('photos').innerHTML = html;
+        // Обработчики ошибок для диагностики
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                log(`Ошибка загрузки изображения: ${e.target.src}`);
+            }
+        }, true);
     </script>
 </body>
 </html>
