@@ -1,38 +1,35 @@
-name: Update Photos from Yandex.Disk
+name: Download and Display Photos
 
-# ТОЛЬКО ручной запуск
 on: workflow_dispatch
 
 jobs:
-  fetch-photos:
+  sync-photos:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Setup Python
-      uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        
+    
     - name: Install dependencies
-      run: |
-        pip install requests
-        
-    - name: Fetch photos from Yandex.Disk
+      run: pip install requests
+    
+    - name: Download photos from Yandex.Disk
       env:
         YANDEX_DISK_TOKEN: ${{ secrets.YANDEX_DISK_TOKEN }}
+      run: python scripts/download_photos.py
+    
+    - name: Push changes
       run: |
-        python scripts/fetch_photos.py
-        
-    - name: Commit and push if changed
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add -A
-        timestamp=$(date -u)
-        git commit -m "Update photos: ${timestamp}" || exit 0
+        git config user.name 'github-actions'
+        git config user.email 'github-actions@github.com'
+        git add docs/ || true
+        git add *.html || true
+        git add *.jpg || true
+        git add *.png || true
+        git commit -m "Update photos $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
         git push
