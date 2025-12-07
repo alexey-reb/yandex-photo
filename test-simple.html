@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Тест загрузки фото</h1>
+    
+    <div id="photos"></div>
+    
+    <script>
+        // Прямые ссылки из вашего JSON (скопируйте из photos.json)
+        const photos = [
+            {
+                name: "Photo2.jpg",
+                url: "https://downloader.disk.yandex.ru/preview/bef84f0bfcc58c986c19bc9640ddbb1de9fafa81d1b510d8e9c25cd48d75f094/inf/ya7cmzhnoK3iRIsryPEgoeZqJktOMu1w5w_Fnamxi5mgl7I9hekfI6OUR7y06WFzGpdUDo9vW2uDH5IdhjmD1Q%3D%3D?uid=312146104&filename=Photo2.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=312146104&tknv=v3&size=XXXL&crop=0"
+            },
+            {
+                name: "portrait.jpg",
+                url: "https://downloader.disk.yandex.ru/preview/3f6a1898f7a86985b9b669a3ff48c89a8e9ccdcd7a71e6fb7c3e20ad66c355e7/inf/cZD67ox3tPR4QbSBcpepRp6iLnjuL93b8fzWdX9DcK0qStUu89g5-PgHASs0SG4mHiY4Ar19x2u-jbNjyhI0ug%3D%3D?uid=312146104&filename=portrait.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&owner_uid=312146104&tknv=v3&size=XXXL&crop=0"
+            }
+        ];
+        
+        let html = '';
+        photos.forEach(photo => {
+            html += `
+                <div style="margin: 20px;">
+                    <h3>${photo.name}</h3>
+                    <img src="${photo.url}" 
+                         alt="${photo.name}" 
+                         style="max-width: 300px; border: 1px solid #ccc;"
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Ошибка+загрузки'">
+                    <p><a href="${photo.url}" target="_blank">Открыть оригинал</a></p>
+                </div>
+            `;
+        });
+        
+        document.getElementById('photos').innerHTML = html;
+    </script>
+</body>
+</html>
