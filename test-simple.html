@@ -98,13 +98,13 @@
         <div class="photo-container">
             <h2>Тест 1: Прямая ссылка на фото</h2>
             <div class="url-box">
-                https://disk.yandex.ru/i/gkMhqDb7CF6q5w
+                https://drive.google.com/file/d/1jvJohGjKalhF8mZKbqtwrtYgyG8RW--7/view?usp=drive_link
             </div>
             
             <div id="status1" class="status">Загрузка...</div>
             
             <img id="photo1" 
-                 src="https://disk.yandex.ru/i/gkMhqDb7CF6q5w" 
+                 src="https://drive.google.com/file/d/1jvJohGjKalhF8mZKbqtwrtYgyG8RW--7/view?usp=drive_link" 
                  alt="Тестовое фото с Яндекс.Диска"
                  onload="document.getElementById('status1').innerHTML = '✅ Фото загружено'; document.getElementById('status1').className = 'status success';"
                  onerror="document.getElementById('status1').innerHTML = '❌ Ошибка загрузки: CORS или доступ запрещен'; document.getElementById('status1').className = 'status error';">
@@ -174,14 +174,14 @@
             
             // Перезагружаем с уникальным параметром для избежания кэша
             const timestamp = new Date().getTime();
-            img1.src = `https://disk.yandex.ru/i/gkMhqDb7CF6q5w?t=${timestamp}`;
+            img1.src = `https://drive.google.com/file/d/1jvJohGjKalhF8mZKbqtwrtYgyG8RW--7/view?usp=drive_link?t=${timestamp}`;
             img2.src = `https://downloader.disk.yandex.ru/disk/gkMhqDb7CF6q5w?t=${timestamp}`;
             
             log('Изображения перезагружены');
         }
         
         function openDirect() {
-            window.open('https://disk.yandex.ru/i/gkMhqDb7CF6q5w', '_blank');
+            window.open('https://drive.google.com/file/d/1jvJohGjKalhF8mZKbqtwrtYgyG8RW--7/view?usp=drive_link', '_blank');
             log('Открыта оригинальная ссылка в новой вкладке');
         }
         
@@ -192,7 +192,7 @@
             log(`Текущий домен: ${window.location.hostname}`);
             
             // Проверяем доступность через fetch
-            fetch('https://disk.yandex.ru/i/gkMhqDb7CF6q5w', { mode: 'no-cors' })
+            fetch('https://drive.google.com/file/d/1jvJohGjKalhF8mZKbqtwrtYgyG8RW--7/view?usp=drive_link', { mode: 'no-cors' })
                 .then(() => log('Fetch запрос отправлен (no-cors mode)'))
                 .catch(err => log(`Fetch ошибка: ${err.message}`));
         });
