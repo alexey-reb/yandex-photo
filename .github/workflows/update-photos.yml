@@ -1,55 +1,43 @@
-name: Update Photos from Yandex Disk
+name: Update Photos
 
 on:
-  workflow_dispatch:  # Позволяет запускать вручную
-  schedule:
-    - cron: '0 12 * * *'  # Каждый день в 12:00 UTC
+  workflow_dispatch:
   push:
-    paths:
-      - 'scripts/get_yadisk_photos.py'
+    branches: [ main ]
 
 jobs:
-  update-photos:
+  update:
     runs-on: ubuntu-latest
     
     steps:
-    - name: 🚀 Checkout repository
+    - name: 🚀 Checkout with PAT
       uses: actions/checkout@v3
       with:
-        persist-credentials: false
+        token: ${{ secrets.PAT_TOKEN }}
         
-    - name: 🐍 Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-        
-    - name: 📦 Install dependencies
+    - name: 📝 Create test data
       run: |
-        python -m pip install --upgrade pip
-        pip install requests
+        mkdir -p data
         
-    - name: 🖼️ Get photos from Yandex Disk
-      env:
-        YANDEX_TOKEN: ${{ secrets.YANDEX_TOKEN }}
-        YANDEX_FOLDER: "disk:/test_photos"  # Укажите вашу папку
+        # Создаем простой JSON с текущим временем
+        echo '{
+          "updated": "'$(date -Is)'",
+          "message": "Тестовые данные. Добавьте скрипт для Яндекс Диска.",
+          "photos": []
+        }' > data/photos.json
+        
+    - name: ✅ Commit changes
       run: |
-        python scripts/get_yadisk_photos.py
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions-bot@users.noreply.github.com"
         
-    - name: 💾 Commit and push if changed
-      run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        
-        # Проверяем, есть ли изменения
+        # Только если есть изменения
         git add data/photos.json
         
-        # Пытаемся сделать коммит
-        git diff --staged --quiet || {
-          git commit -m "📸 Update photos from Yandex Disk - $(date +'%Y-%m-%d %H:%M')"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
-        }
-        
-    - name: 📋 Show result
-      run: |
-        echo "=== Photos JSON ==="
-        cat data/photos.json || echo "Файл не найден"
+        # Используем простую проверку изменений
+        if ! git diff-index --quiet HEAD --; then
+          git commit -m "🤖 Auto-update: $(date +'%Y-%m-%d %H:%M')"
+          git push
+        else
+          echo "Нет изменений для коммита"
+        fi
