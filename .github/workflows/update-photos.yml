@@ -2,9 +2,8 @@ name: Update Photos from Yandex.Disk
 
 on:
   schedule:
-    # Запуск каждый день в 3:00 UTC
     - cron: '0 3 * * *'
-  workflow_dispatch:  # Ручной запуск
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -12,9 +11,14 @@ jobs:
   fetch-photos:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: write  # Добавьте эту строку!
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GH_PAT }}  # Используем PAT для checkout
       
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -32,10 +36,12 @@ jobs:
         python scripts/fetch_photos.py
         
     - name: Commit and push if changed
+      env:
+        GH_TOKEN: ${{ secrets.GH_PAT }}  # Используем PAT для push
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add -A
         timestamp=$(date -u)
         git commit -m "Update photos: ${timestamp}" || exit 0
-        git push
+        git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:main
