@@ -10,6 +10,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Полная история для rebase
     
     - uses: actions/setup-python@v4
       with:
@@ -21,15 +23,31 @@ jobs:
     - name: Download photos from Yandex.Disk
       env:
         YANDEX_DISK_TOKEN: ${{ secrets.YANDEX_DISK_TOKEN }}
-      run: python scripts/download_photos.py
-    
-    - name: Push changes
       run: |
-        git config user.name 'github-actions'
-        git config user.email 'github-actions@github.com'
-        git add docs/ || true
-        git add *.html || true
-        git add *.jpg || true
-        git add *.png || true
-        git commit -m "Update photos $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
-        git push
+        echo "Скачиваю фото..."
+        python scripts/download_photos.py
+    
+    - name: Configure Git
+      run: |
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    
+    - name: Commit and push changes
+      run: |
+        # Добавляем все изменения
+        git add --all
+        
+        # Проверяем есть ли изменения
+        if git diff --quiet --cached; then
+          echo "Нет изменений для коммита"
+          exit 0
+        fi
+        
+        # Коммитим
+        git commit -m "📸 Update photos $(date +'%Y-%m-%d %H:%M:%S UTC')"
+        
+        # Синхронизируем с удаленным репозиторием
+        git pull --rebase origin main
+        
+        # Пушим изменения
+        git push origin main
