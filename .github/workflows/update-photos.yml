@@ -1,0 +1,41 @@
+name: Update Photos from Yandex.Disk
+
+on:
+  schedule:
+    # Запуск каждый день в 3:00 UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:  # Ручной запуск
+  push:
+    branches: [ main ]
+
+jobs:
+  fetch-photos:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        pip install requests
+        
+    - name: Fetch photos from Yandex.Disk
+      env:
+        YANDEX_DISK_TOKEN: ${{ secrets.YANDEX_DISK_TOKEN }}
+      run: |
+        python scripts/fetch_photos.py
+        
+    - name: Commit and push if changed
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add -A
+        timestamp=$(date -u)
+        git commit -m "Update photos: ${timestamp}" || exit 0
+        git push
