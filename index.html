@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фотогалерея с Яндекс.Диска</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .folders { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
+        .folder-btn { padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background 0.3s; }
+        .folder-btn:hover { background: #45a049; }
+        .folder-btn.active { background: #2196F3; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .photo-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .photo-card:hover { transform: translateY(-5px); }
+        .photo-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+        .photo-info { padding: 15px; }
+        .photo-name { font-weight: bold; margin-bottom: 5px; }
+        .loading { text-align: center; padding: 50px; font-size: 18px; }
+        .error { color: #f44336; padding: 20px; background: #ffebee; border-radius: 5px; margin: 20px 0; }
+        footer { text-align: center; margin-top: 40px; padding: 20px; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📷 Фотогалерея с Яндекс.Диска</h1>
+            <p id="last-updated">Загрузка данных...</p>
+        </header>
+
+        <div class="folders" id="folders-container">
+            <!-- Папки будут загружены через JS -->
+        </div>
+
+        <div id="loading" class="loading">⏳ Загрузка фотографий...</div>
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div class="gallery" id="gallery-container">
+            <!-- Фотографии будут загружены через JS -->
+        </div>
+
+        <footer>
+            <p>Обновляется автоматически через GitHub Actions</p>
+            <p id="photo-count"></p>
+        </footer>
+    </div>
+
+    <script>
+        // Конфигурация
+        const DATA_URL = 'data/photos.json';  // Путь к JSON файлу
+        const CACHE_TIME = 5 * 60 * 1000; // 5 минут кеша
+
+        class PhotoGallery {
+            constructor() {
+                this.currentFolder = 'all';
+                this.allPhotos = {};
+                this.init();
+            }
+
+            async init() {
+                await this.loadData();
+                this.renderFolders();
+                this.renderPhotos();
+            }
+
+            async loadData() {
+                try {
+                    // Пробуем получить данные из localStorage (кеш)
+                    const cached = localStorage.getItem('yandex_photos_data');
+                    const cachedTime = localStorage.getItem('yandex_photos_time');
+                    
+                    if (cached && cachedTime && (Date.now() - cachedTime < CACHE_TIME)) {
+                        this.allPhotos = JSON.parse(cached);
+                        this.showMessage('Используются кешированные данные');
+                    } else {
+                        const response = await fetch(DATA_URL + '?t=' + Date.now());
+                        if (!response.ok) throw new Error('Ошибка загрузки данных');
+                        
+                        this.allPhotos = await response.json();
+                        
+                        // Сохраняем в кеш
+                        localStorage.setItem('yandex_photos_data', JSON.stringify(this.allPhotos));
+                        localStorage.setItem('yandex_photos_time', Date.now());
+                    }
+                    
+                    this.hideLoading();
+                    this.updateLastUpdated();
+                } catch (error) {
+                    this.showError('Не удалось загрузить фотографии: ' + error.message);
+                    this.hideLoading();
+                }
+            }
+
+            renderFolders() {
+                const container = document.getElementById('folders-container');
+                const folders = Object.keys(this.allPhotos.folders || {});
+                
+                if (folders.length === 0) {
+                    container.innerHTML = '<p>Папки не найдены</p>';
+                    return;
+                }
+
+                let html = `
+                    <button class="folder-btn active" data-folder="all">
+                        Все фото (${this.getTotalPhotos()})
+                    </button>
+                `;
+                
+                folders.forEach(folder => {
+                    const count = this.allPhotos.folders[folder].length;
+                    html += `
+                        <button class="folder-btn" data-folder="${folder}">
+                            ${folder} (${count})
+                        </button>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Назначаем обработчики
+                container.querySelectorAll('.folder-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const folder = e.target.dataset.folder;
+                        this.setActiveFolder(folder);
+                    });
+                });
+            }
+
+            renderPhotos() {
+                const container = document.getElementById('gallery-container');
+                let photos = [];
+                
+                if (this.currentFolder === 'all') {
+                    // Все фото из всех папок
+                    Object.values(this.allPhotos.folders || {}).forEach(folderPhotos => {
+                        photos.push(...folderPhotos);
+                    });
+                } else {
+                    photos = this.allPhotos.folders[this.currentFolder] || [];
+                }
+                
+                if (photos.length === 0) {
+                    container.innerHTML = '<p>В этой папке нет фотографий</p>';
+                    return;
+                }
+                
+                let html = '';
+                photos.forEach(photo => {
+                    const previewUrl = photo.preview_url || 'https://via.placeholder.com/250x200?text=No+Image';
+                    const name = photo.name || 'Без названия';
+                    
+                    html += `
+                        <div class="photo-card">
+                            <img src="${previewUrl}" alt="${name}" loading="lazy">
+                            <div class="photo-info">
+                                <div class="photo-name">${name}</div>
+                                <div class="photo-size">${this.formatSize(photo.size)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                this.updatePhotoCount(photos.length);
+            }
+
+            setActiveFolder(folder) {
+                this.currentFolder = folder;
+                
+                // Обновляем активную кнопку
+                document.querySelectorAll('.folder-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.folder === folder) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                this.renderPhotos();
+            }
+
+            getTotalPhotos() {
+                let total = 0;
+                Object.values(this.allPhotos.folders || {}).forEach(photos => {
+                    total += photos.length;
+                });
+                return total;
+            }
+
+            formatSize(bytes) {
+                if (!bytes) return '';
+                const units = ['B', 'KB', 'MB', 'GB'];
+                let size = bytes;
+                let unitIndex = 0;
+                
+                while (size >= 1024 && unitIndex < units.length - 1) {
+                    size /= 1024;
+                    unitIndex++;
+                }
+                
+                return `${size.toFixed(1)} ${units[unitIndex]}`;
+            }
+
+            updateLastUpdated() {
+                const element = document.getElementById('last-updated');
+                if (this.allPhotos.last_updated) {
+                    const date = new Date(this.allPhotos.last_updated);
+                    element.textContent = `Последнее обновление: ${date.toLocaleString('ru-RU')}`;
+                }
+            }
+
+            updatePhotoCount(count) {
+                const element = document.getElementById('photo-count');
+                element.textContent = `Показано фотографий: ${count}`;
+            }
+
+            showMessage(text) {
+                console.log(text);
+            }
+
+            showError(text) {
+                const element = document.getElementById('error');
+                element.textContent = text;
+                element.style.display = 'block';
+            }
+
+            hideLoading() {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            new PhotoGallery();
+        });
+    </script>
+</body>
+</html>
