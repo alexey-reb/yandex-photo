@@ -5,224 +5,329 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Портфолио модели | Школа моделей</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
         :root {
-            --primary: #4f46e5;
-            --secondary: #7c3aed;
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
             --accent: #ec4899;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            color: #1f2937;
+            color: #f1f5f9;
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1400px;
             margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 40px;
             padding: 20px;
         }
         
+        /* Шапка */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
         .logo {
-            font-size: 2.8rem;
+            font-size: 2rem;
             font-weight: 800;
             background: linear-gradient(90deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 10px;
         }
         
-        .subtitle {
-            color: #6b7280;
-            font-size: 1.1rem;
+        .model-selector {
+            display: flex;
+            gap: 15px;
+            align-items: center;
         }
         
-        .portfolio-card {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-            overflow: hidden;
+        .model-select {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+        
+        /* Основная информация */
+        .model-header {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 500px;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         @media (max-width: 768px) {
-            .portfolio-card {
+            .model-header {
                 grid-template-columns: 1fr;
             }
         }
         
-        .photo-section {
-            position: relative;
-            background: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .model-photo {
+        .main-photo {
             width: 100%;
-            max-width: 400px;
-            height: auto;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: block;
+            height: 400px;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
         
-        .info-section {
-            padding: 40px;
+        .model-info {
+            padding: 20px 0;
         }
         
         .model-name {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 700;
             margin-bottom: 10px;
-            color: #111827;
+            background: linear-gradient(90deg, white, #c7d2fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
         .model-id {
-            color: var(--primary);
-            font-size: 1rem;
-            margin-bottom: 30px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            margin-bottom: 30px;
+            color: #cbd5e1;
         }
         
+        /* Статистика */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
         
         .stat-card {
-            background: #f8fafc;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
             border-radius: 16px;
-            border-left: 4px solid var(--primary);
-            transition: transform 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: transform 0.3s, background 0.3s;
         }
         
         .stat-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 3rem;
+            font-weight: 800;
             color: var(--primary);
             display: block;
+            line-height: 1;
         }
         
         .stat-label {
-            font-size: 0.9rem;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-top: 10px;
         }
         
-        .grade-badge {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            display: inline-flex;
+        /* Галерея */
+        .gallery-section {
+            margin: 60px 0;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            font-weight: 600;
+            margin-bottom: 30px;
         }
         
-        .contacts {
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 16px;
-            margin-top: 25px;
-        }
-        
-        .contact-item {
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
+            gap: 15px;
+        }
+        
+        .category-tabs {
+            display: flex;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
         
-        .loading {
-            text-align: center;
-            padding: 60px;
-            grid-column: 1 / -1;
+        .tab-btn {
+            padding: 12px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
         }
         
-        .loader {
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+        
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 20px;
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover .photo-overlay {
+            transform: translateY(0);
+        }
+        
+        .photo-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox-img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
             width: 50px;
             height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            background: #d1fae5;
-            color: #065f46;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-left: 15px;
-        }
-        
-        .update-info {
-            text-align: center;
-            margin-top: 20px;
-            color: #9ca3af;
-            font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
         }
         
-        .controls {
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
+            justify-content: space-between;
+            padding: 0 30px;
+            transform: translateY(-50%);
         }
         
+        .nav-btn {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Кнопки */
         .btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 12px;
             border: none;
             font-weight: 600;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            font-family: inherit;
+            gap: 10px;
+            transition: all 0.3s;
             font-size: 1rem;
+            text-decoration: none;
         }
         
         .btn-primary {
@@ -231,400 +336,502 @@
         }
         
         .btn-secondary {
-            background: #e5e7eb;
-            color: #374151;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
         }
         
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        footer {
+        /* Загрузка */
+        .loading {
             text-align: center;
-            margin-top: 50px;
-            padding: 30px;
-            color: #6b7280;
-            font-size: 0.9rem;
-            border-top: 1px solid #e5e7eb;
+            padding: 100px 20px;
         }
         
-        .tech-stack {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
         }
         
-        .tech-item {
-            background: #f3f4f6;
-            padding: 8px 16px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .model-name {
+                font-size: 2.2rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+        }
+        
+        .photo-counter {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
             border-radius: 20px;
-            font-size: 0.8rem;
-        }
-        
-        .error-message {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-        }
-        
-        .success-message {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .json-viewer {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            max-height: 400px;
-            overflow: auto;
-            font-family: 'Consolas', 'Monaco', monospace;
             font-size: 0.9rem;
-            text-align: left;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Шапка -->
         <header>
             <div class="logo">MODEL PORTFOLIO</div>
-            <div class="subtitle">Школа моделей • Система отслеживания прогресса</div>
+            <div class="model-selector">
+                <select id="modelSelect" class="model-select" onchange="loadModel(this.value)">
+                    <option value="1">Анна Петрова</option>
+                    <option value="2">Мария Иванова</option>
+                    <option value="3">Елена Сидорова</option>
+                </select>
+                <button class="btn btn-secondary" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> Обновить
+                </button>
+            </div>
         </header>
         
-        <main>
-            <div class="portfolio-card">
-                <div id="model-content" class="loading">
-                    <div class="loader"></div>
-                    <h3>Загрузка данных модели...</h3>
-                    <p>Подключаемся к Google Sheets через API</p>
-                </div>
+        <!-- Основной контент -->
+        <div id="content">
+            <div class="loading">
+                <div class="loader"></div>
+                <h3>Загрузка портфолио...</h3>
+                <p>Подключаемся к Яндекс.Облаку</p>
             </div>
-            
-            <div class="controls">
-                <button class="btn btn-primary" onclick="loadModelData()">
-                    <i class="fas fa-sync-alt"></i> Обновить данные
-                </button>
-                <button class="btn btn-secondary" onclick="toggleJSONViewer()">
-                    <i class="fas fa-code"></i> Показать/скрыть JSON
-                </button>
-                <button class="btn btn-secondary" onclick="openPhotoInNewTab()">
-                    <i class="fas fa-external-link-alt"></i> Открыть фото
-                </button>
-            </div>
-            
-            <div id="json-viewer" class="json-viewer" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <strong>JSON данные из Google Sheets:</strong>
-                    <button onclick="copyJSON()" class="btn" style="padding: 5px 10px; font-size: 0.8rem;">
-                        <i class="fas fa-copy"></i> Копировать
-                    </button>
-                </div>
-                <pre id="json-content">Загрузка...</pre>
-            </div>
-            
-            <div class="update-info">
-                <i class="fas fa-circle" style="color: #10b981; font-size: 8px;"></i>
-                <span id="update-time">Система готова к работе</span>
-            </div>
-            
-            <div id="status-message"></div>
-        </main>
+        </div>
         
-        <footer>
-            <p>🚀 <strong>MVP система школы моделей</strong></p>
-            <p>Данные автоматически обновляются из Google Sheets</p>
-            
-            <div class="tech-stack">
-                <span class="tech-item">Google Sheets</span>
-                <span class="tech-item">Google Apps Script</span>
-                <span class="tech-item">JSON API</span>
-                <span class="tech-item">GitHub Pages</span>
-                <span class="tech-item">Яндекс.Облако</span>
+        <!-- Lightbox для просмотра фото -->
+        <div class="lightbox" id="lightbox">
+            <div class="lightbox-close" onclick="closeLightbox()">
+                <i class="fas fa-times"></i>
             </div>
-            
-            <p style="margin-top: 20px;">
-                <small>Изменяйте данные в таблице → Web App обновляется → сайт показывает актуальную информацию</small>
-            </p>
-            <p style="margin-top: 10px; font-size: 0.8rem; color: #9ca3af;">
-                API Endpoint: <code>https://script.google.com/macros/s/AKfycbzDcvPwakuJcr2E2n7I_r7iGwRutetz1Yn9-DbbHVo5mH19lUvl-CbdHEQLZd3sITVKMA/exec</code>
-            </p>
-        </footer>
+            <div class="lightbox-nav">
+                <button class="nav-btn" onclick="prevPhoto()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="nav-btn" onclick="nextPhoto()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <img class="lightbox-img" id="lightbox-img" src="" alt="">
+            <div id="lightbox-info" style="position: absolute; bottom: 30px; left: 0; right: 0; text-align: center; color: white;"></div>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
         // ==============================================
-        // КОНФИГУРАЦИЯ - ВАША ССЫЛКА НА WEB APP
+        // КОНФИГУРАЦИЯ
         // ==============================================
-        const JSON_URL = "https://script.google.com/macros/s/AKfycbzDcvPwakuJcr2E2n7I_r7iGwRutetz1Yn9-DbbHVo5mH19lUvl-CbdHEQLZd3sITVKMA/exec";
-        
-        // ==============================================
-        // ПЕРЕМЕННЫЕ И СОСТОЯНИЕ
-        // ==============================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbzDcvPwakuJcr2E2n7I_r7iGwRutetz1Yn9-DbbHVo5mH19lUvl-CbdHEQLZd3sITVKMA/exec";
+        let currentModelId = 1;
         let currentModelData = null;
-        let lastUpdateTime = null;
+        let currentCategory = 'all';
+        let lightboxPhotos = [];
+        let currentLightboxIndex = 0;
         
         // ==============================================
-        // ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ ДАННЫХ
+        // ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ
         // ==============================================
-        async function loadModelData() {
-            const contentDiv = document.getElementById('model-content');
-            const timeDiv = document.getElementById('update-time');
-            const statusDiv = document.getElementById('status-message');
-            const jsonContentDiv = document.getElementById('json-content');
+        
+        async function loadModel(modelId = 1) {
+            const contentDiv = document.getElementById('content');
+            currentModelId = modelId;
             
             try {
-                // Показываем состояние загрузки
                 contentDiv.innerHTML = `
                     <div class="loading">
                         <div class="loader"></div>
-                        <h3>Обновление данных...</h3>
-                        <p>Запрашиваем информацию из Google Sheets API</p>
+                        <h3>Загрузка портфолио...</h3>
+                        <p>Получаем фото из Яндекс.Облака</p>
                     </div>
                 `;
                 
-                statusDiv.innerHTML = '';
+                const url = `${API_URL}?id=${modelId}&action=portfolio`;
+                const response = await fetch(url);
+                const data = await response.json();
                 
-                // Загружаем JSON с временной меткой для избежания кэширования
-                const timestamp = new Date().getTime();
-                const urlWithCacheBust = `${JSON_URL}?t=${timestamp}`;
-                
-                console.log('Загружаем данные по URL:', urlWithCacheBust);
-                const response = await fetch(urlWithCacheBust);
-                
-                if (!response.ok) {
-                    throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+                if (data.success) {
+                    currentModelData = data.data;
+                    renderPortfolio(data.data);
+                } else {
+                    throw new Error(data.error || 'Ошибка загрузки портфолио');
                 }
                 
-                const model = await response.json();
-                console.log('Данные получены:', model);
-                
-                // Сохраняем данные
-                currentModelData = model;
-                lastUpdateTime = new Date();
-                
-                // Форматируем дату
-                const updatedDate = model.updated ? new Date(model.updated) : lastUpdateTime;
-                const formattedDate = updatedDate.toLocaleString('ru-RU', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                // Обновляем JSON viewer
-                jsonContentDiv.textContent = JSON.stringify(model, null, 2);
-                
-                // Отображаем данные модели
-                contentDiv.innerHTML = `
-                    <div class="photo-section">
-                        <img src="${model.photo}" 
-                             alt="${model.name}"
-                             class="model-photo"
-                             onerror="handleImageError(this)">
-                    </div>
-                    <div class="info-section">
-                        <h1 class="model-name">${model.name}</h1>
-                        <div class="model-id">
-                            <i class="fas fa-fingerprint"></i>
-                            ID модели: #${model.id}
-                            <span class="status-indicator">
-                                <i class="fas fa-circle"></i>
-                                Активна
-                            </span>
-                        </div>
-                        
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <span class="stat-value">${model.height}</span>
-                                <span class="stat-label">Рост (см)</span>
-                            </div>
-                            <div class="stat-card">
-                                <span class="stat-value">${model.grade}/5</span>
-                                <span class="stat-label">Текущая оценка</span>
-                            </div>
-                            <div class="stat-card">
-                                <span class="stat-value">
-                                    <i class="fab fa-telegram" style="color: #0088cc;"></i>
-                                </span>
-                                <span class="stat-label">Telegram</span>
-                            </div>
-                            <div class="stat-card">
-                                <span class="stat-value">MVP</span>
-                                <span class="stat-label">Версия</span>
-                            </div>
-                        </div>
-                        
-                        <div class="grade-badge">
-                            <i class="fas fa-trophy"></i>
-                            Успеваемость: ${model.grade} из 5 баллов
-                        </div>
-                        
-                        <div class="contacts">
-                            <h3 style="margin-bottom: 15px; color: #4b5563;">
-                                <i class="fas fa-id-card"></i> Контактная информация
-                            </h3>
-                            <div class="contact-item">
-                                <i class="fab fa-telegram" style="color: #0088cc;"></i>
-                                <span><strong>Telegram:</strong> ${model.telegram || 'не указан'}</span>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-calendar-alt" style="color: #8b5cf6;"></i>
-                                <span><strong>Обновлено:</strong> ${formattedDate}</span>
-                            </div>
-                            <div class="contact-item">
-                                <i class="fas fa-link" style="color: #f59e0b;"></i>
-                                <span><strong>Источник:</strong> Google Apps Script Web App</span>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-top: 25px; padding: 15px; background: #f0f9ff; border-radius: 12px;">
-                            <h4 style="margin: 0 0 10px 0; color: #0369a1;">
-                                <i class="fas fa-info-circle"></i> Как работает система
-                            </h4>
-                            <p style="margin: 0; color: #475569; font-size: 0.9rem;">
-                                Данные хранятся в Google Sheets → Google Apps Script предоставляет API → Этот сайт загружает и отображает данные
-                            </p>
-                        </div>
-                    </div>
-                `;
-                
-                // Обновляем время
-                const nowTime = new Date().toLocaleTimeString('ru-RU');
-                timeDiv.innerHTML = `
-                    <i class="fas fa-check-circle" style="color: #10b981;"></i>
-                    Данные загружены: ${nowTime}
-                `;
-                
-                // Показываем сообщение об успехе
-                statusDiv.innerHTML = `
-                    <div class="success-message">
-                        <i class="fas fa-check-circle"></i>
-                        Данные успешно загружены из Google Sheets!
-                    </div>
-                `;
-                
             } catch (error) {
-                console.error('Ошибка загрузки:', error);
-                
                 contentDiv.innerHTML = `
-                    <div class="error-message">
-                        <h3><i class="fas fa-exclamation-triangle"></i> Ошибка загрузки данных</h3>
-                        <p><strong>Проблема:</strong> ${error.message}</p>
-                        <p><strong>Возможные решения:</strong></p>
-                        <ul>
-                            <li>Проверьте подключение к интернету</li>
-                            <li>Убедитесь, что Web App опубликован с доступом "Все, даже анонимные"</li>
-                            <li>Проверьте, что функция doGet() добавлена в Google Apps Script</li>
-                            <li>Проверьте консоль браузера (F12) для подробностей</li>
-                        </ul>
-                        <p><small>API URL: ${JSON_URL}</small></p>
-                        <button onclick="loadModelData()" class="btn btn-primary" style="margin-top: 10px;">
+                    <div class="error-message" style="background: rgba(239, 68, 68, 0.1); color: #fca5a5; padding: 30px; border-radius: 16px; text-align: center;">
+                        <h3 style="color: #fca5a5;"><i class="fas fa-exclamation-triangle"></i> Ошибка загрузки</h3>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 15px; color: #94a3b8;">
+                            Убедитесь, что папка с фото указана в таблице и файлы загружены на Яндекс.Облако
+                        </p>
+                        <button class="btn btn-primary" onclick="loadModel(${modelId})" style="margin-top: 20px;">
                             <i class="fas fa-redo"></i> Попробовать снова
                         </button>
                     </div>
                 `;
-                
-                timeDiv.innerHTML = `
-                    <i class="fas fa-exclamation-circle" style="color: #ef4444;"></i>
-                    Ошибка: ${error.message}
-                `;
-                
-                statusDiv.innerHTML = '';
             }
         }
+        
+        // ==============================================
+        // РЕНДЕРИНГ ПОРТФОЛИО
+        // ==============================================
+        
+        function renderPortfolio(modelData) {
+            const contentDiv = document.getElementById('content');
+            
+            // Подготавливаем данные для lightbox
+            lightboxPhotos = [];
+            Object.keys(modelData.portfolio).forEach(category => {
+                modelData.portfolio[category].forEach(photo => {
+                    lightboxPhotos.push({
+                        url: photo,
+                        category: category,
+                        name: photo.split('/').pop()
+                    });
+                });
+            });
+            
+            contentDiv.innerHTML = `
+                <!-- Основная информация -->
+                <div class="model-header">
+                    <div>
+                        <img src="${modelData.portfolio.polaroids?.[0] || modelData.portfolio.beauty?.[0] || 'https://storage.yandexcloud.net/alexreb/promo.png'}" 
+                             alt="${modelData.name}"
+                             class="main-photo"
+                             onclick="openLightbox('${modelData.portfolio.polaroids?.[0] || modelData.portfolio.beauty?.[0]}')">
+                    </div>
+                    
+                    <div class="model-info">
+                        <h1 class="model-name">${modelData.name}</h1>
+                        <div class="model-id">
+                            <span style="background: rgba(99, 102, 241, 0.2); padding: 8px 16px; border-radius: 20px;">
+                                <i class="fas fa-fingerprint"></i> ID: #${modelData.id}
+                            </span>
+                            <span style="background: rgba(139, 92, 246, 0.2); padding: 8px 16px; border-radius: 20px;">
+                                <i class="fab fa-telegram"></i> ${modelData.telegram || 'Не указан'}
+                            </span>
+                            <span style="background: rgba(236, 72, 153, 0.2); padding: 8px 16px; border-radius: 20px;">
+                                <i class="fas fa-ruler-vertical"></i> ${modelData.height} см
+                            </span>
+                        </div>
+                        
+                        <div style="margin: 30px 0;">
+                            <h3 style="color: #cbd5e1; margin-bottom: 15px;">О модели</h3>
+                            <p style="line-height: 1.6; color: #94a3b8;">
+                                Профессиональная модель школы. Специализируется на fashion-съемках и коммерческой рекламе.
+                                Обладает опытом работы с ведущими фотографами и брендами.
+                            </p>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; margin-top: 30px;">
+                            <button class="btn btn-primary" onclick="downloadPortfolio()">
+                                <i class="fas fa-download"></i> Скачать портфолио
+                            </button>
+                            <button class="btn btn-secondary" onclick="sharePortfolio()">
+                                <i class="fas fa-share"></i> Поделиться
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Статистика -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-value">${modelData.stats.totalPhotos}</span>
+                        <span class="stat-label">Всего фото</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${modelData.stats.categories.polaroids || 0}</span>
+                        <span class="stat-label">Polaroids</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${modelData.stats.categories.beauty || 0}</span>
+                        <span class="stat-label">Beauty</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${modelData.stats.categories.commercial || 0}</span>
+                        <span class="stat-label">Commercial</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${modelData.grade}/5</span>
+                        <span class="stat-label">Рейтинг</span>
+                    </div>
+                </div>
+                
+                <!-- Галерея -->
+                <div class="gallery-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-images"></i> Галерея портфолио
+                        </h2>
+                        <div style="color: #94a3b8;">
+                            <i class="fas fa-cloud"></i> Яндекс.Облако
+                        </div>
+                    </div>
+                    
+                    <!-- Табы категорий -->
+                    <div class="category-tabs">
+                        <button class="tab-btn ${currentCategory === 'all' ? 'active' : ''}" onclick="filterCategory('all')">
+                            <i class="fas fa-th"></i> Все фото (${modelData.stats.totalPhotos})
+                        </button>
+                        ${modelData.portfolio.polaroids ? `
+                            <button class="tab-btn ${currentCategory === 'polaroids' ? 'active' : ''}" onclick="filterCategory('polaroids')">
+                                <i class="fas fa-camera"></i> Polaroids (${modelData.stats.categories.polaroids || 0})
+                            </button>
+                        ` : ''}
+                        ${modelData.portfolio.beauty ? `
+                            <button class="tab-btn ${currentCategory === 'beauty' ? 'active' : ''}" onclick="filterCategory('beauty')">
+                                <i class="fas fa-star"></i> Beauty (${modelData.stats.categories.beauty || 0})
+                            </button>
+                        ` : ''}
+                        ${modelData.portfolio.commercial ? `
+                            <button class="tab-btn ${currentCategory === 'commercial' ? 'active' : ''}" onclick="filterCategory('commercial')">
+                                <i class="fas fa-briefcase"></i> Commercial (${modelData.stats.categories.commercial || 0})
+                            </button>
+                        ` : ''}
+                    </div>
+                    
+                    <!-- Сетка фотографий -->
+                    <div id="gallery-grid" class="gallery-grid">
+                        ${renderGalleryGrid(modelData.portfolio, 'all')}
+                    </div>
+                </div>
+                
+                <!-- Информация о папке -->
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 16px; margin-top: 40px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h3 style="margin-bottom: 15px; color: #cbd5e1;">
+                        <i class="fas fa-folder-open"></i> Структура папки на Яндекс.Облаке
+                    </h3>
+                    <p style="color: #94a3b8; margin-bottom: 10px;">
+                        <strong>Базовая папка:</strong> ${modelData.folder}
+                    </p>
+                    <p style="color: #94a3b8; font-size: 0.9rem;">
+                        Все фото хранятся в облачном хранилище и загружаются напрямую оттуда.
+                        Для добавления новых фото просто загрузите их в соответствующую папку на Яндекс.Облаке.
+                    </p>
+                </div>
+            `;
+            
+            // Обновляем селектор
+            document.getElementById('modelSelect').value = modelData.id;
+        }
+        
+        // ==============================================
+        // ФИЛЬТРАЦИЯ И ГАЛЕРЕЯ
+        // ==============================================
+        
+        function filterCategory(category) {
+            currentCategory = category;
+            const galleryGrid = document.getElementById('gallery-grid');
+            
+            if (!currentModelData) return;
+            
+            galleryGrid.innerHTML = renderGalleryGrid(currentModelData.portfolio, category);
+            
+            // Обновляем активные табы
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        function renderGalleryGrid(portfolio, category) {
+            let photos = [];
+            
+            if (category === 'all') {
+                Object.keys(portfolio).forEach(cat => {
+                    if (Array.isArray(portfolio[cat])) {
+                        photos = photos.concat(portfolio[cat].map(url => ({ url, category: cat })));
+                    }
+                });
+            } else if (portfolio[category]) {
+                photos = portfolio[category].map(url => ({ url, category }));
+            }
+            
+            if (photos.length === 0) {
+                return `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: #94a3b8;">
+                        <i class="fas fa-image" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                        <h3>Нет фото в этой категории</h3>
+                        <p>Загрузите фото в соответствующую папку на Яндекс.Облаке</p>
+                    </div>
+                `;
+            }
+            
+            return photos.map((photo, index) => {
+                const fileName = photo.url.split('/').pop();
+                const categoryName = getCategoryName(photo.category);
+                
+                return `
+                    <div class="gallery-item" onclick="openLightbox('${photo.url}', ${index + (category === 'all' ? getAllPhotoIndex(portfolio, photo.category, photo.url) : index)})">
+                        <img src="${photo.url}" 
+                             alt="${categoryName} - ${fileName}"
+                             class="gallery-img"
+                             onerror="this.src='https://storage.yandexcloud.net/alexreb/promo.png'">
+                        <div class="photo-overlay">
+                            <div class="photo-info">
+                                <span>${categoryName}</span>
+                                <span>${fileName}</span>
+                            </div>
+                        </div>
+                        <div class="photo-counter">${index + 1}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getAllPhotoIndex(portfolio, targetCategory, targetUrl) {
+            let index = 0;
+            for (const category in portfolio) {
+                if (Array.isArray(portfolio[category])) {
+                    for (const url of portfolio[category]) {
+                        if (category === targetCategory && url === targetUrl) {
+                            return index;
+                        }
+                        index++;
+                    }
+                }
+            }
+            return 0;
+        }
+        
+        function getCategoryName(category) {
+            const names = {
+                'polaroids': 'Polaroid',
+                'beauty': 'Beauty',
+                'commercial': 'Commercial',
+                'videos': 'Video'
+            };
+            return names[category] || category;
+        }
+        
+        // ==============================================
+        // LIGHTBOX (ПРОСМОТР ФОТО)
+        // ==============================================
+        
+        function openLightbox(photoUrl, index = 0) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxInfo = document.getElementById('lightbox-info');
+            
+            // Находим индекс фото в общем массиве
+            currentLightboxIndex = lightboxPhotos.findIndex(p => p.url === photoUrl);
+            if (currentLightboxIndex === -1) currentLightboxIndex = index;
+            
+            // Показываем фото
+            lightboxImg.src = lightboxPhotos[currentLightboxIndex].url;
+            
+            // Информация о фото
+            const fileName = lightboxPhotos[currentLightboxIndex].url.split('/').pop();
+            lightboxInfo.innerHTML = `
+                ${getCategoryName(lightboxPhotos[currentLightboxIndex].category)} • 
+                ${fileName} • 
+                ${currentLightboxIndex + 1} из ${lightboxPhotos.length}
+            `;
+            
+            // Показываем lightbox
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function prevPhoto() {
+            if (currentLightboxIndex > 0) {
+                currentLightboxIndex--;
+                openLightbox(lightboxPhotos[currentLightboxIndex].url, currentLightboxIndex);
+            }
+        }
+        
+        function nextPhoto() {
+            if (currentLightboxIndex < lightboxPhotos.length - 1) {
+                currentLightboxIndex++;
+                openLightbox(lightboxPhotos[currentLightboxIndex].url, currentLightboxIndex);
+            }
+        }
+        
+        // Закрытие по ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') prevPhoto();
+            if (e.key === 'ArrowRight') nextPhoto();
+        });
         
         // ==============================================
         // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
         // ==============================================
         
-        function handleImageError(img) {
-            console.warn('Ошибка загрузки изображения:', img.src);
-            img.src = 'https://storage.yandexcloud.net/alexreb/promo.png';
-            img.alt = 'Запасное изображение';
-        }
-        
-        function toggleJSONViewer() {
-            const viewer = document.getElementById('json-viewer');
-            if (viewer.style.display === 'none') {
-                viewer.style.display = 'block';
-            } else {
-                viewer.style.display = 'none';
-            }
-        }
-        
-        function openPhotoInNewTab() {
-            if (currentModelData && currentModelData.photo) {
-                window.open(currentModelData.photo, '_blank');
-            } else {
-                alert('Сначала загрузите данные модели');
-            }
-        }
-        
-        function copyJSON() {
-            if (!currentModelData) {
-                alert('Нет данных для копирования');
-                return;
-            }
+        function downloadPortfolio() {
+            if (!currentModelData) return;
             
-            const jsonStr = JSON.stringify(currentModelData, null, 2);
-            navigator.clipboard.writeText(jsonStr)
-                .then(() => {
-                    const btn = event.target.closest('button');
-                    const originalHTML = btn.innerHTML;
-                    btn.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
-                    btn.style.background = '#10b981';
-                    
-                    setTimeout(() => {
-                        btn.innerHTML = originalHTML;
-                        btn.style.background = '';
-                    }, 2000);
-                })
-                .catch(err => {
-                    console.error('Ошибка копирования:', err);
-                    alert('Не удалось скопировать JSON');
+            const zipUrl = `https://script.google.com/macros/s/AKfycbzDcvPwakuJcr2E2n7I_r7iGwRutetz1Yn9-DbbHVo5mH19lUvl-CbdHEQLZd3sITVKMA/exec?action=download&id=${currentModelData.id}`;
+            window.open(zipUrl, '_blank');
+            
+            alert('Скачивание портфолио началось. Все фото будут упакованы в ZIP архив.');
+        }
+        
+        function sharePortfolio() {
+            if (!currentModelData) return;
+            
+            const shareUrl = window.location.href.split('?')[0] + `?id=${currentModelData.id}`;
+            const shareText = `Портфолио модели ${currentModelData.name} | Школа моделей`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: shareText,
+                    text: `Посмотрите портфолио модели ${currentModelData.name}`,
+                    url: shareUrl
                 });
+            } else {
+                // Копируем ссылку в буфер
+                navigator.clipboard.writeText(shareUrl)
+                    .then(() => alert('Ссылка скопирована в буфер обмена!'));
+            }
+        }
+        
+        function refreshData() {
+            loadModel(currentModelId);
         }
         
         // ==============================================
-        // АВТОМАТИЧЕСКАЯ ЗАГРУЗКА И ОБНОВЛЕНИЕ
+        // ЗАГРУЗКА ПРИ СТАРТЕ
         // ==============================================
         
-        // Загружаем данные при загрузке страницы
-        document.addEventListener('DOMContentLoaded', loadModelData);
+        // Получаем ID модели из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelIdFromUrl = urlParams.get('id');
         
-        // Автоматическое обновление каждые 30 секунд
-        setInterval(loadModelData, 300000);
-        
-        // Обновляем при возвращении на вкладку
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                loadModelData();
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadModel(modelIdFromUrl || 1);
         });
-        
-        // Информация о системе
-        console.log('🚀 Система портфолио модели загружена');
-        console.log('📊 API Endpoint:', JSON_URL);
-        console.log('🔄 Автообновление: каждые 30 секунд');
     </script>
 </body>
 </html>
