@@ -1,168 +1,142 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Простейший пример</title>
-    <style>
-        body {
-            font-family: Arial;
-            padding: 40px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .photo {
-            max-width: 400px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        .card {
-            border: 2px solid #4CAF50;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Каталог</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
+    .top { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin: 12px 0 18px; }
+    input, select { padding: 10px 12px; border:1px solid #ddd; border-radius:10px; font-size: 14px; }
+    .meta { color:#555; font-size: 14px; margin: 8px 0 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 14px; overflow: hidden; background: #fff; }
+    .img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: #f3f3f3; }
+    .p { padding: 12px; }
+    .title { font-weight: 650; margin: 0 0 8px; }
+    .tags { color: #666; font-size: 13px; margin-top: 10px; }
+    .price { margin-top: 8px; font-weight: 600; }
+    .err { color: #b00020; white-space: pre-wrap; }
+  </style>
 </head>
 <body>
-    <h1>Простейшая интеграция</h1>
-    
-    <div id="data-container">
-        <p>Загрузка данных...</p>
-    </div>
-    
-    <div id="error" style="color: red; display: none;"></div>
+  <h1>Каталог</h1>
 
-    <script>
-        // ==============================================
-        // КОНСТАНТЫ (неизменяемые значения)
-        // ==============================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbzDcvPwakuJcr2E2n7I_r7iGwRutetz1Yn9-DbbHVo5mH19lUvl-CbdHEQLZd3sITVKMA/exec";
-        
-        // ==============================================
-        // ОСНОВНАЯ ФУНКЦИЯ - загружает и показывает данные
-        // ==============================================
-        async function loadData() {
-            try {
-                // 1. Показываем статус загрузки
-                document.getElementById('data-container').innerHTML = 
-                    '<p>⌛ Загружаем данные из Google Sheets...</p>';
-                
-                // 2. Делаем запрос к API (fetch - встроенная функция браузера)
-                const response = await fetch(API_URL);
-                
-                // 3. Проверяем статус ответа
-                if (!response.ok) {
-                    throw new Error(`HTTP ошибка: ${response.status}`);
-                }
-                
-                // 4. Парсим JSON (превращаем текст в объект)
-                const data = await response.json();
-                
-                // 5. Проверяем, что данные пришли
-                if (data.status !== "success") {
-                    throw new Error("Ошибка в данных API");
-                }
-                
-                // 6. Показываем данные на странице
-                displayData(data);
-                
-            } catch (error) {
-                // Если произошла ошибка, показываем её
-                showError(error);
-            }
+  <div class="top">
+    <input id="q" placeholder="Поиск по названию..." />
+    <select id="tag">
+      <option value="">Все теги</option>
+    </select>
+  </div>
+
+  <div class="meta" id="meta"></div>
+  <div class="grid" id="grid"></div>
+  <div class="err" id="err"></div>
+
+  <script>
+    let allItems = [];
+
+    function uniq(arr) {
+      return Array.from(new Set(arr));
+    }
+
+    function render(items, meta) {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+
+      for (const item of items) {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const img = document.createElement("img");
+        img.className = "img";
+        img.loading = "lazy";
+        img.alt = item.title || "";
+        if (item.image) img.src = item.image;
+
+        const p = document.createElement("div");
+        p.className = "p";
+
+        const h = document.createElement("div");
+        h.className = "title";
+        h.textContent = item.title || "";
+
+        p.appendChild(h);
+
+        if (item.description) {
+          const d = document.createElement("div");
+          d.textContent = item.description;
+          p.appendChild(d);
         }
-        
-        // ==============================================
-        // ФУНКЦИЯ ОТОБРАЖЕНИЯ ДАННЫХ
-        // ==============================================
-        function displayData(data) {
-            // Создаём HTML разметку с данными
-            const html = `
-                <div class="card">
-                    <h2>📊 Данные из Google Sheets:</h2>
-                    <p><strong>Текст:</strong> ${data.text}</p>
-                    <p><strong>Время обновления:</strong> ${new Date(data.updated).toLocaleString()}</p>
-                    
-                    <h2>🖼️ Фото из Яндекс.Облака:</h2>
-                    <img src="${data.photo}" 
-                         alt="Фото из облака" 
-                         class="photo"
-                         onerror="handlePhotoError(this)">
-                    <p><small>Ссылка: ${data.photo}</small></p>
-                </div>
-            `;
-            
-            // Вставляем HTML в контейнер
-            document.getElementById('data-container').innerHTML = html;
+
+        if (typeof item.price === "number") {
+          const pr = document.createElement("div");
+          pr.className = "price";
+          pr.textContent = item.price.toLocaleString("ru-RU") + " ₽";
+          p.appendChild(pr);
         }
-        
-        // ==============================================
-        // ФУНКЦИЯ ОБРАБОТКИ ОШИБКИ ФОТО
-        // ==============================================
-        function handlePhotoError(imgElement) {
-            console.warn('Фото не загрузилось:', imgElement.src);
-            
-            // Пробуем альтернативные ссылки
-            const backupPhotos = [
-                "https://storage.yandexcloud.net/alexreb/photo1.jpg",
-                "https://via.placeholder.com/400x300?text=Фото+не+загружено"
-            ];
-            
-            let currentIndex = 0;
-            
-            // Рекурсивная функция для перебора резервных фото
-            function tryNextPhoto() {
-                if (currentIndex < backupPhotos.length) {
-                    imgElement.src = backupPhotos[currentIndex];
-                    currentIndex++;
-                }
-            }
-            
-            // Устанавливаем обработчик ошибки
-            imgElement.onerror = tryNextPhoto;
-            
-            // Пробуем первое резервное фото
-            tryNextPhoto();
-        }
-        
-        // ==============================================
-        // ФУНКЦИЯ ПОКАЗА ОШИБКИ
-        // ==============================================
-        function showError(error) {
-            console.error('Ошибка загрузки:', error);
-            
-            const errorDiv = document.getElementById('error');
-            errorDiv.innerHTML = `
-                <h3>❌ Ошибка загрузки</h3>
-                <p><strong>Причина:</strong> ${error.message}</p>
-                <p><strong>Что проверить:</strong></p>
-                <ul>
-                    <li>Интернет соединение</li>
-                    <li>URL API в константе API_URL</li>
-                    <li>Web App опубликован с доступом "Все, даже анонимные"</li>
-                </ul>
-                <button onclick="loadData()">Попробовать снова</button>
-            `;
-            errorDiv.style.display = 'block';
-            
-            // Показываем локальные данные при ошибке
-            document.getElementById('data-container').innerHTML = `
-                <div class="card">
-                    <h2>📊 Локальные данные (оффлайн):</h2>
-                    <p><strong>Текст:</strong> Это локальные данные, API не доступен</p>
-                    <p><strong>Фото:</strong></p>
-                    <img src="https://storage.yandexcloud.net/alexreb/test-photo.jpg" 
-                         class="photo"
-                         onerror="this.src='https://via.placeholder.com/400x300?text=Оффлайн'">
-                </div>
-            `;
-        }
-        
-        // ==============================================
-        // АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ПРИ СТАРТЕ
-        // ==============================================
-        // Когда страница полностью загрузится, запускаем loadData()
-        window.addEventListener('DOMContentLoaded', loadData);
-    </script>
+
+        const t = document.createElement("div");
+        t.className = "tags";
+        t.textContent = (item.tags && item.tags.length) ? item.tags.join(", ") : "";
+        p.appendChild(t);
+
+        card.appendChild(img);
+        card.appendChild(p);
+        grid.appendChild(card);
+      }
+
+      document.getElementById("meta").textContent =
+        `Обновлено: ${meta.generated_at} • Всего опубликовано: ${meta.count} • Показано: ${items.length}`;
+    }
+
+    function applyFilters(meta) {
+      const q = document.getElementById("q").value.trim().toLowerCase();
+      const tag = document.getElementById("tag").value;
+
+      let items = allItems;
+
+      if (q) {
+        items = items.filter(x => String(x.title || "").toLowerCase().includes(q));
+      }
+      if (tag) {
+        items = items.filter(x => Array.isArray(x.tags) && x.tags.includes(tag));
+      }
+
+      render(items, meta);
+    }
+
+    async function main() {
+      // cache-bust, чтобы не тянуть старую версию из кеша
+      const res = await fetch("./data.json?v=" + Date.now());
+      if (!res.ok) throw new Error("Failed to load data.json: HTTP " + res.status);
+
+      const meta = await res.json();
+      allItems = meta.items || [];
+
+      // наполняем список тегов
+      const tags = uniq(allItems.flatMap(x => Array.isArray(x.tags) ? x.tags : []))
+        .sort((a,b) => a.localeCompare(b, "ru"));
+
+      const tagSel = document.getElementById("tag");
+      for (const t of tags) {
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+        tagSel.appendChild(opt);
+      }
+
+      // обработчики
+      document.getElementById("q").addEventListener("input", () => applyFilters(meta));
+      document.getElementById("tag").addEventListener("change", () => applyFilters(meta));
+
+      render(allItems, meta);
+    }
+
+    main().catch(err => {
+      console.error(err);
+      document.getElementById("err").textContent = String(err);
+    });
+  </script>
 </body>
 </html>
