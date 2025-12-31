@@ -20,123 +20,70 @@
   </style>
 </head>
 <body>
-  <h1>Каталог</h1>
+  <div id="meta"></div>
+<div id="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;"></div>
 
-  <div class="top">
-    <input id="q" placeholder="Поиск по названию..." />
-    <select id="tag">
-      <option value="">Все теги</option>
-    </select>
-  </div>
+<script>
+function renderCards(items) {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
-  <div class="meta" id="meta"></div>
-  <div class="grid" id="grid"></div>
-  <div class="err" id="err"></div>
+  for (const item of items) {
+    const card = document.createElement("div");
+    card.style.border = "1px solid #ddd";
+    card.style.borderRadius = "12px";
+    card.style.overflow = "hidden";
 
-  <script>
-    let allItems = [];
-
-    function uniq(arr) {
-      return Array.from(new Set(arr));
+    if (item.image) {
+      const img = document.createElement("img");
+      img.src = item.image;
+      img.alt = item.title || "";
+      img.loading = "lazy";
+      img.style.width = "100%";
+      img.style.aspectRatio = "4/3";
+      img.style.objectFit = "cover";
+      card.appendChild(img);
     }
 
-    function render(items, meta) {
-      const grid = document.getElementById("grid");
-      grid.innerHTML = "";
+    const body = document.createElement("div");
+    body.style.padding = "12px";
 
-      for (const item of items) {
-        const card = document.createElement("div");
-        card.className = "card";
+    const title = document.createElement("div");
+    title.textContent = item.title || "(без названия)";
+    title.style.fontWeight = "600";
+    body.appendChild(title);
 
-        const img = document.createElement("img");
-        img.className = "img";
-        img.loading = "lazy";
-        img.alt = item.title || "";
-        if (item.image) img.src = item.image;
-
-        const p = document.createElement("div");
-        p.className = "p";
-
-        const h = document.createElement("div");
-        h.className = "title";
-        h.textContent = item.title || "";
-
-        p.appendChild(h);
-
-        if (item.description) {
-          const d = document.createElement("div");
-          d.textContent = item.description;
-          p.appendChild(d);
-        }
-
-        if (typeof item.price === "number") {
-          const pr = document.createElement("div");
-          pr.className = "price";
-          pr.textContent = item.price.toLocaleString("ru-RU") + " ₽";
-          p.appendChild(pr);
-        }
-
-        const t = document.createElement("div");
-        t.className = "tags";
-        t.textContent = (item.tags && item.tags.length) ? item.tags.join(", ") : "";
-        p.appendChild(t);
-
-        card.appendChild(img);
-        card.appendChild(p);
-        grid.appendChild(card);
-      }
-
-      document.getElementById("meta").textContent =
-        `Обновлено: ${meta.generated_at} • Всего опубликовано: ${meta.count} • Показано: ${items.length}`;
+    if (item.description) {
+      const desc = document.createElement("div");
+      desc.textContent = item.description;
+      desc.style.marginTop = "6px";
+      body.appendChild(desc);
     }
 
-    function applyFilters(meta) {
-      const q = document.getElementById("q").value.trim().toLowerCase();
-      const tag = document.getElementById("tag").value;
-
-      let items = allItems;
-
-      if (q) {
-        items = items.filter(x => String(x.title || "").toLowerCase().includes(q));
-      }
-      if (tag) {
-        items = items.filter(x => Array.isArray(x.tags) && x.tags.includes(tag));
-      }
-
-      render(items, meta);
+    if (Array.isArray(item.tags) && item.tags.length) {
+      const tags = document.createElement("div");
+      tags.textContent = item.tags.join(", ");
+      tags.style.marginTop = "10px";
+      tags.style.fontSize = "12px";
+      tags.style.color = "#666";
+      body.appendChild(tags);
     }
 
-    async function main() {
-      // cache-bust, чтобы не тянуть старую версию из кеша
-      const res = await fetch("./data.json?v=" + Date.now());
-      if (!res.ok) throw new Error("Failed to load data.json: HTTP " + res.status);
+    card.appendChild(body);
+    grid.appendChild(card);
+  }
+}
 
-      const meta = await res.json();
-      allItems = meta.items || [];
+(async () => {
+  const res = await fetch("./data.json?v=" + Date.now());
+  if (!res.ok) throw new Error("data.json загрузить не удалось: " + res.status);
 
-      // наполняем список тегов
-      const tags = uniq(allItems.flatMap(x => Array.isArray(x.tags) ? x.tags : []))
-        .sort((a,b) => a.localeCompare(b, "ru"));
+  const data = await res.json();
+  document.getElementById("meta").textContent =
+    `Обновлено: ${data.generated_at} • Всего: ${data.count}`;
 
-      const tagSel = document.getElementById("tag");
-      for (const t of tags) {
-        const opt = document.createElement("option");
-        opt.value = t;
-        opt.textContent = t;
-        tagSel.appendChild(opt);
-      }
-
-      // обработчики
-      document.getElementById("q").addEventListener("input", () => applyFilters(meta));
-      document.getElementById("tag").addEventListener("change", () => applyFilters(meta));
-
-      render(allItems, meta);
-    }
-
-    main().catch(err => {
-      console.error(err);
-      document.getElementById("err").textContent = String(err);
-    });
-  </script>
+  renderCards(data.items || []);
+})();
+</script>
 </body>
 </html>
