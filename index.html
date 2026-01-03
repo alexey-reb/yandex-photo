@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Модель — Персональная страница (Demo)</title>
+  <title>Модель — Портфолио (Demo)</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -17,19 +17,13 @@
     }
     .hero .muted { color: rgba(255,255,255,.75); }
 
-    /* Masonry без библиотек: CSS columns */
-    .masonry {
-      column-gap: 1rem;
-      column-count: 1;
-    }
+    /* Masonry (CSS columns) */
+    .masonry { column-gap: 1rem; column-count: 1; }
     @media (min-width: 576px) { .masonry { column-count: 2; } }
     @media (min-width: 992px) { .masonry { column-count: 3; } }
     @media (min-width: 1200px){ .masonry { column-count: 4; } }
 
-    .masonry-item {
-      break-inside: avoid;
-      margin-bottom: 1rem;
-    }
+    .masonry-item { break-inside: avoid; margin-bottom: 1rem; }
 
     .photo-card {
       border: 1px solid rgba(0,0,0,.08);
@@ -49,8 +43,7 @@
 
     .spec dt { color: #6c757d; font-weight: 500; }
     .spec dd { margin-bottom: .6rem; }
-
-    .chip { cursor: default; }
+    .tag { cursor: default; }
 
     .modal-img {
       width: 100%;
@@ -64,7 +57,6 @@
 
 <body class="bg-body-tertiary">
 
-  <!-- HERO -->
   <header class="hero py-5">
     <div class="container">
       <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
@@ -83,7 +75,7 @@
 
   <main class="container my-4">
     <div class="row g-4">
-      <!-- LEFT: Profile -->
+      <!-- анкета -->
       <aside class="col-12 col-lg-4">
         <div class="card shadow-sm">
           <div class="card-body">
@@ -92,8 +84,7 @@
               <div class="flex-grow-1">
                 <div class="small text-secondary">Статус</div>
                 <div class="fw-semibold" id="status"></div>
-
-                <div class="mt-2 d-flex flex-wrap gap-2" id="badges"></div>
+                <div class="mt-2 d-flex flex-wrap gap-2" id="tags"></div>
               </div>
             </div>
 
@@ -101,29 +92,13 @@
 
             <h2 class="h6 mb-3">Параметры</h2>
             <dl class="spec row mb-0">
-              <dt class="col-5">Возраст</dt>
-              <dd class="col-7" id="age"></dd>
-
-              <dt class="col-5">Рост</dt>
-              <dd class="col-7" id="height"></dd>
-
-              <dt class="col-5">Город</dt>
-              <dd class="col-7" id="city"></dd>
-
-              <dt class="col-5">Параметры</dt>
-              <dd class="col-7" id="measurements"></dd>
-
-              <dt class="col-5">Обувь</dt>
-              <dd class="col-7" id="shoe"></dd>
-
-              <dt class="col-5">Волосы</dt>
-              <dd class="col-7" id="hair"></dd>
-
-              <dt class="col-5">Глаза</dt>
-              <dd class="col-7" id="eyes"></dd>
-
-              <dt class="col-5">Языки</dt>
-              <dd class="col-7" id="langs"></dd>
+              <dt class="col-5">Возраст</dt><dd class="col-7" id="age"></dd>
+              <dt class="col-5">Рост</dt><dd class="col-7" id="height"></dd>
+              <dt class="col-5">Город</dt><dd class="col-7" id="city"></dd>
+              <dt class="col-5">Параметры</dt><dd class="col-7" id="meas"></dd>
+              <dt class="col-5">Обувь</dt><dd class="col-7" id="shoe"></dd>
+              <dt class="col-5">Волосы</dt><dd class="col-7" id="hair"></dd>
+              <dt class="col-5">Глаза</dt><dd class="col-7" id="eyes"></dd>
             </dl>
 
             <hr class="my-3">
@@ -132,21 +107,20 @@
             <p class="text-secondary mb-3" id="bio"></p>
 
             <div class="d-grid gap-2">
-              <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
-              <a class="btn btn-outline-secondary" href="#" id="contactBtn">Контакты</a>
+              <button class="btn btn-primary" id="bookBtn">Забронировать</button>
+              <button class="btn btn-outline-secondary" id="contactBtn">Контакты</button>
             </div>
           </div>
         </div>
       </aside>
 
-      <!-- RIGHT: Portfolio -->
+      <!-- портфолио -->
       <section class="col-12 col-lg-8">
         <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
           <div>
             <h2 class="h5 mb-0">Портфолио</h2>
             <div class="text-secondary small" id="photoCount"></div>
           </div>
-
           <div class="d-flex gap-2">
             <button class="btn btn-outline-secondary btn-sm" id="shuffleBtn">Перемешать</button>
             <button class="btn btn-outline-secondary btn-sm" id="resetBtn">Сбросить</button>
@@ -158,7 +132,7 @@
     </div>
   </main>
 
-  <!-- Modal (Lightbox) -->
+  <!-- Lightbox modal -->
   <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
@@ -176,6 +150,9 @@
               <a class="btn btn-primary btn-sm" id="openOriginal" href="#" target="_blank" rel="noreferrer">Открыть оригинал</a>
             </div>
           </div>
+          <div class="text-secondary small mt-2">
+            Подсказка: стрелки клавиатуры ← → перелистывают фото.
+          </div>
         </div>
       </div>
     </div>
@@ -184,7 +161,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // ====== ТЕСТОВЫЕ ДАННЫЕ (потом заменим на JSON) ======
+    // ====== ТЕСТОВЫЕ ДАННЫЕ ======
+    // Фото лучше держать локально (в репозитории) для РФ:
+    // ./photos/1.jpg, ./photos/2.jpg, ... и заглушка ./photos/placeholder.jpg
     const model = {
       id: "101",
       name: "Анна Воронова",
@@ -197,17 +176,10 @@
       shoe: "39",
       hair: "Русые",
       eyes: "Зелёные",
-      languages: ["RU", "EN"],
-      bio: "Коммерческая и fashion-съёмка, каталоги, e-commerce. Легко работаю с позингом и светом, быстро вхожу в роль. Открыта к поездкам.",
-      badges: ["Fashion", "E-commerce", "Beauty", "Runway"],
-      avatar: "https://storage.yandexcloud.net/alexreb/test.jpeg",
-      contacts: {
-        email: "model@example.com",
-        instagram: "@modelanna",
-        phone: "+358 00 000 0000"
-      },
+      bio: "Коммерческая и fashion-съёмка, каталоги, e-commerce. Открыта к поездкам.",
+      tags: ["Fashion", "E-commerce", "Beauty", "Runway"],
+      avatar: "./photos/avatar.jpg",
       portfolio: [
-        // Разные пропорции специально, чтобы проверить сетку
         "https://storage.yandexcloud.net/alexreb/test.jpeg",
         "https://storage.yandexcloud.net/alexreb/1.jpg",
         "https://storage.yandexcloud.net/alexreb/2.jpg",
@@ -221,66 +193,20 @@
       ]
     };
 
-    // ====== РЕНДЕР ======
+    const PLACEHOLDER = "./photos/placeholder.jpg";
+
+    // ====== DOM helpers ======
     const el = (id) => document.getElementById(id);
+    const setText = (id, v, fb="—") => el(id).textContent = (v === null || v === undefined || v === "") ? fb : String(v);
 
-    function setText(id, value, fallback="—") {
-      el(id).textContent = (value === null || value === undefined || value === "") ? fallback : String(value);
-    }
-
-    function chip(text) {
+    function tagBadge(text) {
       const b = document.createElement("span");
-      b.className = "badge text-bg-light border chip";
+      b.className = "badge text-bg-light border tag";
       b.textContent = text;
       return b;
     }
 
-    function renderProfile() {
-      el("name").textContent = model.name;
-      el("modelId").textContent = model.id;
-      el("updatedAt").textContent = model.updated_at;
-
-      const subtitleBits = [
-        model.city,
-        `Возраст: ${model.age}`,
-        `Рост: ${model.height} см`
-      ].filter(Boolean);
-      el("subtitle").textContent = subtitleBits.join(" • ");
-
-      el("avatar").src = model.avatar;
-      el("avatar").alt = model.name;
-
-      setText("status", model.status);
-      setText("age", model.age);
-      setText("height", model.height + " см");
-      setText("city", model.city);
-      setText("measurements", model.measurements);
-      setText("shoe", model.shoe);
-      setText("hair", model.hair);
-      setText("eyes", model.eyes);
-      setText("langs", (model.languages || []).join(", "));
-      setText("bio", model.bio, "");
-
-      const badgesWrap = el("badges");
-      badgesWrap.innerHTML = "";
-      (model.badges || []).forEach(t => badgesWrap.appendChild(chip(t)));
-
-      el("bookBtn").addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Demo: тут будет заявка на бронь");
-      });
-
-      el("contactBtn").addEventListener("click", (e) => {
-        e.preventDefault();
-        alert(
-          `Email: ${model.contacts.email}\n` +
-          `Instagram: ${model.contacts.instagram}\n` +
-          `Phone: ${model.contacts.phone}`
-        );
-      });
-    }
-
-    // ====== LIGHTBOX ======
+    // ====== Lightbox state ======
     let photos = [...model.portfolio];
     let currentIndex = 0;
 
@@ -291,17 +217,49 @@
       el("modalTitle").textContent = `Портфолио — ${model.name}`;
       el("modalImg").src = url;
       el("modalImg").alt = model.name;
+      el("modalImg").onerror = () => { el("modalImg").src = PLACEHOLDER; };
+
       el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
       el("openOriginal").href = url;
 
-      const modal = bootstrap.Modal.getOrCreateInstance(el("photoModal"));
-      modal.show();
+      bootstrap.Modal.getOrCreateInstance(el("photoModal")).show();
     }
 
     function step(delta) {
       if (!photos.length) return;
       currentIndex = (currentIndex + delta + photos.length) % photos.length;
       openModal(currentIndex);
+    }
+
+    // ====== Render ======
+    function renderProfile() {
+      document.title = model.name + " — Портфолио";
+      el("name").textContent = model.name;
+      el("modelId").textContent = model.id;
+      el("updatedAt").textContent = model.updated_at;
+
+      el("subtitle").textContent = [model.city, `Возраст: ${model.age}`, `Рост: ${model.height} см`].filter(Boolean).join(" • ");
+
+      el("avatar").src = model.avatar;
+      el("avatar").alt = model.name;
+      el("avatar").onerror = () => { el("avatar").src = PLACEHOLDER; };
+
+      setText("status", model.status);
+      setText("age", model.age);
+      setText("height", model.height + " см");
+      setText("city", model.city);
+      setText("meas", model.measurements);
+      setText("shoe", model.shoe);
+      setText("hair", model.hair);
+      setText("eyes", model.eyes);
+      setText("bio", model.bio, "");
+
+      const tagsWrap = el("tags");
+      tagsWrap.innerHTML = "";
+      (model.tags || []).forEach(t => tagsWrap.appendChild(tagBadge(t)));
+
+      el("bookBtn").onclick = () => alert("Demo: форма бронирования (позже подключим)");
+      el("contactBtn").onclick = () => alert("Demo: контакты (позже подключим)");
     }
 
     function renderMasonry() {
@@ -321,7 +279,7 @@
         img.loading = "lazy";
         img.src = url;
         img.alt = model.name;
-
+        img.onerror = () => { img.src = PLACEHOLDER; };
         img.addEventListener("click", () => openModal(idx));
 
         card.appendChild(img);
@@ -339,8 +297,8 @@
     }
 
     function bindControls() {
-      el("prevBtn").addEventListener("click", () => step(-1));
-      el("nextBtn").addEventListener("click", () => step(1));
+      el("prevBtn").onclick = () => step(-1);
+      el("nextBtn").onclick = () => step(1);
 
       document.addEventListener("keydown", (e) => {
         const isShown = el("photoModal").classList.contains("show");
@@ -349,15 +307,8 @@
         if (e.key === "ArrowRight") step(1);
       });
 
-      el("shuffleBtn").addEventListener("click", () => {
-        photos = shuffle([...photos]);
-        renderMasonry();
-      });
-
-      el("resetBtn").addEventListener("click", () => {
-        photos = [...model.portfolio];
-        renderMasonry();
-      });
+      el("shuffleBtn").onclick = () => { photos = shuffle([...photos]); renderMasonry(); };
+      el("resetBtn").onclick = () => { photos = [...model.portfolio]; renderMasonry(); };
     }
 
     // init
