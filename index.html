@@ -215,7 +215,7 @@
         "https://storage.yandexcloud.net/alexreb/6.jpg",
         "https://storage.yandexcloud.net/alexreb/7.jpg",
         "https://storage.yandexcloud.net/alexreb/8.jpg",
-        "https://storage.yandexcloud.net/alexreb/9.jpg",
+        "https://storage.yandexcloud.net/alexreb/9.jpg"
       ]
     };
 
@@ -319,6 +319,10 @@
         img.loading = "lazy";
         img.src = url;
         img.alt = model.name;
+        img.onerror = () => {
+  img.src = "https://storage.yandexcloud.net/alexreb/test.jpeg"; // любая гарантированная заглушка
+};
+
 
         img.addEventListener("click", () => openModal(idx));
 
