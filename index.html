@@ -3,12 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Модель</title>
+  <title>Модель — Персональная страница (Demo)</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    /* Masonry без библиотек: колонками (очень просто и работает везде) */
+    .hero {
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.14), transparent 60%),
+        radial-gradient(1200px 600px at 80% 0%, rgba(32,201,151,.10), transparent 55%),
+        #0b1220;
+      color: #fff;
+    }
+    .hero .muted { color: rgba(255,255,255,.75); }
+
+    /* Masonry без библиотек: CSS columns */
     .masonry {
       column-gap: 1rem;
       column-count: 1;
@@ -22,14 +31,6 @@
       margin-bottom: 1rem;
     }
 
-    .masonry img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 12px;
-      background: #f3f3f3;
-    }
-
     .photo-card {
       border: 1px solid rgba(0,0,0,.08);
       border-radius: 14px;
@@ -38,20 +39,19 @@
       background: #fff;
     }
 
-    .hero {
-      background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.12), transparent 60%),
-                  radial-gradient(1200px 600px at 80% 0%, rgba(32,201,151,.10), transparent 55%),
-                  #0b1220;
-      color: #fff;
+    .masonry img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #f3f3f3;
+      cursor: zoom-in;
     }
-    .hero .muted { color: rgba(255,255,255,.70); }
 
     .spec dt { color: #6c757d; font-weight: 500; }
-    .spec dd { margin-bottom: .5rem; }
+    .spec dd { margin-bottom: .6rem; }
 
-    .tag { cursor: default; }
+    .chip { cursor: default; }
 
-    /* В модалке картинка адаптивная */
     .modal-img {
       width: 100%;
       height: auto;
@@ -69,31 +69,38 @@
     <div class="container">
       <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
         <div>
-          <a href="./index.html" class="text-decoration-none text-white-50 small">← Назад к списку</a>
-          <h1 id="name" class="display-6 mb-1 mt-2">Модель</h1>
-          <div id="subtitle" class="muted"></div>
+          <a href="#" class="text-decoration-none text-white-50 small">← Назад к списку</a>
+          <h1 class="display-6 mb-1 mt-2" id="name"></h1>
+          <div class="muted" id="subtitle"></div>
         </div>
         <div class="text-md-end">
-          <div id="meta" class="small text-white-50"></div>
+          <div class="small text-white-50">Обновлено: <span id="updatedAt"></span></div>
+          <div class="small text-white-50">ID: <span id="modelId"></span></div>
         </div>
       </div>
     </div>
   </header>
 
   <main class="container my-4">
-    <div id="error" class="alert alert-danger d-none"></div>
-
     <div class="row g-4">
-      <!-- LEFT: анкета -->
+      <!-- LEFT: Profile -->
       <aside class="col-12 col-lg-4">
         <div class="card shadow-sm">
           <div class="card-body">
+            <div class="d-flex align-items-start gap-3">
+              <img id="avatar" alt="" class="rounded-3" style="width:84px;height:84px;object-fit:cover;background:#eee;">
+              <div class="flex-grow-1">
+                <div class="small text-secondary">Статус</div>
+                <div class="fw-semibold" id="status"></div>
+
+                <div class="mt-2 d-flex flex-wrap gap-2" id="badges"></div>
+              </div>
+            </div>
+
+            <hr class="my-3">
+
             <h2 class="h6 mb-3">Параметры</h2>
-
             <dl class="spec row mb-0">
-              <dt class="col-5">ID</dt>
-              <dd class="col-7" id="id"></dd>
-
               <dt class="col-5">Возраст</dt>
               <dd class="col-7" id="age"></dd>
 
@@ -102,30 +109,47 @@
 
               <dt class="col-5">Город</dt>
               <dd class="col-7" id="city"></dd>
+
+              <dt class="col-5">Параметры</dt>
+              <dd class="col-7" id="measurements"></dd>
+
+              <dt class="col-5">Обувь</dt>
+              <dd class="col-7" id="shoe"></dd>
+
+              <dt class="col-5">Волосы</dt>
+              <dd class="col-7" id="hair"></dd>
+
+              <dt class="col-5">Глаза</dt>
+              <dd class="col-7" id="eyes"></dd>
+
+              <dt class="col-5">Языки</dt>
+              <dd class="col-7" id="langs"></dd>
             </dl>
 
-            <hr>
+            <hr class="my-3">
 
-            <div id="bioWrap" class="d-none">
-              <h3 class="h6 mb-2">О себе</h3>
-              <p id="bio" class="mb-0 text-secondary"></p>
-              <hr>
-            </div>
+            <h2 class="h6 mb-2">О себе</h2>
+            <p class="text-secondary mb-3" id="bio"></p>
 
-            <div id="tagsWrap" class="d-none">
-              <h3 class="h6 mb-2">Теги</h3>
-              <div id="tags" class="d-flex flex-wrap gap-2"></div>
+            <div class="d-grid gap-2">
+              <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
+              <a class="btn btn-outline-secondary" href="#" id="contactBtn">Контакты</a>
             </div>
           </div>
         </div>
       </aside>
 
-      <!-- RIGHT: фото -->
+      <!-- RIGHT: Portfolio -->
       <section class="col-12 col-lg-8">
-        <div class="d-flex align-items-end justify-content-between mb-3">
+        <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
           <div>
             <h2 class="h5 mb-0">Портфолио</h2>
             <div class="text-secondary small" id="photoCount"></div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" id="shuffleBtn">Перемешать</button>
+            <button class="btn btn-outline-secondary btn-sm" id="resetBtn">Сбросить</button>
           </div>
         </div>
 
@@ -160,126 +184,135 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // --- helpers ---
+    // ====== ТЕСТОВЫЕ ДАННЫЕ (потом заменим на JSON) ======
+    const model = {
+      id: "101",
+      name: "Анна Воронова",
+      status: "Доступна на январь",
+      updated_at: "2026-01-03",
+      age: 22,
+      height: 175,
+      city: "Хельсинки",
+      measurements: "84–60–90",
+      shoe: "39",
+      hair: "Русые",
+      eyes: "Зелёные",
+      languages: ["RU", "EN"],
+      bio: "Коммерческая и fashion-съёмка, каталоги, e-commerce. Легко работаю с позингом и светом, быстро вхожу в роль. Открыта к поездкам.",
+      badges: ["Fashion", "E-commerce", "Beauty", "Runway"],
+      avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80",
+      contacts: {
+        email: "model@example.com",
+        instagram: "@modelanna",
+        phone: "+358 00 000 0000"
+      },
+      portfolio: [
+        // Разные пропорции специально, чтобы проверить сетку
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1520975958225-322fadf38b19?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=1200&q=80"
+      ]
+    };
+
+    // ====== РЕНДЕР ======
     const el = (id) => document.getElementById(id);
 
-    function showError(msg) {
-      el("error").textContent = msg;
-      el("error").classList.remove("d-none");
+    function setText(id, value, fallback="—") {
+      el(id).textContent = (value === null || value === undefined || value === "") ? fallback : String(value);
     }
 
-    function badge(text) {
+    function chip(text) {
       const b = document.createElement("span");
-      b.className = "badge text-bg-light border tag";
+      b.className = "badge text-bg-light border chip";
       b.textContent = text;
       return b;
     }
 
-    function formatHeight(v) {
-      if (v === null || v === undefined || v === "") return "—";
-      const n = Number(v);
-      return Number.isFinite(n) ? `${n} см` : String(v);
+    function renderProfile() {
+      el("name").textContent = model.name;
+      el("modelId").textContent = model.id;
+      el("updatedAt").textContent = model.updated_at;
+
+      const subtitleBits = [
+        model.city,
+        `Возраст: ${model.age}`,
+        `Рост: ${model.height} см`
+      ].filter(Boolean);
+      el("subtitle").textContent = subtitleBits.join(" • ");
+
+      el("avatar").src = model.avatar;
+      el("avatar").alt = model.name;
+
+      setText("status", model.status);
+      setText("age", model.age);
+      setText("height", model.height + " см");
+      setText("city", model.city);
+      setText("measurements", model.measurements);
+      setText("shoe", model.shoe);
+      setText("hair", model.hair);
+      setText("eyes", model.eyes);
+      setText("langs", (model.languages || []).join(", "));
+      setText("bio", model.bio, "");
+
+      const badgesWrap = el("badges");
+      badgesWrap.innerHTML = "";
+      (model.badges || []).forEach(t => badgesWrap.appendChild(chip(t)));
+
+      el("bookBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("Demo: тут будет заявка на бронь");
+      });
+
+      el("contactBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        alert(
+          `Email: ${model.contacts.email}\n` +
+          `Instagram: ${model.contacts.instagram}\n` +
+          `Phone: ${model.contacts.phone}`
+        );
+      });
     }
 
-    function formatAge(v) {
-      if (v === null || v === undefined || v === "") return "—";
-      const n = Number(v);
-      return Number.isFinite(n) ? `${n}` : String(v);
-    }
-
-    // --- lightbox state ---
-    let currentPhotos = [];
+    // ====== LIGHTBOX ======
+    let photos = [...model.portfolio];
     let currentIndex = 0;
 
-    function openPhotoModal(index, modelName) {
-      currentIndex = index;
+    function openModal(idx) {
+      currentIndex = idx;
+      const url = photos[currentIndex];
 
-      const url = currentPhotos[currentIndex];
+      el("modalTitle").textContent = `Портфолио — ${model.name}`;
       el("modalImg").src = url;
-      el("modalImg").alt = modelName || "Фото";
-      el("modalTitle").textContent = modelName ? `Портфолио — ${modelName}` : "Фото";
-      el("modalIndex").textContent = `${currentIndex + 1} / ${currentPhotos.length}`;
+      el("modalImg").alt = model.name;
+      el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
       el("openOriginal").href = url;
 
       const modal = bootstrap.Modal.getOrCreateInstance(el("photoModal"));
       modal.show();
     }
 
-    function stepPhoto(delta, modelName) {
-      if (!currentPhotos.length) return;
-      currentIndex = (currentIndex + delta + currentPhotos.length) % currentPhotos.length;
-      openPhotoModal(currentIndex, modelName);
+    function step(delta) {
+      if (!photos.length) return;
+      currentIndex = (currentIndex + delta + photos.length) % photos.length;
+      openModal(currentIndex);
     }
 
-    // --- main ---
-    async function main() {
-      // id из URL: model.html?id=1
-      const params = new URLSearchParams(location.search);
-      const id = params.get("id");
-      if (!id) {
-        showError('Нет параметра "id" в URL. Пример: model.html?id=1');
-        return;
-      }
-
-      // грузим JSON
-      const res = await fetch("./data.json?v=" + Date.now());
-      if (!res.ok) throw new Error("Не удалось загрузить data.json: HTTP " + res.status);
-
-      const data = await res.json();
-      el("meta").textContent = data.generated_at ? ("Сгенерировано: " + data.generated_at) : "";
-
-      // ищем модель
-      const model = (data.items || []).find(x => String(x.id) === String(id));
-      if (!model) {
-        showError(`Модель с id=${id} не найдена в data.json`);
-        return;
-      }
-
-      // --- заполняем анкету ---
-      const name = model.name || model.title || "Модель";
-      document.title = name + " — Портфолио";
-      el("name").textContent = name;
-
-      // небольшая подстрока
-      const bits = [];
-      if (model.city) bits.push(model.city);
-      if (model.age) bits.push(`Возраст: ${formatAge(model.age)}`);
-      if (model.height) bits.push(`Рост: ${formatHeight(model.height)}`);
-      el("subtitle").textContent = bits.join(" • ");
-
-      el("id").textContent = String(model.id ?? "—");
-      el("age").textContent = formatAge(model.age);
-      el("height").textContent = formatHeight(model.height);
-      el("city").textContent = model.city ? String(model.city) : "—";
-
-      if (model.bio) {
-        el("bioWrap").classList.remove("d-none");
-        el("bio").textContent = String(model.bio);
-      }
-
-      if (Array.isArray(model.tags) && model.tags.length) {
-        el("tagsWrap").classList.remove("d-none");
-        const wrap = el("tags");
-        wrap.innerHTML = "";
-        model.tags.forEach(t => wrap.appendChild(badge(t)));
-      }
-
-      // --- портфолио фото ---
-      // 1) Если у тебя отдельное поле photos: ["url1", "url2"...]
-      // 2) Если пока только image (одна картинка), используем её как fallback
-      const photos = Array.isArray(model.photos) ? model.photos : [];
-      if (!photos.length && model.image) photos.push(model.image);
-
-      currentPhotos = photos;
-
-      el("photoCount").textContent = photos.length ? `Фото: ${photos.length}` : "Фото отсутствуют";
+    function renderMasonry() {
+      el("photoCount").textContent = `Фото: ${photos.length}`;
 
       const masonry = el("masonry");
       masonry.innerHTML = "";
 
       photos.forEach((url, idx) => {
-        const item = document.createElement("div");
-        item.className = "masonry-item";
+        const wrap = document.createElement("div");
+        wrap.className = "masonry-item";
 
         const card = document.createElement("div");
         card.className = "photo-card";
@@ -287,32 +320,50 @@
         const img = document.createElement("img");
         img.loading = "lazy";
         img.src = url;
-        img.alt = name;
-        img.style.cursor = "zoom-in";
+        img.alt = model.name;
 
-        img.addEventListener("click", () => openPhotoModal(idx, name));
+        img.addEventListener("click", () => openModal(idx));
 
         card.appendChild(img);
-        item.appendChild(card);
-        masonry.appendChild(item);
-      });
-
-      // кнопки модалки
-      el("prevBtn").addEventListener("click", () => stepPhoto(-1, name));
-      el("nextBtn").addEventListener("click", () => stepPhoto(1, name));
-
-      // клавиатура в модалке (стрелки)
-      document.addEventListener("keydown", (e) => {
-        // если модалка не открыта — не мешаем
-        const isShown = el("photoModal").classList.contains("show");
-        if (!isShown) return;
-
-        if (e.key === "ArrowLeft") stepPhoto(-1, name);
-        if (e.key === "ArrowRight") stepPhoto(1, name);
+        wrap.appendChild(card);
+        masonry.appendChild(wrap);
       });
     }
 
-    main().catch(err => showError(String(err)));
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function bindControls() {
+      el("prevBtn").addEventListener("click", () => step(-1));
+      el("nextBtn").addEventListener("click", () => step(1));
+
+      document.addEventListener("keydown", (e) => {
+        const isShown = el("photoModal").classList.contains("show");
+        if (!isShown) return;
+        if (e.key === "ArrowLeft") step(-1);
+        if (e.key === "ArrowRight") step(1);
+      });
+
+      el("shuffleBtn").addEventListener("click", () => {
+        photos = shuffle([...photos]);
+        renderMasonry();
+      });
+
+      el("resetBtn").addEventListener("click", () => {
+        photos = [...model.portfolio];
+        renderMasonry();
+      });
+    }
+
+    // init
+    renderProfile();
+    renderMasonry();
+    bindControls();
   </script>
 </body>
 </html>
