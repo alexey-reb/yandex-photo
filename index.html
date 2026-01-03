@@ -3,25 +3,62 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Портфолио</title>
+  <title>Модель</title>
 
-  <!-- Bootstrap 5 (CSS) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    /* Небольшие улучшения внешнего вида */
+    /* Masonry без библиотек: колонками (очень просто и работает везде) */
+    .masonry {
+      column-gap: 1rem;
+      column-count: 1;
+    }
+    @media (min-width: 576px) { .masonry { column-count: 2; } }
+    @media (min-width: 992px) { .masonry { column-count: 3; } }
+    @media (min-width: 1200px){ .masonry { column-count: 4; } }
+
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+    }
+
+    .masonry img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      background: #f3f3f3;
+    }
+
+    .photo-card {
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 .25rem .75rem rgba(0,0,0,.05);
+      background: #fff;
+    }
+
     .hero {
-      background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.18), transparent 60%),
-                  radial-gradient(1200px 600px at 80% 0%, rgba(32,201,151,.12), transparent 55%),
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.12), transparent 60%),
+                  radial-gradient(1200px 600px at 80% 0%, rgba(32,201,151,.10), transparent 55%),
                   #0b1220;
       color: #fff;
     }
-    .hero .lead { color: rgba(255,255,255,.75); }
-    .card-img-top { aspect-ratio: 4 / 3; object-fit: cover; }
-    .badge-tag { cursor: pointer; }
-    .sticky-top-offset { top: 0.75rem; }
-    .muted { color: #6c757d; }
-    .empty-state { border: 1px dashed #dee2e6; border-radius: 1rem; padding: 2rem; }
+    .hero .muted { color: rgba(255,255,255,.70); }
+
+    .spec dt { color: #6c757d; font-weight: 500; }
+    .spec dd { margin-bottom: .5rem; }
+
+    .tag { cursor: default; }
+
+    /* В модалке картинка адаптивная */
+    .modal-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      background: #f3f3f3;
+    }
   </style>
 </head>
 
@@ -32,463 +69,247 @@
     <div class="container">
       <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
         <div>
-          <h1 class="display-6 mb-2">Портфолио</h1>
-          <p class="lead mb-0">Страница собирается из <code>data.json</code> (Google Sheets → Apps Script → GitHub).</p>
+          <a href="./index.html" class="text-decoration-none text-white-50 small">← Назад к списку</a>
+          <h1 id="name" class="display-6 mb-1 mt-2">Модель</h1>
+          <div id="subtitle" class="muted"></div>
         </div>
         <div class="text-md-end">
-          <div id="meta" class="small"></div>
-          <div id="counts" class="small text-white-50"></div>
+          <div id="meta" class="small text-white-50"></div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- CONTENT -->
   <main class="container my-4">
+    <div id="error" class="alert alert-danger d-none"></div>
+
     <div class="row g-4">
-      <!-- SIDEBAR -->
-      <aside class="col-12 col-lg-3">
-        <div class="card shadow-sm sticky-top sticky-top-offset">
+      <!-- LEFT: анкета -->
+      <aside class="col-12 col-lg-4">
+        <div class="card shadow-sm">
           <div class="card-body">
-            <h2 class="h6 mb-3">Фильтры</h2>
+            <h2 class="h6 mb-3">Параметры</h2>
 
-            <label class="form-label small mb-1" for="q">Поиск по названию</label>
-            <input id="q" class="form-control mb-3" placeholder="Например: лендинг, дизайн..." />
+            <dl class="spec row mb-0">
+              <dt class="col-5">ID</dt>
+              <dd class="col-7" id="id"></dd>
 
-            <label class="form-label small mb-1" for="tag">Тег</label>
-            <select id="tag" class="form-select mb-3">
-              <option value="">Все теги</option>
-            </select>
+              <dt class="col-5">Возраст</dt>
+              <dd class="col-7" id="age"></dd>
 
-            <label class="form-label small mb-1" for="sort">Сортировка</label>
-            <select id="sort" class="form-select mb-3">
-              <option value="updated_desc">Сначала новые (updated_at)</option>
-              <option value="updated_asc">Сначала старые (updated_at)</option>
-              <option value="title_asc">По названию (А→Я)</option>
-              <option value="title_desc">По названию (Я→А)</option>
-            </select>
+              <dt class="col-5">Рост</dt>
+              <dd class="col-7" id="height"></dd>
 
-            <label class="form-label small mb-1" for="perPage">На странице</label>
-            <select id="perPage" class="form-select mb-3">
-              <option value="6">6</option>
-              <option value="9" selected>9</option>
-              <option value="12">12</option>
-              <option value="24">24</option>
-            </select>
+              <dt class="col-5">Город</dt>
+              <dd class="col-7" id="city"></dd>
+            </dl>
 
-            <div class="d-grid gap-2">
-              <button id="reset" class="btn btn-outline-secondary">Сбросить</button>
+            <hr>
+
+            <div id="bioWrap" class="d-none">
+              <h3 class="h6 mb-2">О себе</h3>
+              <p id="bio" class="mb-0 text-secondary"></p>
+              <hr>
             </div>
 
-            <hr class="my-3" />
-            <div class="small muted">
-              Подсказка: кликай по тегам на карточках — фильтр применится автоматически.
+            <div id="tagsWrap" class="d-none">
+              <h3 class="h6 mb-2">Теги</h3>
+              <div id="tags" class="d-flex flex-wrap gap-2"></div>
             </div>
           </div>
         </div>
       </aside>
 
-      <!-- GRID -->
-      <section class="col-12 col-lg-9">
-        <div id="error" class="alert alert-danger d-none" role="alert"></div>
-
-        <div id="grid" class="row g-4"></div>
-
-        <!-- Empty state -->
-        <div id="empty" class="empty-state bg-white d-none">
-          <h3 class="h5 mb-2">Ничего не найдено</h3>
-          <p class="mb-0 text-secondary">Попробуй изменить поиск/теги или нажми “Сбросить”.</p>
+      <!-- RIGHT: фото -->
+      <section class="col-12 col-lg-8">
+        <div class="d-flex align-items-end justify-content-between mb-3">
+          <div>
+            <h2 class="h5 mb-0">Портфолио</h2>
+            <div class="text-secondary small" id="photoCount"></div>
+          </div>
         </div>
 
-        <!-- Pagination -->
-        <nav class="mt-4" aria-label="Pagination">
-          <ul id="pager" class="pagination justify-content-center mb-0"></ul>
-        </nav>
+        <div id="masonry" class="masonry"></div>
       </section>
     </div>
   </main>
 
-  <!-- MODAL -->
-  <div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+  <!-- Modal (Lightbox) -->
+  <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 id="modalTitle" class="modal-title">Проект</h5>
+          <h5 class="modal-title" id="modalTitle">Фото</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
         </div>
         <div class="modal-body">
-          <img id="modalImg" class="w-100 rounded mb-3" alt="" style="aspect-ratio: 16/9; object-fit: cover; background:#f3f3f3;">
-          <p id="modalDesc" class="mb-3"></p>
-
-          <div class="d-flex flex-wrap gap-2 align-items-center">
-            <div id="modalTags" class="d-flex flex-wrap gap-2"></div>
-            <div class="ms-auto text-secondary small" id="modalUpdated"></div>
-          </div>
-
-          <div class="mt-3 d-flex gap-2 align-items-center">
-            <div class="fw-semibold" id="modalPrice"></div>
-            <div class="ms-auto">
-              <button id="copyId" class="btn btn-outline-primary btn-sm">Скопировать ID</button>
+          <img id="modalImg" class="modal-img" alt="">
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="text-secondary small" id="modalIndex"></div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-secondary btn-sm" id="prevBtn">←</button>
+              <button class="btn btn-outline-secondary btn-sm" id="nextBtn">→</button>
+              <a class="btn btn-primary btn-sm" id="openOriginal" href="#" target="_blank" rel="noreferrer">Открыть оригинал</a>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bootstrap 5 (JS) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    /**
-     * Ожидаемый формат data.json:
-     * {
-     *   "generated_at": "...",
-     *   "count": 1,
-     *   "items": [
-     *     { "id":"1", "title":"...", "description":null, "image":"...", "tags":["a","b"], "price":null, "updated_at":null }
-     *   ]
-     * }
-     */
-
-    const state = {
-      meta: null,
-      items: [],
-      q: "",
-      tag: "",
-      sort: "updated_desc",
-      page: 1,
-      perPage: 9
-    };
-
+    // --- helpers ---
     const el = (id) => document.getElementById(id);
-    const uniq = (arr) => Array.from(new Set(arr));
 
-    function showError(message) {
-      const box = el("error");
-      box.textContent = message;
-      box.classList.remove("d-none");
+    function showError(msg) {
+      el("error").textContent = msg;
+      el("error").classList.remove("d-none");
     }
 
-    function clearError() {
-      el("error").classList.add("d-none");
-      el("error").textContent = "";
-    }
-
-    function formatPrice(price) {
-      if (typeof price !== "number" || !Number.isFinite(price)) return "";
-      return price.toLocaleString("ru-RU") + " ₽";
-    }
-
-    function parseDateSafe(s) {
-      // updated_at у тебя может быть null/строка/ISO. Если null — возвращаем 0.
-      if (!s) return 0;
-      const t = Date.parse(s);
-      return Number.isFinite(t) ? t : 0;
-    }
-
-    function applyFilters(items) {
-      let out = items;
-
-      if (state.q) {
-        const q = state.q.toLowerCase();
-        out = out.filter(x => String(x.title || "").toLowerCase().includes(q));
-      }
-
-      if (state.tag) {
-        out = out.filter(x => Array.isArray(x.tags) && x.tags.includes(state.tag));
-      }
-
-      return out;
-    }
-
-    function applySort(items) {
-      const out = [...items];
-
-      switch (state.sort) {
-        case "title_asc":
-          out.sort((a,b) => String(a.title||"").localeCompare(String(b.title||""), "ru"));
-          break;
-        case "title_desc":
-          out.sort((a,b) => String(b.title||"").localeCompare(String(a.title||""), "ru"));
-          break;
-        case "updated_asc":
-          out.sort((a,b) => parseDateSafe(a.updated_at) - parseDateSafe(b.updated_at));
-          break;
-        case "updated_desc":
-        default:
-          out.sort((a,b) => parseDateSafe(b.updated_at) - parseDateSafe(a.updated_at));
-          break;
-      }
-
-      return out;
-    }
-
-    function paginate(items) {
-      const total = items.length;
-      const pages = Math.max(1, Math.ceil(total / state.perPage));
-      const page = Math.min(Math.max(1, state.page), pages);
-
-      const start = (page - 1) * state.perPage;
-      const slice = items.slice(start, start + state.perPage);
-
-      return { slice, total, pages, page };
-    }
-
-    function renderPager(pages, page) {
-      const pager = el("pager");
-      pager.innerHTML = "";
-
-      function add(label, targetPage, disabled=false, active=false) {
-        const li = document.createElement("li");
-        li.className = "page-item" + (disabled ? " disabled" : "") + (active ? " active" : "");
-
-        const a = document.createElement("a");
-        a.className = "page-link";
-        a.href = "#";
-        a.textContent = label;
-        a.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (disabled || active) return;
-          state.page = targetPage;
-          update();
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-
-        li.appendChild(a);
-        pager.appendChild(li);
-      }
-
-      add("«", page - 1, page <= 1);
-
-      // Умная пагинация: показываем текущую ±2
-      const start = Math.max(1, page - 2);
-      const end = Math.min(pages, page + 2);
-
-      if (start > 1) add("1", 1);
-      if (start > 2) {
-        const li = document.createElement("li");
-        li.className = "page-item disabled";
-        li.innerHTML = '<span class="page-link">…</span>';
-        pager.appendChild(li);
-      }
-
-      for (let p = start; p <= end; p++) add(String(p), p, false, p === page);
-
-      if (end < pages - 1) {
-        const li = document.createElement("li");
-        li.className = "page-item disabled";
-        li.innerHTML = '<span class="page-link">…</span>';
-        pager.appendChild(li);
-      }
-      if (end < pages) add(String(pages), pages);
-
-      add("»", page + 1, page >= pages);
-    }
-
-    function makeTagBadge(tag) {
+    function badge(text) {
       const b = document.createElement("span");
-      b.className = "badge text-bg-light border badge-tag";
-      b.textContent = tag;
-      b.title = "Фильтровать по тегу";
-      b.addEventListener("click", () => {
-        state.tag = tag;
-        el("tag").value = tag;
-        state.page = 1;
-        update();
-      });
+      b.className = "badge text-bg-light border tag";
+      b.textContent = text;
       return b;
     }
 
-    function openModal(item) {
-      el("modalTitle").textContent = item.title || "Проект";
-      el("modalImg").src = item.image || "";
-      el("modalImg").alt = item.title || "";
+    function formatHeight(v) {
+      if (v === null || v === undefined || v === "") return "—";
+      const n = Number(v);
+      return Number.isFinite(n) ? `${n} см` : String(v);
+    }
 
-      el("modalDesc").textContent = item.description || "";
-      el("modalPrice").textContent = formatPrice(item.price);
+    function formatAge(v) {
+      if (v === null || v === undefined || v === "") return "—";
+      const n = Number(v);
+      return Number.isFinite(n) ? `${n}` : String(v);
+    }
 
-      el("modalUpdated").textContent = item.updated_at ? ("updated_at: " + item.updated_at) : "";
+    // --- lightbox state ---
+    let currentPhotos = [];
+    let currentIndex = 0;
 
-      const tagsWrap = el("modalTags");
-      tagsWrap.innerHTML = "";
-      (item.tags || []).forEach(t => tagsWrap.appendChild(makeTagBadge(t)));
+    function openPhotoModal(index, modelName) {
+      currentIndex = index;
 
-      el("copyId").onclick = async () => {
-        try {
-          await navigator.clipboard.writeText(String(item.id || ""));
-          el("copyId").textContent = "Скопировано!";
-          setTimeout(() => el("copyId").textContent = "Скопировать ID", 1200);
-        } catch (_) {
-          // если clipboard запрещён
-          alert("Не удалось скопировать. ID: " + String(item.id || ""));
-        }
-      };
+      const url = currentPhotos[currentIndex];
+      el("modalImg").src = url;
+      el("modalImg").alt = modelName || "Фото";
+      el("modalTitle").textContent = modelName ? `Портфолио — ${modelName}` : "Фото";
+      el("modalIndex").textContent = `${currentIndex + 1} / ${currentPhotos.length}`;
+      el("openOriginal").href = url;
 
-      const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById("itemModal"));
+      const modal = bootstrap.Modal.getOrCreateInstance(el("photoModal"));
       modal.show();
     }
 
-    function renderGrid(items) {
-      const grid = el("grid");
-      grid.innerHTML = "";
-
-      for (const item of items) {
-        const col = document.createElement("div");
-        col.className = "col-12 col-md-6 col-xl-4";
-
-        const card = document.createElement("div");
-        card.className = "card h-100 shadow-sm";
-
-        const img = document.createElement("img");
-        img.className = "card-img-top";
-        img.loading = "lazy";
-        img.alt = item.title || "";
-        img.src = item.image || "";
-        card.appendChild(img);
-
-        const body = document.createElement("div");
-        body.className = "card-body";
-
-        const title = document.createElement("h3");
-        title.className = "h6 card-title mb-2";
-        title.textContent = item.title || "(без названия)";
-        body.appendChild(title);
-
-        if (item.description) {
-          const desc = document.createElement("p");
-          desc.className = "card-text small text-secondary mb-2";
-          desc.textContent = item.description;
-          body.appendChild(desc);
-        }
-
-        const tagsWrap = document.createElement("div");
-        tagsWrap.className = "d-flex flex-wrap gap-2 mb-2";
-        (item.tags || []).forEach(t => tagsWrap.appendChild(makeTagBadge(t)));
-        body.appendChild(tagsWrap);
-
-        const footerRow = document.createElement("div");
-        footerRow.className = "d-flex align-items-center justify-content-between mt-2";
-
-        const price = document.createElement("div");
-        price.className = "small fw-semibold";
-        price.textContent = formatPrice(item.price);
-        footerRow.appendChild(price);
-
-        const btn = document.createElement("button");
-        btn.className = "btn btn-primary btn-sm";
-        btn.textContent = "Подробнее";
-        btn.addEventListener("click", () => openModal(item));
-        footerRow.appendChild(btn);
-
-        body.appendChild(footerRow);
-
-        const foot = document.createElement("div");
-        foot.className = "card-footer bg-transparent border-top-0 pt-0";
-        const meta = document.createElement("div");
-        meta.className = "small text-secondary";
-        meta.textContent = item.updated_at ? `updated_at: ${item.updated_at}` : `id: ${item.id ?? ""}`;
-        foot.appendChild(meta);
-
-        card.appendChild(body);
-        card.appendChild(foot);
-        col.appendChild(card);
-        grid.appendChild(col);
-      }
+    function stepPhoto(delta, modelName) {
+      if (!currentPhotos.length) return;
+      currentIndex = (currentIndex + delta + currentPhotos.length) % currentPhotos.length;
+      openPhotoModal(currentIndex, modelName);
     }
 
-    function update() {
-      clearError();
-
-      const filtered = applyFilters(state.items);
-      const sorted = applySort(filtered);
-      const { slice, total, pages, page } = paginate(sorted);
-
-      // мета
-      el("meta").innerHTML = state.meta
-        ? `Сгенерировано: <strong>${state.meta.generated_at}</strong>`
-        : "";
-      el("counts").textContent = `Всего: ${state.items.length} • После фильтров: ${total}`;
-
-      // empty state
-      el("empty").classList.toggle("d-none", total !== 0);
-
-      // grid + pager
-      renderGrid(slice);
-      renderPager(pages, page);
-
-      // зафиксируем page после clamp
-      state.page = page;
-    }
-
-    function bindUI() {
-      el("q").addEventListener("input", (e) => {
-        state.q = e.target.value.trim();
-        state.page = 1;
-        update();
-      });
-
-      el("tag").addEventListener("change", (e) => {
-        state.tag = e.target.value;
-        state.page = 1;
-        update();
-      });
-
-      el("sort").addEventListener("change", (e) => {
-        state.sort = e.target.value;
-        state.page = 1;
-        update();
-      });
-
-      el("perPage").addEventListener("change", (e) => {
-        state.perPage = Number(e.target.value) || 9;
-        state.page = 1;
-        update();
-      });
-
-      el("reset").addEventListener("click", () => {
-        state.q = "";
-        state.tag = "";
-        state.sort = "updated_desc";
-        state.page = 1;
-        state.perPage = 9;
-
-        el("q").value = "";
-        el("tag").value = "";
-        el("sort").value = "updated_desc";
-        el("perPage").value = "9";
-
-        update();
-      });
-    }
-
+    // --- main ---
     async function main() {
-      bindUI();
+      // id из URL: model.html?id=1
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id");
+      if (!id) {
+        showError('Нет параметра "id" в URL. Пример: model.html?id=1');
+        return;
+      }
 
-      // cache-bust против кеша GitHub Pages / CDN
+      // грузим JSON
       const res = await fetch("./data.json?v=" + Date.now());
       if (!res.ok) throw new Error("Не удалось загрузить data.json: HTTP " + res.status);
 
       const data = await res.json();
-      state.meta = data;
-      state.items = data.items || [];
+      el("meta").textContent = data.generated_at ? ("Сгенерировано: " + data.generated_at) : "";
 
-      // наполняем список тегов
-      const tags = uniq(state.items.flatMap(x => Array.isArray(x.tags) ? x.tags : []))
-        .sort((a,b) => a.localeCompare(b, "ru"));
-
-      const tagSel = el("tag");
-      for (const t of tags) {
-        const opt = document.createElement("option");
-        opt.value = t;
-        opt.textContent = t;
-        tagSel.appendChild(opt);
+      // ищем модель
+      const model = (data.items || []).find(x => String(x.id) === String(id));
+      if (!model) {
+        showError(`Модель с id=${id} не найдена в data.json`);
+        return;
       }
 
-      update();
+      // --- заполняем анкету ---
+      const name = model.name || model.title || "Модель";
+      document.title = name + " — Портфолио";
+      el("name").textContent = name;
+
+      // небольшая подстрока
+      const bits = [];
+      if (model.city) bits.push(model.city);
+      if (model.age) bits.push(`Возраст: ${formatAge(model.age)}`);
+      if (model.height) bits.push(`Рост: ${formatHeight(model.height)}`);
+      el("subtitle").textContent = bits.join(" • ");
+
+      el("id").textContent = String(model.id ?? "—");
+      el("age").textContent = formatAge(model.age);
+      el("height").textContent = formatHeight(model.height);
+      el("city").textContent = model.city ? String(model.city) : "—";
+
+      if (model.bio) {
+        el("bioWrap").classList.remove("d-none");
+        el("bio").textContent = String(model.bio);
+      }
+
+      if (Array.isArray(model.tags) && model.tags.length) {
+        el("tagsWrap").classList.remove("d-none");
+        const wrap = el("tags");
+        wrap.innerHTML = "";
+        model.tags.forEach(t => wrap.appendChild(badge(t)));
+      }
+
+      // --- портфолио фото ---
+      // 1) Если у тебя отдельное поле photos: ["url1", "url2"...]
+      // 2) Если пока только image (одна картинка), используем её как fallback
+      const photos = Array.isArray(model.photos) ? model.photos : [];
+      if (!photos.length && model.image) photos.push(model.image);
+
+      currentPhotos = photos;
+
+      el("photoCount").textContent = photos.length ? `Фото: ${photos.length}` : "Фото отсутствуют";
+
+      const masonry = el("masonry");
+      masonry.innerHTML = "";
+
+      photos.forEach((url, idx) => {
+        const item = document.createElement("div");
+        item.className = "masonry-item";
+
+        const card = document.createElement("div");
+        card.className = "photo-card";
+
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = url;
+        img.alt = name;
+        img.style.cursor = "zoom-in";
+
+        img.addEventListener("click", () => openPhotoModal(idx, name));
+
+        card.appendChild(img);
+        item.appendChild(card);
+        masonry.appendChild(item);
+      });
+
+      // кнопки модалки
+      el("prevBtn").addEventListener("click", () => stepPhoto(-1, name));
+      el("nextBtn").addEventListener("click", () => stepPhoto(1, name));
+
+      // клавиатура в модалке (стрелки)
+      document.addEventListener("keydown", (e) => {
+        // если модалка не открыта — не мешаем
+        const isShown = el("photoModal").classList.contains("show");
+        if (!isShown) return;
+
+        if (e.key === "ArrowLeft") stepPhoto(-1, name);
+        if (e.key === "ArrowRight") stepPhoto(1, name);
+      });
     }
 
     main().catch(err => showError(String(err)));
