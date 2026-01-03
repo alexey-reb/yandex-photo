@@ -18,6 +18,19 @@
     .hero .muted { color: rgba(255,255,255,.75); }
 
     /* Masonry (CSS columns) */
+.photo-frame{
+  width: 100%;
+  aspect-ratio: var(--ar, 4/3);
+  background:#f3f3f3;
+}
+.photo-frame img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit: cover; /* хочешь без кропа — поставь contain */
+}
+
+    
     .masonry { column-gap: 1rem; column-count: 1; }
     @media (min-width: 576px) { .masonry { column-count: 2; } }
     @media (min-width: 992px) { .masonry { column-count: 3; } }
@@ -262,31 +275,51 @@
       el("contactBtn").onclick = () => alert("Demo: контакты (позже подключим)");
     }
 
-    function renderMasonry() {
-      el("photoCount").textContent = `Фото: ${photos.length}`;
+  const PLACEHOLDER = "./photos/placeholder.jpg";
 
-      const masonry = el("masonry");
-      masonry.innerHTML = "";
+function preloadSize(url) {
+  return new Promise((resolve) => {
+    const im = new Image();
+    im.onload = () => resolve({ url, w: im.naturalWidth || 4, h: im.naturalHeight || 3 });
+    im.onerror = () => resolve({ url: PLACEHOLDER, w: 4, h: 3 });
+    im.src = url;
+  });
+}
 
-      photos.forEach((url, idx) => {
-        const wrap = document.createElement("div");
-        wrap.className = "masonry-item";
+async function renderMasonry() {
+  el("photoCount").textContent = `Фото: ${photos.length}`;
+  const masonry = el("masonry");
+  masonry.innerHTML = "";
 
-        const card = document.createElement("div");
-        card.className = "photo-card";
+  // 1) грузим размеры ВСЕХ фото (или хотя бы первых N)
+  const sized = await Promise.all(photos.map(preloadSize));
 
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.src = url;
-        img.alt = model.name;
-        img.onerror = () => { img.src = PLACEHOLDER; };
-        img.addEventListener("click", () => openModal(idx));
+  // 2) теперь рендерим — размеры уже известны, layout не прыгает
+  sized.forEach(({ url, w, h }, idx) => {
+    const wrap = document.createElement("div");
+    wrap.className = "masonry-item";
 
-        card.appendChild(img);
-        wrap.appendChild(card);
-        masonry.appendChild(wrap);
-      });
-    }
+    const card = document.createElement("div");
+    card.className = "photo-card";
+
+    const frame = document.createElement("div");
+    frame.className = "photo-frame";
+    frame.style.setProperty("--ar", `${w}/${h}`);
+
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    img.src = url;
+    img.alt = model.name;
+    img.onerror = () => { img.src = PLACEHOLDER; };
+
+    img.addEventListener("click", () => openModal(idx));
+
+    frame.appendChild(img);
+    card.appendChild(frame);
+    wrap.appendChild(card);
+    masonry.appendChild(wrap);
+  });
+}
 
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
