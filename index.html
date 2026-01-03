@@ -3,25 +3,62 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Портфолио</title>
+  <title>Модель — Персональная страница (Demo)</title>
 
-  <!-- Bootstrap 5 (CSS) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    /* Небольшие улучшения внешнего вида */
     .hero {
-      background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.18), transparent 60%),
-                  radial-gradient(1200px 600px at 80% 0%, rgba(32,201,151,.12), transparent 55%),
-                  #0b1220;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.14), transparent 60%),
+        radial-gradient(1200px 600px at 80% 0%, rgba(32,201,151,.10), transparent 55%),
+        #0b1220;
       color: #fff;
     }
-    .hero .lead { color: rgba(255,255,255,.75); }
-    .card-img-top { aspect-ratio: 4 / 3; object-fit: cover; }
-    .badge-tag { cursor: pointer; }
-    .sticky-top-offset { top: 0.75rem; }
-    .muted { color: #6c757d; }
-    .empty-state { border: 1px dashed #dee2e6; border-radius: 1rem; padding: 2rem; }
+    .hero .muted { color: rgba(255,255,255,.75); }
+
+    /* Masonry без библиотек: CSS columns */
+    .masonry {
+      column-gap: 1rem;
+      column-count: 1;
+    }
+    @media (min-width: 576px) { .masonry { column-count: 2; } }
+    @media (min-width: 992px) { .masonry { column-count: 3; } }
+    @media (min-width: 1200px){ .masonry { column-count: 4; } }
+
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+    }
+
+    .photo-card {
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 .25rem .75rem rgba(0,0,0,.05);
+      background: #fff;
+    }
+
+    .masonry img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #f3f3f3;
+      cursor: zoom-in;
+    }
+
+    .spec dt { color: #6c757d; font-weight: 500; }
+    .spec dd { margin-bottom: .6rem; }
+
+    .chip { cursor: default; }
+
+    .modal-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      background: #f3f3f3;
+    }
   </style>
 </head>
 
@@ -32,466 +69,299 @@
     <div class="container">
       <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
         <div>
-          <h1 class="display-6 mb-2">Портфолио</h1>
-          <p class="lead mb-0">Страница собирается из <code>data.json</code> (Google Sheets → Apps Script → GitHub).</p>
+          <a href="#" class="text-decoration-none text-white-50 small">← Назад к списку</a>
+          <h1 class="display-6 mb-1 mt-2" id="name"></h1>
+          <div class="muted" id="subtitle"></div>
         </div>
         <div class="text-md-end">
-          <div id="meta" class="small"></div>
-          <div id="counts" class="small text-white-50"></div>
+          <div class="small text-white-50">Обновлено: <span id="updatedAt"></span></div>
+          <div class="small text-white-50">ID: <span id="modelId"></span></div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- CONTENT -->
   <main class="container my-4">
     <div class="row g-4">
-      <!-- SIDEBAR -->
-      <aside class="col-12 col-lg-3">
-        <div class="card shadow-sm sticky-top sticky-top-offset">
+      <!-- LEFT: Profile -->
+      <aside class="col-12 col-lg-4">
+        <div class="card shadow-sm">
           <div class="card-body">
-            <h2 class="h6 mb-3">Фильтры</h2>
+            <div class="d-flex align-items-start gap-3">
+              <img id="avatar" alt="" class="rounded-3" style="width:84px;height:84px;object-fit:cover;background:#eee;">
+              <div class="flex-grow-1">
+                <div class="small text-secondary">Статус</div>
+                <div class="fw-semibold" id="status"></div>
 
-            <label class="form-label small mb-1" for="q">Поиск по названию</label>
-            <input id="q" class="form-control mb-3" placeholder="Например: лендинг, дизайн..." />
-
-            <label class="form-label small mb-1" for="tag">Тег</label>
-            <select id="tag" class="form-select mb-3">
-              <option value="">Все теги</option>
-            </select>
-
-            <label class="form-label small mb-1" for="sort">Сортировка</label>
-            <select id="sort" class="form-select mb-3">
-              <option value="updated_desc">Сначала новые (updated_at)</option>
-              <option value="updated_asc">Сначала старые (updated_at)</option>
-              <option value="title_asc">По названию (А→Я)</option>
-              <option value="title_desc">По названию (Я→А)</option>
-            </select>
-
-            <label class="form-label small mb-1" for="perPage">На странице</label>
-            <select id="perPage" class="form-select mb-3">
-              <option value="6">6</option>
-              <option value="9" selected>9</option>
-              <option value="12">12</option>
-              <option value="24">24</option>
-            </select>
-
-            <div class="d-grid gap-2">
-              <button id="reset" class="btn btn-outline-secondary">Сбросить</button>
+                <div class="mt-2 d-flex flex-wrap gap-2" id="badges"></div>
+              </div>
             </div>
 
-            <hr class="my-3" />
-            <div class="small muted">
-              Подсказка: кликай по тегам на карточках — фильтр применится автоматически.
+            <hr class="my-3">
+
+            <h2 class="h6 mb-3">Параметры</h2>
+            <dl class="spec row mb-0">
+              <dt class="col-5">Возраст</dt>
+              <dd class="col-7" id="age"></dd>
+
+              <dt class="col-5">Рост</dt>
+              <dd class="col-7" id="height"></dd>
+
+              <dt class="col-5">Город</dt>
+              <dd class="col-7" id="city"></dd>
+
+              <dt class="col-5">Параметры</dt>
+              <dd class="col-7" id="measurements"></dd>
+
+              <dt class="col-5">Обувь</dt>
+              <dd class="col-7" id="shoe"></dd>
+
+              <dt class="col-5">Волосы</dt>
+              <dd class="col-7" id="hair"></dd>
+
+              <dt class="col-5">Глаза</dt>
+              <dd class="col-7" id="eyes"></dd>
+
+              <dt class="col-5">Языки</dt>
+              <dd class="col-7" id="langs"></dd>
+            </dl>
+
+            <hr class="my-3">
+
+            <h2 class="h6 mb-2">О себе</h2>
+            <p class="text-secondary mb-3" id="bio"></p>
+
+            <div class="d-grid gap-2">
+              <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
+              <a class="btn btn-outline-secondary" href="#" id="contactBtn">Контакты</a>
             </div>
           </div>
         </div>
       </aside>
 
-      <!-- GRID -->
-      <section class="col-12 col-lg-9">
-        <div id="error" class="alert alert-danger d-none" role="alert"></div>
+      <!-- RIGHT: Portfolio -->
+      <section class="col-12 col-lg-8">
+        <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+          <div>
+            <h2 class="h5 mb-0">Портфолио</h2>
+            <div class="text-secondary small" id="photoCount"></div>
+          </div>
 
-        <div id="grid" class="row g-4"></div>
-
-        <!-- Empty state -->
-        <div id="empty" class="empty-state bg-white d-none">
-          <h3 class="h5 mb-2">Ничего не найдено</h3>
-          <p class="mb-0 text-secondary">Попробуй изменить поиск/теги или нажми “Сбросить”.</p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" id="shuffleBtn">Перемешать</button>
+            <button class="btn btn-outline-secondary btn-sm" id="resetBtn">Сбросить</button>
+          </div>
         </div>
 
-        <!-- Pagination -->
-        <nav class="mt-4" aria-label="Pagination">
-          <ul id="pager" class="pagination justify-content-center mb-0"></ul>
-        </nav>
+        <div id="masonry" class="masonry"></div>
       </section>
     </div>
   </main>
 
-  <!-- MODAL -->
-  <div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+  <!-- Modal (Lightbox) -->
+  <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 id="modalTitle" class="modal-title">Проект</h5>
+          <h5 class="modal-title" id="modalTitle">Фото</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
         </div>
         <div class="modal-body">
-          <img id="modalImg" class="w-100 rounded mb-3" alt="" style="aspect-ratio: 16/9; object-fit: cover; background:#f3f3f3;">
-          <p id="modalDesc" class="mb-3"></p>
-
-          <div class="d-flex flex-wrap gap-2 align-items-center">
-            <div id="modalTags" class="d-flex flex-wrap gap-2"></div>
-            <div class="ms-auto text-secondary small" id="modalUpdated"></div>
-          </div>
-
-          <div class="mt-3 d-flex gap-2 align-items-center">
-            <div class="fw-semibold" id="modalPrice"></div>
-            <div class="ms-auto">
-              <button id="copyId" class="btn btn-outline-primary btn-sm">Скопировать ID</button>
+          <img id="modalImg" class="modal-img" alt="">
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="text-secondary small" id="modalIndex"></div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-secondary btn-sm" id="prevBtn">←</button>
+              <button class="btn btn-outline-secondary btn-sm" id="nextBtn">→</button>
+              <a class="btn btn-primary btn-sm" id="openOriginal" href="#" target="_blank" rel="noreferrer">Открыть оригинал</a>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bootstrap 5 (JS) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    /**
-     * Ожидаемый формат data.json:
-     * {
-     *   "generated_at": "...",
-     *   "count": 1,
-     *   "items": [
-     *     { "id":"1", "title":"...", "description":null, "image":"...", "tags":["a","b"], "price":null, "updated_at":null }
-     *   ]
-     * }
-     */
-
-    const state = {
-      meta: null,
-      items: [],
-      q: "",
-      tag: "",
-      sort: "updated_desc",
-      page: 1,
-      perPage: 9
+    // ====== ТЕСТОВЫЕ ДАННЫЕ (потом заменим на JSON) ======
+    const model = {
+      id: "101",
+      name: "Анна Воронова",
+      status: "Доступна на январь",
+      updated_at: "2026-01-03",
+      age: 22,
+      height: 175,
+      city: "Хельсинки",
+      measurements: "84–60–90",
+      shoe: "39",
+      hair: "Русые",
+      eyes: "Зелёные",
+      languages: ["RU", "EN"],
+      bio: "Коммерческая и fashion-съёмка, каталоги, e-commerce. Легко работаю с позингом и светом, быстро вхожу в роль. Открыта к поездкам.",
+      badges: ["Fashion", "E-commerce", "Beauty", "Runway"],
+      avatar: "https://storage.yandexcloud.net/alexreb/1.jpg",
+      contacts: {
+        email: "model@example.com",
+        instagram: "@modelanna",
+        phone: "+358 00 000 0000"
+      },
+      portfolio: [
+        // Разные пропорции специально, чтобы проверить сетку
+        "https://storage.yandexcloud.net/alexreb/1.jpg",
+        "https://storage.yandexcloud.net/alexreb/2.jpg",
+        "https://storage.yandexcloud.net/alexreb/4.jpg",
+        "https://storage.yandexcloud.net/alexreb/5.jpg",
+        "https://storage.yandexcloud.net/alexreb/6.jpg",
+        "https://storage.yandexcloud.net/alexreb/7.jpg",
+        "https://storage.yandexcloud.net/alexreb/8.jpg",
+        "https://storage.yandexcloud.net/alexreb/9.jpg",
+      ]
     };
 
+    // ====== РЕНДЕР ======
     const el = (id) => document.getElementById(id);
-    const uniq = (arr) => Array.from(new Set(arr));
 
-    function showError(message) {
-      const box = el("error");
-      box.textContent = message;
-      box.classList.remove("d-none");
+    function setText(id, value, fallback="—") {
+      el(id).textContent = (value === null || value === undefined || value === "") ? fallback : String(value);
     }
 
-    function clearError() {
-      el("error").classList.add("d-none");
-      el("error").textContent = "";
-    }
-
-    function formatPrice(price) {
-      if (typeof price !== "number" || !Number.isFinite(price)) return "";
-      return price.toLocaleString("ru-RU") + " ₽";
-    }
-
-    function parseDateSafe(s) {
-      // updated_at у тебя может быть null/строка/ISO. Если null — возвращаем 0.
-      if (!s) return 0;
-      const t = Date.parse(s);
-      return Number.isFinite(t) ? t : 0;
-    }
-
-    function applyFilters(items) {
-      let out = items;
-
-      if (state.q) {
-        const q = state.q.toLowerCase();
-        out = out.filter(x => String(x.title || "").toLowerCase().includes(q));
-      }
-
-      if (state.tag) {
-        out = out.filter(x => Array.isArray(x.tags) && x.tags.includes(state.tag));
-      }
-
-      return out;
-    }
-
-    function applySort(items) {
-      const out = [...items];
-
-      switch (state.sort) {
-        case "title_asc":
-          out.sort((a,b) => String(a.title||"").localeCompare(String(b.title||""), "ru"));
-          break;
-        case "title_desc":
-          out.sort((a,b) => String(b.title||"").localeCompare(String(a.title||""), "ru"));
-          break;
-        case "updated_asc":
-          out.sort((a,b) => parseDateSafe(a.updated_at) - parseDateSafe(b.updated_at));
-          break;
-        case "updated_desc":
-        default:
-          out.sort((a,b) => parseDateSafe(b.updated_at) - parseDateSafe(a.updated_at));
-          break;
-      }
-
-      return out;
-    }
-
-    function paginate(items) {
-      const total = items.length;
-      const pages = Math.max(1, Math.ceil(total / state.perPage));
-      const page = Math.min(Math.max(1, state.page), pages);
-
-      const start = (page - 1) * state.perPage;
-      const slice = items.slice(start, start + state.perPage);
-
-      return { slice, total, pages, page };
-    }
-
-    function renderPager(pages, page) {
-      const pager = el("pager");
-      pager.innerHTML = "";
-
-      function add(label, targetPage, disabled=false, active=false) {
-        const li = document.createElement("li");
-        li.className = "page-item" + (disabled ? " disabled" : "") + (active ? " active" : "");
-
-        const a = document.createElement("a");
-        a.className = "page-link";
-        a.href = "#";
-        a.textContent = label;
-        a.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (disabled || active) return;
-          state.page = targetPage;
-          update();
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-
-        li.appendChild(a);
-        pager.appendChild(li);
-      }
-
-      add("«", page - 1, page <= 1);
-
-      // Умная пагинация: показываем текущую ±2
-      const start = Math.max(1, page - 2);
-      const end = Math.min(pages, page + 2);
-
-      if (start > 1) add("1", 1);
-      if (start > 2) {
-        const li = document.createElement("li");
-        li.className = "page-item disabled";
-        li.innerHTML = '<span class="page-link">…</span>';
-        pager.appendChild(li);
-      }
-
-      for (let p = start; p <= end; p++) add(String(p), p, false, p === page);
-
-      if (end < pages - 1) {
-        const li = document.createElement("li");
-        li.className = "page-item disabled";
-        li.innerHTML = '<span class="page-link">…</span>';
-        pager.appendChild(li);
-      }
-      if (end < pages) add(String(pages), pages);
-
-      add("»", page + 1, page >= pages);
-    }
-
-    function makeTagBadge(tag) {
+    function chip(text) {
       const b = document.createElement("span");
-      b.className = "badge text-bg-light border badge-tag";
-      b.textContent = tag;
-      b.title = "Фильтровать по тегу";
-      b.addEventListener("click", () => {
-        state.tag = tag;
-        el("tag").value = tag;
-        state.page = 1;
-        update();
-      });
+      b.className = "badge text-bg-light border chip";
+      b.textContent = text;
       return b;
     }
 
-    function openModal(item) {
-      el("modalTitle").textContent = item.title || "Проект";
-      el("modalImg").src = item.image || "";
-      el("modalImg").alt = item.title || "";
+    function renderProfile() {
+      el("name").textContent = model.name;
+      el("modelId").textContent = model.id;
+      el("updatedAt").textContent = model.updated_at;
 
-      el("modalDesc").textContent = item.description || "";
-      el("modalPrice").textContent = formatPrice(item.price);
+      const subtitleBits = [
+        model.city,
+        `Возраст: ${model.age}`,
+        `Рост: ${model.height} см`
+      ].filter(Boolean);
+      el("subtitle").textContent = subtitleBits.join(" • ");
 
-      el("modalUpdated").textContent = item.updated_at ? ("updated_at: " + item.updated_at) : "";
+      el("avatar").src = model.avatar;
+      el("avatar").alt = model.name;
 
-      const tagsWrap = el("modalTags");
-      tagsWrap.innerHTML = "";
-      (item.tags || []).forEach(t => tagsWrap.appendChild(makeTagBadge(t)));
+      setText("status", model.status);
+      setText("age", model.age);
+      setText("height", model.height + " см");
+      setText("city", model.city);
+      setText("measurements", model.measurements);
+      setText("shoe", model.shoe);
+      setText("hair", model.hair);
+      setText("eyes", model.eyes);
+      setText("langs", (model.languages || []).join(", "));
+      setText("bio", model.bio, "");
 
-      el("copyId").onclick = async () => {
-        try {
-          await navigator.clipboard.writeText(String(item.id || ""));
-          el("copyId").textContent = "Скопировано!";
-          setTimeout(() => el("copyId").textContent = "Скопировать ID", 1200);
-        } catch (_) {
-          // если clipboard запрещён
-          alert("Не удалось скопировать. ID: " + String(item.id || ""));
-        }
-      };
+      const badgesWrap = el("badges");
+      badgesWrap.innerHTML = "";
+      (model.badges || []).forEach(t => badgesWrap.appendChild(chip(t)));
 
-      const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById("itemModal"));
+      el("bookBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("Demo: тут будет заявка на бронь");
+      });
+
+      el("contactBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        alert(
+          `Email: ${model.contacts.email}\n` +
+          `Instagram: ${model.contacts.instagram}\n` +
+          `Phone: ${model.contacts.phone}`
+        );
+      });
+    }
+
+    // ====== LIGHTBOX ======
+    let photos = [...model.portfolio];
+    let currentIndex = 0;
+
+    function openModal(idx) {
+      currentIndex = idx;
+      const url = photos[currentIndex];
+
+      el("modalTitle").textContent = `Портфолио — ${model.name}`;
+      el("modalImg").src = url;
+      el("modalImg").alt = model.name;
+      el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
+      el("openOriginal").href = url;
+
+      const modal = bootstrap.Modal.getOrCreateInstance(el("photoModal"));
       modal.show();
     }
 
-    function renderGrid(items) {
-      const grid = el("grid");
-      grid.innerHTML = "";
+    function step(delta) {
+      if (!photos.length) return;
+      currentIndex = (currentIndex + delta + photos.length) % photos.length;
+      openModal(currentIndex);
+    }
 
-      for (const item of items) {
-        const col = document.createElement("div");
-        col.className = "col-12 col-md-6 col-xl-4";
+    function renderMasonry() {
+      el("photoCount").textContent = `Фото: ${photos.length}`;
+
+      const masonry = el("masonry");
+      masonry.innerHTML = "";
+
+      photos.forEach((url, idx) => {
+        const wrap = document.createElement("div");
+        wrap.className = "masonry-item";
 
         const card = document.createElement("div");
-        card.className = "card h-100 shadow-sm";
+        card.className = "photo-card";
 
         const img = document.createElement("img");
-        img.className = "card-img-top";
         img.loading = "lazy";
-        img.alt = item.title || "";
-        img.src = item.image || "";
+        img.src = url;
+        img.alt = model.name;
+
+        img.addEventListener("click", () => openModal(idx));
+
         card.appendChild(img);
+        wrap.appendChild(card);
+        masonry.appendChild(wrap);
+      });
+    }
 
-        const body = document.createElement("div");
-        body.className = "card-body";
-
-        const title = document.createElement("h3");
-        title.className = "h6 card-title mb-2";
-        title.textContent = item.title || "(без названия)";
-        body.appendChild(title);
-
-        if (item.description) {
-          const desc = document.createElement("p");
-          desc.className = "card-text small text-secondary mb-2";
-          desc.textContent = item.description;
-          body.appendChild(desc);
-        }
-
-        const tagsWrap = document.createElement("div");
-        tagsWrap.className = "d-flex flex-wrap gap-2 mb-2";
-        (item.tags || []).forEach(t => tagsWrap.appendChild(makeTagBadge(t)));
-        body.appendChild(tagsWrap);
-
-        const footerRow = document.createElement("div");
-        footerRow.className = "d-flex align-items-center justify-content-between mt-2";
-
-        const price = document.createElement("div");
-        price.className = "small fw-semibold";
-        price.textContent = formatPrice(item.price);
-        footerRow.appendChild(price);
-
-        const btn = document.createElement("button");
-        btn.className = "btn btn-primary btn-sm";
-        btn.textContent = "Подробнее";
-        btn.addEventListener("click", () => openModal(item));
-        footerRow.appendChild(btn);
-
-        body.appendChild(footerRow);
-
-        const foot = document.createElement("div");
-        foot.className = "card-footer bg-transparent border-top-0 pt-0";
-        const meta = document.createElement("div");
-        meta.className = "small text-secondary";
-        meta.textContent = item.updated_at ? `updated_at: ${item.updated_at}` : `id: ${item.id ?? ""}`;
-        foot.appendChild(meta);
-
-        card.appendChild(body);
-        card.appendChild(foot);
-        col.appendChild(card);
-        grid.appendChild(col);
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
+      return arr;
     }
 
-    function update() {
-      clearError();
+    function bindControls() {
+      el("prevBtn").addEventListener("click", () => step(-1));
+      el("nextBtn").addEventListener("click", () => step(1));
 
-      const filtered = applyFilters(state.items);
-      const sorted = applySort(filtered);
-      const { slice, total, pages, page } = paginate(sorted);
-
-      // мета
-      el("meta").innerHTML = state.meta
-        ? `Сгенерировано: <strong>${state.meta.generated_at}</strong>`
-        : "";
-      el("counts").textContent = `Всего: ${state.items.length} • После фильтров: ${total}`;
-
-      // empty state
-      el("empty").classList.toggle("d-none", total !== 0);
-
-      // grid + pager
-      renderGrid(slice);
-      renderPager(pages, page);
-
-      // зафиксируем page после clamp
-      state.page = page;
-    }
-
-    function bindUI() {
-      el("q").addEventListener("input", (e) => {
-        state.q = e.target.value.trim();
-        state.page = 1;
-        update();
+      document.addEventListener("keydown", (e) => {
+        const isShown = el("photoModal").classList.contains("show");
+        if (!isShown) return;
+        if (e.key === "ArrowLeft") step(-1);
+        if (e.key === "ArrowRight") step(1);
       });
 
-      el("tag").addEventListener("change", (e) => {
-        state.tag = e.target.value;
-        state.page = 1;
-        update();
+      el("shuffleBtn").addEventListener("click", () => {
+        photos = shuffle([...photos]);
+        renderMasonry();
       });
 
-      el("sort").addEventListener("change", (e) => {
-        state.sort = e.target.value;
-        state.page = 1;
-        update();
-      });
-
-      el("perPage").addEventListener("change", (e) => {
-        state.perPage = Number(e.target.value) || 9;
-        state.page = 1;
-        update();
-      });
-
-      el("reset").addEventListener("click", () => {
-        state.q = "";
-        state.tag = "";
-        state.sort = "updated_desc";
-        state.page = 1;
-        state.perPage = 9;
-
-        el("q").value = "";
-        el("tag").value = "";
-        el("sort").value = "updated_desc";
-        el("perPage").value = "9";
-
-        update();
+      el("resetBtn").addEventListener("click", () => {
+        photos = [...model.portfolio];
+        renderMasonry();
       });
     }
 
-    async function main() {
-      bindUI();
-
-      // cache-bust против кеша GitHub Pages / CDN
-      const res = await fetch("./data.json?v=" + Date.now());
-      if (!res.ok) throw new Error("Не удалось загрузить data.json: HTTP " + res.status);
-
-      const data = await res.json();
-      state.meta = data;
-      state.items = data.items || [];
-
-      // наполняем список тегов
-      const tags = uniq(state.items.flatMap(x => Array.isArray(x.tags) ? x.tags : []))
-        .sort((a,b) => a.localeCompare(b, "ru"));
-
-      const tagSel = el("tag");
-      for (const t of tags) {
-        const opt = document.createElement("option");
-        opt.value = t;
-        opt.textContent = t;
-        tagSel.appendChild(opt);
-      }
-
-      update();
-    }
-
-    main().catch(err => showError(String(err)));
+    // init
+    renderProfile();
+    renderMasonry();
+    bindControls();
   </script>
 </body>
 </html>
