@@ -185,216 +185,186 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-  async function loadModelFromJson() {
-  const params = new URLSearchParams(location.search);
-  const id = params.get("id");
-  if (!id) throw new Error('Нет параметра id. Пример: model.html?id=101');
+  const el = (id) => document.getElementById(id);
 
-  const res = await fetch("./data.json?v=" + Date.now());
-  if (!res.ok) throw new Error("data.json HTTP " + res.status);
-
-  const data = await res.json();
-
-  const item = (data.items || []).find(x => String(x.model_id) === String(id));
-  if (!item) throw new Error("Модель не найдена: " + id);
-
-  // приводим к формату, который уже ждёт твоя страница
-  return {
-    id: item.model_id,
-    name: item.full_name,
-    age: item.age,
-    height: item.height_cm,
-    measurements: [item.bust_cm, item.waist_cm, item.hips_cm].filter(x => x != null).join("–"),
-    avatar: item.avatar,
-    portfolio: item.photos || [],
-    // остальное пока пусто
-    status: "",
-    city: "",
-    shoe: "",
-    hair: "",
-    eyes: "",
-    languages: [],
-    bio: "",
-    badges: []
-  };
-}
-
-function showErr(e) {
-  const box = document.getElementById("err");
-  box.style.display = "block";
-  box.innerHTML = `<div class="alert alert-danger">${String(e)}</div>`;
-}
-
-      portfolio: [
-        // Разные пропорции специально, чтобы проверить сетку
-        "https://storage.yandexcloud.net/alexreb/1.jpg",
-        "https://storage.yandexcloud.net/alexreb/2.jpg",
-        "https://storage.yandexcloud.net/alexreb/4.jpg",
-        "https://storage.yandexcloud.net/alexreb/5.jpg",
-        "https://storage.yandexcloud.net/alexreb/6.jpg",
-        "https://storage.yandexcloud.net/alexreb/7.jpg",
-        "https://storage.yandexcloud.net/alexreb/9.jpg"
-      ]
-    };
-
-    // ====== РЕНДЕР ======
-    const el = (id) => document.getElementById(id);
-
-    function setText(id, value, fallback="—") {
-      el(id).textContent = (value === null || value === undefined || value === "") ? fallback : String(value);
-    }
-
-    function chip(text) {
-      const b = document.createElement("span");
-      b.className = "badge text-bg-light border chip";
-      b.textContent = text;
-      return b;
-    }
-
-    function renderProfile() {
-      el("name").textContent = model.name;
-      el("modelId").textContent = model.id;
-      el("updatedAt").textContent = model.updated_at;
-
-      const subtitleBits = [
-        model.city,
-        `Возраст: ${model.age}`,
-        `Рост: ${model.height} см`
-      ].filter(Boolean);
-      el("subtitle").textContent = subtitleBits.join(" • ");
-
-      el("avatar").src = model.avatar;
-      el("avatar").alt = model.name;
-
-      setText("status", model.status);
-      setText("age", model.age);
-      setText("height", model.height + " см");
-      setText("city", model.city);
-      setText("measurements", model.measurements);
-      setText("shoe", model.shoe);
-      setText("hair", model.hair);
-      setText("eyes", model.eyes);
-      setText("langs", (model.languages || []).join(", "));
-      setText("bio", model.bio, "");
-
-      const badgesWrap = el("badges");
-      badgesWrap.innerHTML = "";
-      (model.badges || []).forEach(t => badgesWrap.appendChild(chip(t)));
-
-      el("bookBtn").addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Demo: тут будет заявка на бронь");
-      });
-
-      el("contactBtn").addEventListener("click", (e) => {
-        e.preventDefault();
-        alert(
-          `Email: ${model.contacts.email}\n` +
-          `Instagram: ${model.contacts.instagram}\n` +
-          `Phone: ${model.contacts.phone}`
-        );
-      });
-    }
-
-    // ====== LIGHTBOX ======
-    let photos = [...model.portfolio];
-    let currentIndex = 0;
-
-    function openModal(idx) {
-      currentIndex = idx;
-      const url = photos[currentIndex];
-
-      el("modalTitle").textContent = `Портфолио — ${model.name}`;
-      el("modalImg").src = url;
-      el("modalImg").alt = model.name;
-      el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
-      el("openOriginal").href = url;
-
-      const modal = bootstrap.Modal.getOrCreateInstance(el("photoModal"));
-      modal.show();
-    }
-
-    function step(delta) {
-      if (!photos.length) return;
-      currentIndex = (currentIndex + delta + photos.length) % photos.length;
-      openModal(currentIndex);
-    }
-
-    function renderMasonry() {
-      el("photoCount").textContent = `Фото: ${photos.length}`;
-
-      const masonry = el("masonry");
-      masonry.innerHTML = "";
-
-      photos.forEach((url, idx) => {
-        const wrap = document.createElement("div");
-        wrap.className = "masonry-item";
-
-        const card = document.createElement("div");
-        card.className = "photo-card";
-
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.src = url;
-        img.alt = model.name;
-        img.onerror = () => {
-  img.src = "https://storage.yandexcloud.net/alexreb/test.jpeg"; // любая гарантированная заглушка
-};
-
-
-        img.addEventListener("click", () => openModal(idx));
-
-        card.appendChild(img);
-        wrap.appendChild(card);
-        masonry.appendChild(wrap);
-      });
-    }
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function bindControls() {
-      el("prevBtn").addEventListener("click", () => step(-1));
-      el("nextBtn").addEventListener("click", () => step(1));
-
-      document.addEventListener("keydown", (e) => {
-        const isShown = el("photoModal").classList.contains("show");
-        if (!isShown) return;
-        if (e.key === "ArrowLeft") step(-1);
-        if (e.key === "ArrowRight") step(1);
-      });
-
-      el("shuffleBtn").addEventListener("click", () => {
-        photos = shuffle([...photos]);
-        renderMasonry();
-      });
-
-      el("resetBtn").addEventListener("click", () => {
-        photos = [...model.portfolio];
-        renderMasonry();
-      });
-    }
-
-    // init
-(async () => {
-  try {
-    window.model = await loadModelFromJson(); // делаем доступной ниже
-    photos = [...model.portfolio];
-
-    renderProfile();
-    renderMasonry();
-    bindControls();
-  } catch (e) {
-    console.error(e);
-    showErr(e);
+  function setText(id, value, fallback="—") {
+    el(id).textContent = (value === null || value === undefined || value === "") ? fallback : String(value);
   }
-})();
 
-  </script>
+  function chip(text) {
+    const b = document.createElement("span");
+    b.className = "badge text-bg-light border chip";
+    b.textContent = text;
+    return b;
+  }
+
+  function showErr(e) {
+    const box = el("err");
+    box.style.display = "block";
+    box.innerHTML = `<div class="alert alert-danger">${String(e)}</div>`;
+  }
+
+  async function loadModelFromJson() {
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+    if (!id) throw new Error('Нет параметра id. Пример: model.html?id=101');
+
+    // ВАЖНО: файл ищется рядом с model.html
+    const url = new URL("data.json", location.href);
+    url.searchParams.set("v", Date.now());
+
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error("data.json HTTP " + res.status);
+
+    const data = await res.json();
+
+    const item = (data.items || []).find(x => String(x.model_id) === String(id));
+    if (!item) throw new Error("Модель не найдена: " + id);
+
+    return {
+      id: item.model_id,
+      name: item.full_name,
+      updated_at: data.generated_at || "",
+      age: item.age,
+      height: item.height_cm,
+      measurements: [item.bust_cm, item.waist_cm, item.hips_cm].filter(x => x != null).join("–"),
+      avatar: item.avatar,
+      portfolio: item.photos || [],
+      status: "",
+      city: "",
+      shoe: "",
+      hair: "",
+      eyes: "",
+      languages: [],
+      bio: "",
+      badges: [],
+      contacts: { email:"", instagram:"", phone:"" }
+    };
+  }
+
+  // ====== LIGHTBOX state ======
+  let photos = [];
+  let currentIndex = 0;
+
+  function openModal(idx) {
+    currentIndex = idx;
+    const url = photos[currentIndex];
+
+    el("modalTitle").textContent = `Портфолио — ${model.name}`;
+    el("modalImg").src = url;
+    el("modalImg").alt = model.name;
+    el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
+    el("openOriginal").href = url;
+
+    bootstrap.Modal.getOrCreateInstance(el("photoModal")).show();
+  }
+
+  function step(delta) {
+    if (!photos.length) return;
+    currentIndex = (currentIndex + delta + photos.length) % photos.length;
+    openModal(currentIndex);
+  }
+
+  function renderProfile() {
+    el("name").textContent = model.name;
+    el("modelId").textContent = model.id;
+    el("updatedAt").textContent = model.updated_at;
+
+    el("subtitle").textContent = [
+      model.city,
+      `Возраст: ${model.age}`,
+      `Рост: ${model.height} см`
+    ].filter(Boolean).join(" • ");
+
+    el("avatar").src = model.avatar || "";
+    el("avatar").alt = model.name;
+
+    setText("status", model.status);
+    setText("age", model.age);
+    setText("height", model.height ? model.height + " см" : null);
+    setText("city", model.city);
+    setText("measurements", model.measurements);
+    setText("shoe", model.shoe);
+    setText("hair", model.hair);
+    setText("eyes", model.eyes);
+    setText("langs", (model.languages || []).join(", "));
+    setText("bio", model.bio, "");
+
+    const badgesWrap = el("badges");
+    badgesWrap.innerHTML = "";
+    (model.badges || []).forEach(t => badgesWrap.appendChild(chip(t)));
+  }
+
+  function renderMasonry() {
+    el("photoCount").textContent = `Фото: ${photos.length}`;
+    const masonry = el("masonry");
+    masonry.innerHTML = "";
+
+    photos.forEach((url, idx) => {
+      const wrap = document.createElement("div");
+      wrap.className = "masonry-item";
+
+      const card = document.createElement("div");
+      card.className = "photo-card";
+
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.src = url;
+      img.alt = model.name;
+
+      img.addEventListener("click", () => openModal(idx));
+
+      card.appendChild(img);
+      wrap.appendChild(card);
+      masonry.appendChild(wrap);
+    });
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function bindControls() {
+    el("prevBtn").addEventListener("click", () => step(-1));
+    el("nextBtn").addEventListener("click", () => step(1));
+
+    document.addEventListener("keydown", (e) => {
+      const isShown = el("photoModal").classList.contains("show");
+      if (!isShown) return;
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+    });
+
+    el("shuffleBtn").addEventListener("click", () => {
+      photos = shuffle([...photos]);
+      renderMasonry();
+    });
+
+    el("resetBtn").addEventListener("click", () => {
+      photos = [...model.portfolio];
+      renderMasonry();
+    });
+  }
+
+  // init
+  (async () => {
+    try {
+      window.model = await loadModelFromJson();
+      photos = [...model.portfolio];
+
+      renderProfile();
+      renderMasonry();
+      bindControls();
+    } catch (e) {
+      console.error(e);
+      showErr(e);
+    }
+  })();
+</script>
+
 </body>
 </html>
