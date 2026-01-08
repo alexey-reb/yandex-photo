@@ -66,6 +66,7 @@
 
   <!-- HERO -->
   <header class="hero py-5">
+    <div id="err" class="container my-3" style="display:none;"></div>
     <div class="container">
       <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
         <div>
@@ -184,28 +185,46 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // ====== ТЕСТОВЫЕ ДАННЫЕ (потом заменим на JSON) ======
-    const model = {
-      id: "101",
-      name: "Анна Воронова",
-      status: "Доступна на январь",
-      updated_at: "2026-01-03",
-      age: 22,
-      height: 175,
-      city: "Хельсинки",
-      measurements: "84–60–90",
-      shoe: "39",
-      hair: "Русые",
-      eyes: "Зелёные",
-      languages: ["RU", "EN"],
-      bio: "Коммерческая и fashion-съёмка, каталоги, e-commerce. Легко работаю с позингом и светом, быстро вхожу в роль. Открыта к поездкам.",
-      badges: ["Fashion", "E-commerce", "Beauty", "Runway"],
-      avatar: "https://storage.yandexcloud.net/alexreb/1.jpg",
-      contacts: {
-        email: "model@example.com",
-        instagram: "@modelanna",
-        phone: "+358 00 000 0000"
-      },
+  async function loadModelFromJson() {
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id");
+  if (!id) throw new Error('Нет параметра id. Пример: model.html?id=101');
+
+  const res = await fetch("./data.json?v=" + Date.now());
+  if (!res.ok) throw new Error("data.json HTTP " + res.status);
+
+  const data = await res.json();
+
+  const item = (data.items || []).find(x => String(x.model_id) === String(id));
+  if (!item) throw new Error("Модель не найдена: " + id);
+
+  // приводим к формату, который уже ждёт твоя страница
+  return {
+    id: item.model_id,
+    name: item.full_name,
+    age: item.age,
+    height: item.height_cm,
+    measurements: [item.bust_cm, item.waist_cm, item.hips_cm].filter(x => x != null).join("–"),
+    avatar: item.avatar,
+    portfolio: item.photos || [],
+    // остальное пока пусто
+    status: "",
+    city: "",
+    shoe: "",
+    hair: "",
+    eyes: "",
+    languages: [],
+    bio: "",
+    badges: []
+  };
+}
+
+function showErr(e) {
+  const box = document.getElementById("err");
+  box.style.display = "block";
+  box.innerHTML = `<div class="alert alert-danger">${String(e)}</div>`;
+}
+
       portfolio: [
         // Разные пропорции специально, чтобы проверить сетку
         "https://storage.yandexcloud.net/alexreb/1.jpg",
@@ -362,9 +381,20 @@
     }
 
     // init
+(async () => {
+  try {
+    window.model = await loadModelFromJson(); // делаем доступной ниже
+    photos = [...model.portfolio];
+
     renderProfile();
     renderMasonry();
     bindControls();
+  } catch (e) {
+    console.error(e);
+    showErr(e);
+  }
+})();
+
   </script>
 </body>
 </html>
