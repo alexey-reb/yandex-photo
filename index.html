@@ -39,9 +39,12 @@
       const card = document.createElement("div");
       card.className = "card h-100 shadow-sm";
 
+      const fullName = [m.name].filter(Boolean).join(" ");
+
       const img = document.createElement("img");
+      img.className = "card-img-top model-card-img";
       img.src = m.avatar || "";
-      img.alt = m.full_name || "";
+      img.alt = fullName || "";
       img.loading = "lazy";
 
       const body = document.createElement("div");
@@ -49,7 +52,7 @@
 
       const h = document.createElement("h5");
       h.className = "card-title";
-      h.textContent = m.full_name;
+      h.textContent = fullName;
 
       const p = document.createElement("p");
       p.className = "card-text text-secondary";
