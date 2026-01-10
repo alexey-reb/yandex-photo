@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Модель — Персональная страница (Demo)</title>
+  <title>Модель — Портфолио</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -18,18 +18,12 @@
     .hero .muted { color: rgba(255,255,255,.75); }
 
     /* Masonry без библиотек: CSS columns */
-    .masonry {
-      column-gap: 1rem;
-      column-count: 1;
-    }
+    .masonry { column-gap: 1rem; column-count: 1; }
     @media (min-width: 576px) { .masonry { column-count: 2; } }
     @media (min-width: 992px) { .masonry { column-count: 3; } }
     @media (min-width: 1200px){ .masonry { column-count: 4; } }
 
-    .masonry-item {
-      break-inside: avoid;
-      margin-bottom: 1rem;
-    }
+    .masonry-item { break-inside: avoid; margin-bottom: 1rem; }
 
     .photo-card {
       border: 1px solid rgba(0,0,0,.08);
@@ -50,8 +44,6 @@
     .spec dt { color: #6c757d; font-weight: 500; }
     .spec dd { margin-bottom: .6rem; }
 
-    .chip { cursor: default; }
-
     .modal-img {
       width: 100%;
       height: auto;
@@ -59,13 +51,14 @@
       border-radius: 12px;
       background: #f3f3f3;
     }
+
+    /* Sticky profile so left column doesn't feel "empty" while scrolling */
     @media (min-width: 992px) {
       .sticky-aside {
-      position: sticky;
-      top: 1rem;
+        position: sticky;
+        top: 1rem;
       }
     }
-
   </style>
 </head>
 
@@ -73,11 +66,12 @@
 
   <!-- HERO -->
   <header class="hero py-5">
-    <div id="err" class="container my-3" style="display:none;"></div>
     <div class="container">
+      <div id="err" class="mb-3" style="display:none;"></div>
+
       <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
         <div>
-          <a href="#" class="text-decoration-none text-white-50 small">← Назад к списку</a>
+          <a href="./index.html" class="text-decoration-none text-white-50 small">← Назад к списку</a>
           <h1 class="display-6 mb-1 mt-2" id="name"></h1>
           <div class="muted" id="subtitle"></div>
         </div>
@@ -92,16 +86,15 @@
   <main class="container my-4">
     <div class="row g-4">
       <!-- LEFT: Profile -->
-      <aside class="col-12 col-lg-4 sticky-aside">
+      <aside class="col-12 col-lg-3 sticky-aside">
         <div class="card shadow-sm">
           <div class="card-body">
             <div class="d-flex align-items-start gap-3">
-              <img id="avatar" alt="" class="rounded-3" style="width:84px;height:84px;object-fit:cover;background:#eee;">
+              <img id="avatar" alt="" class="rounded-3"
+                   style="width:84px;height:84px;object-fit:cover;background:#eee;">
               <div class="flex-grow-1">
-                <div class="small text-secondary">Статус</div>
-                <div class="fw-semibold" id="status"></div>
-
-                <div class="mt-2 d-flex flex-wrap gap-2" id="badges"></div>
+                <div class="small text-secondary">Профиль</div>
+                <div class="fw-semibold" id="shortName"></div>
               </div>
             </div>
 
@@ -117,8 +110,9 @@
 
               <dt class="col-5">Параметры</dt>
               <dd class="col-7" id="measurements"></dd>
-
             </dl>
+
+            <hr class="my-3">
 
             <div class="d-grid gap-2">
               <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
@@ -129,7 +123,7 @@
       </aside>
 
       <!-- RIGHT: Portfolio -->
-      <section class="col-12 col-lg-8">
+      <section class="col-12 col-lg-9">
         <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
           <div>
             <h2 class="h5 mb-0">Портфолио</h2>
@@ -165,6 +159,7 @@
               <a class="btn btn-primary btn-sm" id="openOriginal" href="#" target="_blank" rel="noreferrer">Открыть оригинал</a>
             </div>
           </div>
+          <div class="text-secondary small mt-2">Подсказка: стрелки клавиатуры ← → перелистывают фото.</div>
         </div>
       </div>
     </div>
@@ -173,169 +168,171 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-  const el = (id) => document.getElementById(id);
+    const el = (id) => document.getElementById(id);
 
-  function setText(id, value, fallback="—") {
-    el(id).textContent = (value === null || value === undefined || value === "") ? fallback : String(value);
-  }
-
-  function chip(text) {
-    const b = document.createElement("span");
-    b.className = "badge text-bg-light border chip";
-    b.textContent = text;
-    return b;
-  }
-
-  function showErr(e) {
-    const box = el("err");
-    box.style.display = "block";
-    box.innerHTML = `<div class="alert alert-danger">${String(e)}</div>`;
-  }
-
-  async function loadModelFromJson() {
-    const params = new URLSearchParams(location.search);
-    const id = params.get("id");
-    if (!id) throw new Error('Нет параметра id. Пример: model.html?id=101');
-
-    // ВАЖНО: файл ищется рядом с model.html
-    const url = new URL("data.json", location.href);
-    url.searchParams.set("v", Date.now());
-
-    const res = await fetch(url.toString());
-    if (!res.ok) throw new Error("data.json HTTP " + res.status);
-
-    const data = await res.json();
-
-    const item = (data.items || []).find(x => String(x.model_id) === String(id));
-    if (!item) throw new Error("Модель не найдена: " + id);
-
-    return {
-      id: item.model_id,
-      name: item.full_name,
-      updated_at: data.generated_at || "",
-      age: item.age,
-      height: item.height_cm,
-      measurements: [item.bust_cm, item.waist_cm, item.hips_cm].filter(x => x != null).join("–"),
-      avatar: item.avatar,
-      portfolio: item.photos || [],
-      status: "",
-      contacts: { email:"", instagram:"", phone:"" }
-    };
-  }
-
-  // ====== LIGHTBOX state ======
-  let photos = [];
-  let currentIndex = 0;
-
-  function openModal(idx) {
-    currentIndex = idx;
-    const url = photos[currentIndex];
-
-    el("modalTitle").textContent = `Портфолио — ${model.name}`;
-    el("modalImg").src = url;
-    el("modalImg").alt = model.name;
-    el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
-    el("openOriginal").href = url;
-
-    bootstrap.Modal.getOrCreateInstance(el("photoModal")).show();
-  }
-
-  function step(delta) {
-    if (!photos.length) return;
-    currentIndex = (currentIndex + delta + photos.length) % photos.length;
-    openModal(currentIndex);
-  }
-
-  function renderProfile() {
-    el("name").textContent = model.name;
-    el("modelId").textContent = model.id;
-    el("updatedAt").textContent = model.updated_at;
-
-    el("subtitle").textContent = [
-   `Возраст: ${model.age}`,
-   `Рост: ${model.height} см`
-   ].filter(Boolean).join(" • ");
-
-
-    el("avatar").src = model.avatar || "";
-    el("avatar").alt = model.name;
-
-    setText("status", model.status);
-    setText("age", model.age);
-    setText("height", model.height ? model.height + " см" : null);
-    setText("measurements", model.measurements);
-  }
-
-  function renderMasonry() {
-    el("photoCount").textContent = `Фото: ${photos.length}`;
-    const masonry = el("masonry");
-    masonry.innerHTML = "";
-
-    photos.forEach((url, idx) => {
-      const wrap = document.createElement("div");
-      wrap.className = "masonry-item";
-
-      const card = document.createElement("div");
-      card.className = "photo-card";
-
-      const img = document.createElement("img");
-      img.loading = "lazy";
-      img.src = url;
-      img.alt = model.name;
-
-      img.addEventListener("click", () => openModal(idx));
-
-      card.appendChild(img);
-      wrap.appendChild(card);
-      masonry.appendChild(wrap);
-    });
-  }
-
-  function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+    function setText(id, value, fallback="—") {
+      const node = el(id);
+      if (!node) return;
+      node.textContent = (value === null || value === undefined || value === "") ? fallback : String(value);
     }
-    return arr;
-  }
 
-  function bindControls() {
-    el("prevBtn").addEventListener("click", () => step(-1));
-    el("nextBtn").addEventListener("click", () => step(1));
-
-    document.addEventListener("keydown", (e) => {
-      const isShown = el("photoModal").classList.contains("show");
-      if (!isShown) return;
-      if (e.key === "ArrowLeft") step(-1);
-      if (e.key === "ArrowRight") step(1);
-    });
-
-    el("shuffleBtn").addEventListener("click", () => {
-      photos = shuffle([...photos]);
-      renderMasonry();
-    });
-
-    el("resetBtn").addEventListener("click", () => {
-      photos = [...model.portfolio];
-      renderMasonry();
-    });
-  }
-
-  // init
-  (async () => {
-    try {
-      window.model = await loadModelFromJson();
-      photos = [...model.portfolio];
-
-      renderProfile();
-      renderMasonry();
-      bindControls();
-    } catch (e) {
-      console.error(e);
-      showErr(e);
+    function showErr(e) {
+      const box = el("err");
+      box.style.display = "block";
+      box.innerHTML = `<div class="alert alert-danger mb-0">${String(e)}</div>`;
     }
-  })();
-</script>
 
+    async function loadModelFromJson() {
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id");
+      if (!id) throw new Error('Нет параметра id. Пример: model.html?id=101');
+
+      // файл data.json ищется рядом с model.html
+      const url = new URL("data.json", location.href);
+      url.searchParams.set("v", Date.now());
+
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error("data.json HTTP " + res.status);
+
+      const data = await res.json();
+      const item = (data.items || []).find(x => String(x.model_id) === String(id));
+      if (!item) throw new Error("Модель не найдена: " + id);
+
+      return {
+        id: item.model_id,
+        name: item.full_name,
+        updated_at: data.generated_at || "",
+        age: item.age,
+        height: item.height_cm,
+        measurements: [item.bust_cm, item.waist_cm, item.hips_cm].filter(x => x != null).join("–"),
+        avatar: item.avatar,
+        portfolio: item.photos || [],
+        contacts: { email:"", instagram:"", phone:"" }
+      };
+    }
+
+    // ====== Lightbox state ======
+    let photos = [];
+    let currentIndex = 0;
+
+    function openModal(idx) {
+      currentIndex = idx;
+      const url = photos[currentIndex];
+
+      el("modalTitle").textContent = `Портфолио — ${model.name}`;
+      el("modalImg").src = url;
+      el("modalImg").alt = model.name;
+      el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
+      el("openOriginal").href = url;
+
+      bootstrap.Modal.getOrCreateInstance(el("photoModal")).show();
+    }
+
+    function step(delta) {
+      if (!photos.length) return;
+      currentIndex = (currentIndex + delta + photos.length) % photos.length;
+      openModal(currentIndex);
+    }
+
+    function renderProfile() {
+      document.title = model.name + " — Портфолио";
+      el("name").textContent = model.name;
+      el("shortName").textContent = model.name;
+      el("modelId").textContent = model.id;
+      el("updatedAt").textContent = model.updated_at;
+
+      el("subtitle").textContent = [
+        model.age != null ? `Возраст: ${model.age}` : null,
+        model.height != null ? `Рост: ${model.height} см` : null
+      ].filter(Boolean).join(" • ");
+
+      el("avatar").src = model.avatar || "";
+      el("avatar").alt = model.name;
+
+      setText("age", model.age);
+      setText("height", model.height != null ? model.height + " см" : null);
+      setText("measurements", model.measurements);
+
+      el("bookBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("Demo: тут будет заявка на бронь");
+      });
+
+      el("contactBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("Demo: контакты (позже подключим)");
+      });
+    }
+
+    function renderMasonry() {
+      el("photoCount").textContent = `Фото: ${photos.length}`;
+      const masonry = el("masonry");
+      masonry.innerHTML = "";
+
+      photos.forEach((url, idx) => {
+        const wrap = document.createElement("div");
+        wrap.className = "masonry-item";
+
+        const card = document.createElement("div");
+        card.className = "photo-card";
+
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = url;
+        img.alt = model.name;
+
+        img.addEventListener("click", () => openModal(idx));
+
+        card.appendChild(img);
+        wrap.appendChild(card);
+        masonry.appendChild(wrap);
+      });
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function bindControls() {
+      el("prevBtn").addEventListener("click", () => step(-1));
+      el("nextBtn").addEventListener("click", () => step(1));
+
+      document.addEventListener("keydown", (e) => {
+        const isShown = el("photoModal").classList.contains("show");
+        if (!isShown) return;
+        if (e.key === "ArrowLeft") step(-1);
+        if (e.key === "ArrowRight") step(1);
+      });
+
+      el("shuffleBtn").addEventListener("click", () => {
+        photos = shuffle([...photos]);
+        renderMasonry();
+      });
+
+      el("resetBtn").addEventListener("click", () => {
+        photos = [...model.portfolio];
+        renderMasonry();
+      });
+    }
+
+    // init
+    (async () => {
+      try {
+        window.model = await loadModelFromJson();
+        photos = [...model.portfolio];
+
+        renderProfile();
+        renderMasonry();
+        bindControls();
+      } catch (e) {
+        console.error(e);
+        showErr(e);
+      }
+    })();
+  </script>
 </body>
 </html>
