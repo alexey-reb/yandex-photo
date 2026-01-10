@@ -65,9 +65,9 @@
         m.height_cm ? `Рост: ${m.height_cm} см` : null
       ].filter(Boolean).join(" • ");
 
-      /*const a = document.createElement("a");
+      const a = document.createElement("a");
       a.href = `model.html?id=${encodeURIComponent(m.model_id)}`;
-      a.className = "btn btn-primary btn-sm";
+      /*a.className = "btn btn-primary btn-sm";
       a.textContent = "Открыть профиль";*/
 
       body.appendChild(h);
