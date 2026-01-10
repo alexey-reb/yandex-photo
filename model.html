@@ -264,6 +264,7 @@
     setText("age", model.age);
     setText("height", model.height ? model.height + " см" : null);
     setText("measurements", model.measurements);
+  }
 
   function renderMasonry() {
     el("photoCount").textContent = `Фото: ${photos.length}`;
