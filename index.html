@@ -33,6 +33,7 @@
     const data = await res.json();
 
     data.items.forEach(m => {
+      const fullName = [m.name].filter(Boolean).join(" ");
       const col = document.createElement("div");
       col.className = "col-6 col-md-4 col-lg-3";
 
@@ -41,7 +42,7 @@
 
       const img = document.createElement("img");
       img.src = m.avatar || "";
-      img.alt = m.full_name || "";
+      img.alt = fullName || "";
       img.loading = "lazy";
 
       const body = document.createElement("div");
@@ -49,7 +50,7 @@
 
       const h = document.createElement("h5");
       h.className = "card-title";
-      h.textContent = m.full_name;
+      h.textContent = fullName;
 
       const p = document.createElement("p");
       p.className = "card-text text-secondary";
