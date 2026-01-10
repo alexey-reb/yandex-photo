@@ -88,61 +88,64 @@
   </header>
 
   <main class="container-fluid my-4">
-    <div class="row g-4">
-      <!-- LEFT: Profile -->
-      <aside class="col-12 col-lg-3 sticky-aside profile-col">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <div class="d-flex align-items-start gap-3">
-              <img id="avatar" alt="" class="rounded-3"
-                   style="width:84px;height:84px;object-fit:cover;background:#eee;">
-              <div class="flex-grow-1">
-                <div class="small text-secondary">Профиль</div>
-                <div class="fw-semibold" id="shortName"></div>
-              </div>
-            </div>
-
-            <hr class="my-3">
-
-            <h2 class="h6 mb-3">Параметры</h2>
-            <dl class="spec row mb-0">
-              <dt class="col-5">Возраст</dt>
-              <dd class="col-7" id="age"></dd>
-
-              <dt class="col-5">Рост</dt>
-              <dd class="col-7" id="height"></dd>
-
-              <dt class="col-5">Параметры</dt>
-              <dd class="col-7" id="measurements"></dd>
-            </dl>
-
-            <hr class="my-3">
-
-            <div class="d-grid gap-2">
-              <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
-              <a class="btn btn-outline-secondary" href="#" id="contactBtn">Контакты</a>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- RIGHT: Portfolio -->
-      <section class="col-12 col-lg-9">
-        <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <!-- TOP: Profile -->
+<section class="mb-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center justify-content-between">
+        <div class="d-flex align-items-start gap-3">
+          <img id="avatar" alt="" class="rounded-3"
+               style="width:92px;height:92px;object-fit:cover;background:#eee;">
           <div>
-            <h2 class="h5 mb-0">Портфолио</h2>
-            <div class="text-secondary small" id="photoCount"></div>
-          </div>
-
-          <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary btn-sm" id="shuffleBtn">Перемешать</button>
-            <button class="btn btn-outline-secondary btn-sm" id="resetBtn">Сбросить</button>
+            <div class="small text-secondary">Профиль</div>
+            <div class="h5 mb-1" id="shortName"></div>
+            <div class="text-secondary" id="subtitleInline"></div>
           </div>
         </div>
 
-        <div id="masonry" class="masonry"></div>
-      </section>
+        <div class="d-flex gap-2">
+          <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
+          <a class="btn btn-outline-secondary" href="#" id="contactBtn">Контакты</a>
+        </div>
+      </div>
+
+      <hr class="my-3">
+
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <div class="small text-secondary">Возраст</div>
+          <div class="fw-semibold" id="age"></div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="small text-secondary">Рост</div>
+          <div class="fw-semibold" id="height"></div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="small text-secondary">Параметры</div>
+          <div class="fw-semibold" id="measurements"></div>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- FULL WIDTH: Portfolio -->
+<section>
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h2 class="h5 mb-0">Портфолио</h2>
+      <div class="text-secondary small" id="photoCount"></div>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary btn-sm" id="shuffleBtn">Перемешать</button>
+      <button class="btn btn-outline-secondary btn-sm" id="resetBtn">Сбросить</button>
+    </div>
+  </div>
+
+  <div id="masonry" class="masonry"></div>
+</section>
+
   </main>
 
   <!-- Modal (Lightbox) -->
@@ -242,6 +245,7 @@
       document.title = model.name + " — Портфолио";
       el("name").textContent = model.name;
       el("shortName").textContent = model.name;
+      setText("subtitleInline", el("subtitle").textContent, "");
       el("modelId").textContent = model.id;
       el("updatedAt").textContent = model.updated_at;
 
