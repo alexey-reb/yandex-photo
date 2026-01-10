@@ -17,7 +17,6 @@
     }
     .hero .muted { color: rgba(255,255,255,.75); }
 
-    /* Masonry без библиотек: CSS columns */
     .masonry { column-gap: 1rem; column-count: 1; }
     @media (min-width: 576px) { .masonry { column-count: 2; } }
     @media (min-width: 992px) { .masonry { column-count: 3; } }
@@ -41,9 +40,6 @@
       cursor: zoom-in;
     }
 
-    .spec dt { color: #6c757d; font-weight: 500; }
-    .spec dd { margin-bottom: .6rem; }
-
     .modal-img {
       width: 100%;
       height: auto;
@@ -51,296 +47,163 @@
       border-radius: 12px;
       background: #f3f3f3;
     }
-
-    /* Sticky profile so left column doesn't feel "empty" while scrolling */
-    @media (min-width: 992px) {
-      .sticky-aside {
-        position: sticky;
-        top: 1rem;
-      }
-    }
-    @media (min-width: 992px) {
-      .profile-col { max-width: 360px; }
-    }
-
   </style>
 </head>
 
 <body class="bg-body-tertiary">
 
-  <!-- HERO -->
-  <header class="hero py-5">
-    <div class="container">
-      <div id="err" class="mb-3" style="display:none;"></div>
-
-      <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
-        <div>
-          <a href="./index.html" class="text-decoration-none text-white-50 small">← Назад к списку</a>
-          <h1 class="display-6 mb-1 mt-2" id="name"></h1>
-          <div class="muted" id="subtitle"></div>
-        </div>
-        <div class="text-md-end">
-          <div class="small text-white-50">Обновлено: <span id="updatedAt"></span></div>
-          <div class="small text-white-50">ID: <span id="modelId"></span></div>
-        </div>
+<header class="hero py-5">
+  <div class="container">
+    <div id="err" class="mb-3" style="display:none;"></div>
+    <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
+      <div>
+        <a href="./index.html" class="text-decoration-none text-white-50 small">← Назад к списку</a>
+        <h1 class="display-6 mb-1 mt-2" id="name"></h1>
+        <div class="muted" id="subtitle"></div>
+      </div>
+      <div class="text-md-end">
+        <div class="small text-white-50">Обновлено: <span id="updatedAt"></span></div>
+        <div class="small text-white-50">ID: <span id="modelId"></span></div>
       </div>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main class="container-fluid my-4">
-    <!-- TOP: Profile -->
+<main class="container-fluid my-4">
+
 <section class="mb-4">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center justify-content-between">
-        <div class="d-flex align-items-start gap-3">
-          <img id="avatar" alt="" class="rounded-3"
-               style="width:92px;height:92px;object-fit:cover;background:#eee;">
-          <div>
-            <div class="small text-secondary">Профиль</div>
-            <div class="h5 mb-1" id="shortName"></div>
-            <div class="text-secondary" id="subtitleInline"></div>
-          </div>
-        </div>
-
-        <div class="d-flex gap-2">
-          <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
-          <a class="btn btn-outline-secondary" href="#" id="contactBtn">Контакты</a>
-        </div>
-      </div>
-
-      <hr class="my-3">
-
-      <div class="row g-3">
-        <div class="col-6 col-md-3">
-          <div class="small text-secondary">Возраст</div>
-          <div class="fw-semibold" id="age"></div>
-        </div>
-        <div class="col-6 col-md-3">
-          <div class="small text-secondary">Рост</div>
-          <div class="fw-semibold" id="height"></div>
-        </div>
-        <div class="col-12 col-md-6">
-          <div class="small text-secondary">Параметры</div>
-          <div class="fw-semibold" id="measurements"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FULL WIDTH: Portfolio -->
-<section>
-  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
-    <div>
-      <h2 class="h5 mb-0">Портфолио</h2>
-      <div class="text-secondary small" id="photoCount"></div>
-    </div>
-
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary btn-sm" id="shuffleBtn">Перемешать</button>
-      <button class="btn btn-outline-secondary btn-sm" id="resetBtn">Сбросить</button>
-    </div>
-  </div>
-
-  <div id="masonry" class="masonry"></div>
-</section>
-
-  </main>
-
-  <!-- Modal (Lightbox) -->
-  <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalTitle">Фото</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-        </div>
-        <div class="modal-body">
-          <img id="modalImg" class="modal-img" alt="">
-          <div class="d-flex justify-content-between align-items-center mt-3">
-            <div class="text-secondary small" id="modalIndex"></div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-outline-secondary btn-sm" id="prevBtn">←</button>
-              <button class="btn btn-outline-secondary btn-sm" id="nextBtn">→</button>
-              <a class="btn btn-primary btn-sm" id="openOriginal" href="#" target="_blank" rel="noreferrer">Открыть оригинал</a>
+  <div class="container">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center justify-content-between">
+          <div class="d-flex align-items-start gap-3">
+            <img id="avatar" class="rounded-3" style="width:96px;height:96px;object-fit:cover;background:#eee;">
+            <div>
+              <div class="small text-secondary">Профиль</div>
+              <div class="h5 mb-1" id="shortName"></div>
+              <div class="text-secondary" id="subtitleInline"></div>
             </div>
           </div>
-          <div class="text-secondary small mt-2">Подсказка: стрелки клавиатуры ← → перелистывают фото.</div>
+          <div class="d-flex gap-2">
+            <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
+            <a class="btn btn-outline-secondary" href="#" id="contactBtn">Контакты</a>
+          </div>
+        </div>
+
+        <hr class="my-3">
+
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <div class="small text-secondary">Возраст</div>
+            <div class="fw-semibold" id="age"></div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="small text-secondary">Рост</div>
+            <div class="fw-semibold" id="height"></div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="small text-secondary">Параметры</div>
+            <div class="fw-semibold" id="measurements"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<section>
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between mb-3 px-2">
+      <div>
+        <h2 class="h5 mb-0">Портфолио</h2>
+        <div class="text-secondary small" id="photoCount"></div>
+      </div>
+    </div>
+    <div id="masonry" class="masonry px-2"></div>
+  </div>
+</section>
 
-  <script>
-    const el = (id) => document.getElementById(id);
+</main>
 
-    function setText(id, value, fallback="—") {
-      const node = el(id);
-      if (!node) return;
-      node.textContent = (value === null || value === undefined || value === "") ? fallback : String(value);
-    }
+<div class="modal fade" id="photoModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImg" class="modal-img">
+        <div class="d-flex justify-content-between mt-3">
+          <div id="modalIndex" class="text-secondary small"></div>
+          <a id="openOriginal" class="btn btn-sm btn-primary" target="_blank">Открыть оригинал</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    function showErr(e) {
-      const box = el("err");
-      box.style.display = "block";
-      box.innerHTML = `<div class="alert alert-danger mb-0">${String(e)}</div>`;
-    }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    async function loadModelFromJson() {
-      const params = new URLSearchParams(location.search);
-      const id = params.get("id");
-      if (!id) throw new Error('Нет параметра id. Пример: model.html?id=101');
+<script>
+const el = id => document.getElementById(id);
+function showErr(e){ el("err").style.display="block"; el("err").innerHTML=e; }
 
-      // файл data.json ищется рядом с model.html
-      const url = new URL("data.json", location.href);
-      url.searchParams.set("v", Date.now());
+async function loadModel(){
+  const id = new URLSearchParams(location.search).get("id");
+  if(!id) throw "no id";
+  const r = await fetch("./data.json?v="+Date.now());
+  const d = await r.json();
+  const m = d.items.find(x=>String(x.model_id)===String(id));
+  if(!m) throw "not found";
+  return {
+    id:m.model_id, name:m.full_name, updated_at:d.generated_at,
+    age:m.age, height:m.height_cm,
+    measurements:[m.bust_cm,m.waist_cm,m.hips_cm].filter(Boolean).join("–"),
+    avatar:m.avatar, portfolio:m.photos||[]
+  };
+}
 
-      const res = await fetch(url.toString());
-      if (!res.ok) throw new Error("data.json HTTP " + res.status);
+let photos=[], idx=0;
 
-      const data = await res.json();
-      const item = (data.items || []).find(x => String(x.model_id) === String(id));
-      if (!item) throw new Error("Модель не найдена: " + id);
+function render(){
+  el("name").textContent=model.name;
+  el("shortName").textContent=model.name;
+  el("subtitle").textContent=`Возраст: ${model.age} • Рост: ${model.height} см`;
+  el("subtitleInline").textContent=el("subtitle").textContent;
+  el("modelId").textContent=model.id;
+  el("updatedAt").textContent=model.updated_at;
+  el("avatar").src=model.avatar;
+  el("age").textContent=model.age;
+  el("height").textContent=model.height+" см";
+  el("measurements").textContent=model.measurements;
 
-      return {
-        id: item.model_id,
-        name: item.full_name,
-        updated_at: data.generated_at || "",
-        age: item.age,
-        height: item.height_cm,
-        measurements: [item.bust_cm, item.waist_cm, item.hips_cm].filter(x => x != null).join("–"),
-        avatar: item.avatar,
-        portfolio: item.photos || [],
-        contacts: { email:"", instagram:"", phone:"" }
-      };
-    }
+  el("photoCount").textContent=`Фото: ${photos.length}`;
+  const m = el("masonry"); m.innerHTML="";
+  photos.forEach((u,i)=>{
+    const w=document.createElement("div"); w.className="masonry-item";
+    const c=document.createElement("div"); c.className="photo-card";
+    const im=document.createElement("img"); im.src=u; im.onclick=()=>open(i);
+    c.appendChild(im); w.appendChild(c); m.appendChild(w);
+  });
+}
 
-    // ====== Lightbox state ======
-    let photos = [];
-    let currentIndex = 0;
+function open(i){
+  idx=i;
+  el("modalTitle").textContent=model.name;
+  el("modalImg").src=photos[i];
+  el("modalIndex").textContent=`${i+1} / ${photos.length}`;
+  el("openOriginal").href=photos[i];
+  bootstrap.Modal.getOrCreateInstance(el("photoModal")).show();
+}
 
-    function openModal(idx) {
-      currentIndex = idx;
-      const url = photos[currentIndex];
-
-      el("modalTitle").textContent = `Портфолио — ${model.name}`;
-      el("modalImg").src = url;
-      el("modalImg").alt = model.name;
-      el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
-      el("openOriginal").href = url;
-
-      bootstrap.Modal.getOrCreateInstance(el("photoModal")).show();
-    }
-
-    function step(delta) {
-      if (!photos.length) return;
-      currentIndex = (currentIndex + delta + photos.length) % photos.length;
-      openModal(currentIndex);
-    }
-
-    function renderProfile() {
-      document.title = model.name + " — Портфолио";
-      el("name").textContent = model.name;
-      el("shortName").textContent = model.name;
-      setText("subtitleInline", el("subtitle").textContent, "");
-      el("modelId").textContent = model.id;
-      el("updatedAt").textContent = model.updated_at;
-
-      el("subtitle").textContent = [
-        model.age != null ? `Возраст: ${model.age}` : null,
-        model.height != null ? `Рост: ${model.height} см` : null
-      ].filter(Boolean).join(" • ");
-
-      el("avatar").src = model.avatar || "";
-      el("avatar").alt = model.name;
-
-      setText("age", model.age);
-      setText("height", model.height != null ? model.height + " см" : null);
-      setText("measurements", model.measurements);
-
-      el("bookBtn").addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Demo: тут будет заявка на бронь");
-      });
-
-      el("contactBtn").addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Demo: контакты (позже подключим)");
-      });
-    }
-
-    function renderMasonry() {
-      el("photoCount").textContent = `Фото: ${photos.length}`;
-      const masonry = el("masonry");
-      masonry.innerHTML = "";
-
-      photos.forEach((url, idx) => {
-        const wrap = document.createElement("div");
-        wrap.className = "masonry-item";
-
-        const card = document.createElement("div");
-        card.className = "photo-card";
-
-        const img = document.createElement("img");
-        img.loading = "lazy";
-        img.src = url;
-        img.alt = model.name;
-
-        img.addEventListener("click", () => openModal(idx));
-
-        card.appendChild(img);
-        wrap.appendChild(card);
-        masonry.appendChild(wrap);
-      });
-    }
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function bindControls() {
-      el("prevBtn").addEventListener("click", () => step(-1));
-      el("nextBtn").addEventListener("click", () => step(1));
-
-      document.addEventListener("keydown", (e) => {
-        const isShown = el("photoModal").classList.contains("show");
-        if (!isShown) return;
-        if (e.key === "ArrowLeft") step(-1);
-        if (e.key === "ArrowRight") step(1);
-      });
-
-      el("shuffleBtn").addEventListener("click", () => {
-        photos = shuffle([...photos]);
-        renderMasonry();
-      });
-
-      el("resetBtn").addEventListener("click", () => {
-        photos = [...model.portfolio];
-        renderMasonry();
-      });
-    }
-
-    // init
-    (async () => {
-      try {
-        window.model = await loadModelFromJson();
-        photos = [...model.portfolio];
-
-        renderProfile();
-        renderMasonry();
-        bindControls();
-      } catch (e) {
-        console.error(e);
-        showErr(e);
-      }
-    })();
-  </script>
+(async()=>{
+  try{
+    window.model=await loadModel();
+    photos=[...model.portfolio];
+    render();
+  }catch(e){ showErr(e); }
+})();
+</script>
 </body>
 </html>
