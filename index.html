@@ -45,6 +45,12 @@
       img.alt = fullName || "";
       img.loading = "lazy";
 
+      img.style.cursor = "pointer";
+      img.addEventListener("click", () => {
+      window.location.href = `model.html?id=${m.model_id}`;
+      });
+
+
       const body = document.createElement("div");
       body.className = "card-body";
 
