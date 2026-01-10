@@ -120,11 +120,6 @@
 
             </dl>
 
-            <hr class="my-3">
-
-            <h2 class="h6 mb-2">О себе</h2>
-            <p class="text-secondary mb-3" id="bio"></p>
-
             <div class="d-grid gap-2">
               <a class="btn btn-primary" href="#" id="bookBtn">Забронировать</a>
               <a class="btn btn-outline-secondary" href="#" id="contactBtn">Контакты</a>
@@ -224,13 +219,6 @@
       avatar: item.avatar,
       portfolio: item.photos || [],
       status: "",
-      city: "",
-      shoe: "",
-      hair: "",
-      eyes: "",
-      languages: [],
-      bio: "",
-      badges: [],
       contacts: { email:"", instagram:"", phone:"" }
     };
   }
@@ -276,7 +264,6 @@
     setText("age", model.age);
     setText("height", model.height ? model.height + " см" : null);
     setText("measurements", model.measurements);
-    setText("bio", model.bio, "");
 
     const badgesWrap = el("badges");
     badgesWrap.innerHTML = "";
