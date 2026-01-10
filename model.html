@@ -252,10 +252,10 @@
     el("updatedAt").textContent = model.updated_at;
 
     el("subtitle").textContent = [
-      model.city,
-      `Возраст: ${model.age}`,
-      `Рост: ${model.height} см`
-    ].filter(Boolean).join(" • ");
+   `Возраст: ${model.age}`,
+   `Рост: ${model.height} см`
+   ].filter(Boolean).join(" • ");
+
 
     el("avatar").src = model.avatar || "";
     el("avatar").alt = model.name;
@@ -264,11 +264,6 @@
     setText("age", model.age);
     setText("height", model.height ? model.height + " см" : null);
     setText("measurements", model.measurements);
-
-    const badgesWrap = el("badges");
-    badgesWrap.innerHTML = "";
-    (model.badges || []).forEach(t => badgesWrap.appendChild(chip(t)));
-  }
 
   function renderMasonry() {
     el("photoCount").textContent = `Фото: ${photos.length}`;
