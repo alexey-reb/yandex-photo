@@ -108,23 +108,9 @@
               <dt class="col-5">Рост</dt>
               <dd class="col-7" id="height"></dd>
 
-              <dt class="col-5">Город</dt>
-              <dd class="col-7" id="city"></dd>
-
               <dt class="col-5">Параметры</dt>
               <dd class="col-7" id="measurements"></dd>
 
-              <dt class="col-5">Обувь</dt>
-              <dd class="col-7" id="shoe"></dd>
-
-              <dt class="col-5">Волосы</dt>
-              <dd class="col-7" id="hair"></dd>
-
-              <dt class="col-5">Глаза</dt>
-              <dd class="col-7" id="eyes"></dd>
-
-              <dt class="col-5">Языки</dt>
-              <dd class="col-7" id="langs"></dd>
             </dl>
 
             <hr class="my-3">
@@ -282,12 +268,7 @@
     setText("status", model.status);
     setText("age", model.age);
     setText("height", model.height ? model.height + " см" : null);
-    setText("city", model.city);
     setText("measurements", model.measurements);
-    setText("shoe", model.shoe);
-    setText("hair", model.hair);
-    setText("eyes", model.eyes);
-    setText("langs", (model.languages || []).join(", "));
     setText("bio", model.bio, "");
 
     const badgesWrap = el("badges");
