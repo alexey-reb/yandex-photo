@@ -175,15 +175,18 @@
       if (!item) throw new Error("Модель не найдена: " + id);
 
       return {
-        id: item.model_id,
-        name: item.full_name,
-        updated_at: data.generated_at || "",
-        age: item.age,
-        height: item.height_cm,
-        measurements: [item.bust_cm, item.waist_cm, item.hips_cm].filter(x => x != null).join("–"),
-        avatar: item.avatar,
-        portfolio: item.photos || []
+       id: item.model_id,
+      name: [item.name].filter(Boolean).join(" "),
+      updated_at: data.generated_at || "",
+      age: item.age,
+      height: item.height_cm,
+      measurements: [item.bust_cm, item.waist_cm, item.hips_cm]
+        .filter(x => x != null)
+        .join("–"),
+      avatar: item.avatar,
+      portfolio: item.photos || []
       };
+
     }
 
     // ====== state ======
