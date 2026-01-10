@@ -176,7 +176,7 @@
 
 return {
   id: item.model_id,
-  name: [item.name, item.surname].filter(Boolean).join(" "),
+  name: [item.name].filter(Boolean).join(" "),
   updated_at: data.generated_at || "",
   age: item.age,
   height: item.height_cm,
