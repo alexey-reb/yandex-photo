@@ -9,7 +9,7 @@
 <style>
   .model-card-img {
     height: 240px;
-    object-fit: contain;
+    object-fit: cover;      /* 🔥 как было — без пустоты */
     background: #f1f1f1;
     transition: transform 0.25s ease;
   }
@@ -46,11 +46,12 @@
       const card = document.createElement("div");
       card.className = "card h-100 shadow-sm";
 
-      const img = document.createElement("img");
-      img.className = "model-card-img";
-      img.src = m.avatar || "";
-      img.alt = fullName || "";
-      img.loading = "lazy";
+    const img = document.createElement("img");
+    img.className = "model-card-img";   // ← ВАЖНО
+    img.src = m.avatar || "";
+    img.alt = fullName || "";
+    img.loading = "lazy";
+
 
       img.style.cursor = "pointer";
       img.addEventListener("click", () => {
