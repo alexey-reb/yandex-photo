@@ -1,32 +1,16 @@
-<!doctype html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Модели</title>
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   .model-card-img {
     height: 240px;
     object-fit: contain;
     background: #f1f1f1;
     width: 100%;
-    transition: transform 0.4s ease;
+    transition: all 0.4s ease;
     cursor: pointer;
-    padding: 0; /* Убираем отступы */
-    display: block; /* Убираем лишние отступы */
-  }
-  
-  /* Контейнер для картинки внутри карточки */
-  .card > :first-child {
-    overflow: hidden; /* Скрываем увеличенную часть */
-    border-radius: 4px 4px 0 0;
-    background: #f1f1f1;
   }
   
   .model-card-img:hover {
-    transform: scale(1.08);
+    transform: translateY(-3px);
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.1);
   }
   
   .card {
@@ -40,78 +24,3 @@
     position: relative;
   }
 </style>
-
-</head>
-
-<body class="bg-body-tertiary">
-
-<div class="container my-4">
-  <h1 class="mb-4">Каталог моделей</h1>
-  <div id="list" class="row g-4"></div>
-</div>
-
-<script>
-  const list = document.getElementById("list");
-
-  async function load() {
-    const res = await fetch("./data.json?v=" + Date.now());
-    if (!res.ok) throw new Error("data.json HTTP " + res.status);
-
-    const data = await res.json();
-
-    data.items.forEach(m => {
-      const fullName = [m.name].filter(Boolean).join(" ");
-      const col = document.createElement("div");
-      col.className = "col-6 col-md-4 col-lg-3";
-
-      const card = document.createElement("div");
-      card.className = "card h-100 shadow-sm";
-
-      const img = document.createElement("img");
-      img.className = "model-card-img card-img-top";
-      img.src = m.avatar || "";
-      img.alt = fullName || "";
-      img.loading = "lazy";
-      
-      // Обработчик клика по картинке
-      img.addEventListener("click", () => {
-        window.location.href = `model.html?id=${m.model_id}`;
-      });
-
-      card.appendChild(img);
-
-      const body = document.createElement("div");
-      body.className = "card-body";
-
-      const h = document.createElement("h5");
-      h.className = "card-title";
-      h.textContent = fullName;
-
-      const p = document.createElement("p");
-      p.className = "card-text text-secondary";
-      p.textContent = [
-        m.age ? `Возраст: ${m.age}` : null,
-        m.height_cm ? `Рост: ${m.height_cm} см` : null
-      ].filter(Boolean).join(" • ");
-
-      const a = document.createElement("a");
-      a.href = `model.html?id=${encodeURIComponent(m.model_id)}`;
-
-      body.appendChild(h);
-      body.appendChild(p);
-      body.appendChild(a);
-
-      card.appendChild(body);
-      col.appendChild(card);
-      list.appendChild(col);
-    });
-  }
-
-  load().catch(err => {
-    list.innerHTML = `<div class="col"><div class="alert alert-danger">${String(err)}</div></div>`;
-    console.error(err);
-  });
-</script>
-
-</body>
-</html>
