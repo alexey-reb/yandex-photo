@@ -59,6 +59,51 @@
 </div>
 
 <script>
+
+  function readFiltersFromUrl_() {
+  const p = new URLSearchParams(location.search);
+  return {
+    gender: p.get("gender") || "",
+    age_min: p.get("age_min") || "",
+    age_max: p.get("age_max") || ""
+  };
+}
+
+function writeFiltersToUrl_(f) {
+  const p = new URLSearchParams();
+  if (f.gender)  p.set("gender", f.gender);
+  if (f.age_min) p.set("age_min", f.age_min);
+  if (f.age_max) p.set("age_max", f.age_max);
+
+  const qs = p.toString();
+  history.replaceState(null, "", qs ? "?" + qs : location.pathname);
+}
+
+function readFiltersFromUi_() {
+  return {
+    gender: document.getElementById("genderFilter").value,
+    age_min: document.getElementById("ageMin").value,
+    age_max: document.getElementById("ageMax").value
+  };
+}
+
+function syncUiFromFilters_() {
+  document.getElementById("genderFilter").value = filters.gender || "";
+  document.getElementById("ageMin").value = filters.age_min || "";
+  document.getElementById("ageMax").value = filters.age_max || "";
+}
+
+function applyFilters_(items, f) {
+  return items.filter(m => {
+    if (f.gender && m.gender !== f.gender) return false;
+
+    if (f.age_min && Number(m.age) < Number(f.age_min)) return false;
+    if (f.age_max && Number(m.age) > Number(f.age_max)) return false;
+
+    return true;
+  });
+}
+
   const list = document.getElementById("list");
 
   let allItems = [];
