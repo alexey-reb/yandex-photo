@@ -7,25 +7,29 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  .model-card-img {
+  /* Контейнер для картинки с ограничением */
+  .card-img-container {
     height: 240px;
-    object-fit: contain;
+    overflow: hidden;
+    position: relative;
     background: #f1f1f1;
-    width: 100%;
-    transition: all 0.3s ease;
-    cursor: pointer;
     border-radius: 4px 4px 0 0;
   }
   
-  /* Увеличиваем картинку внутри своей рамки */
-  .model-card-img:hover {
-    transform: scale(1.05);
+  .model-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    cursor: pointer;
   }
   
-  /* Увеличиваем всю карточку */
+  .model-card-img:hover {
+    transform: scale(1.1);
+  }
+  
   .card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    overflow: visible;
   }
   
   .card:hover {
@@ -62,18 +66,23 @@
       const card = document.createElement("div");
       card.className = "card h-100 shadow-sm";
 
+      // Создаем контейнер для картинки
+      const imgContainer = document.createElement("div");
+      imgContainer.className = "card-img-container";
+
       const img = document.createElement("img");
-      img.className = "card-img-top model-card-img"; // добавьте этот класс
+      img.className = "model-card-img";
       img.src = m.avatar || "";
       img.alt = fullName || "";
       img.loading = "lazy";
-      img.style.cursor = "pointer";
-
-      img.style.cursor = "pointer";
+      
+      // Обработчик клика по картинке
       img.addEventListener("click", () => {
-      window.location.href = `model.html?id=${m.model_id}`;
+        window.location.href = `model.html?id=${m.model_id}`;
       });
 
+      imgContainer.appendChild(img);
+      card.appendChild(imgContainer);
 
       const body = document.createElement("div");
       body.className = "card-body";
@@ -98,7 +107,6 @@
       body.appendChild(p);
       body.appendChild(a);
 
-      card.appendChild(img);
       card.appendChild(body);
       col.appendChild(card);
       list.appendChild(col);
