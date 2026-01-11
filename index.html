@@ -23,17 +23,124 @@
 
 <div class="container my-4">
   <h1 class="mb-4">Каталог моделей</h1>
+  <div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-3">
+        <label class="form-label">Пол</label>
+        <select id="f_gender" class="form-select">
+          <option value="">Все</option>
+          <option value="female">Женщины</option>
+          <option value="male">Мужчины</option>
+        </select>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="form-label">Возраст от</label>
+        <input id="f_age_min" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="form-label">Возраст до</label>
+        <input id="f_age_max" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+
+      <div class="col-12 col-md-5 d-flex gap-2 justify-content-md-end">
+        <button class="btn btn-primary" id="applyBtn">Применить</button>
+        <button class="btn btn-outline-secondary" id="resetBtn">Сброс</button>
+        <div class="ms-md-2 small text-secondary align-self-center">
+          Найдено: <span id="countFound">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
   <div id="list" class="row g-4"></div>
 </div>
 
 <script>
   const list = document.getElementById("list");
 
+  let allItems = [];
+  let filters = { gender: "", age_min: "", age_max: "" };
+
+  function readFiltersFromUrl_() {
+  const qs = new URLSearchParams(location.search);
+  return {
+    gender: qs.get("gender") || "",
+    age_min: qs.get("age_min") || "",
+    age_max: qs.get("age_max") || ""
+  };
+}
+
+function writeFiltersToUrl_(f) {
+  const qs = new URLSearchParams(location.search);
+
+  // чистим старые значения
+  ["gender","age_min","age_max"].forEach(k => qs.delete(k));
+
+  // пишем только непустые
+  if (f.gender) qs.set("gender", f.gender);
+  if (f.age_min !== "" && f.age_min != null) qs.set("age_min", String(f.age_min));
+  if (f.age_max !== "" && f.age_max != null) qs.set("age_max", String(f.age_max));
+
+  const newUrl = location.pathname + (qs.toString() ? "?" + qs.toString() : "");
+  history.replaceState(null, "", newUrl);
+}
+
+function applyFilters_(items, f) {
+  const gender = String(f.gender || "").toLowerCase();
+  const ageMin = f.age_min === "" ? null : Number(f.age_min);
+  const ageMax = f.age_max === "" ? null : Number(f.age_max);
+
+  return items.filter(m => {
+    if (gender) {
+      if (String(m.gender || "").toLowerCase() !== gender) return false;
+    }
+
+    const age = (m.age === null || m.age === undefined || m.age === "") ? null : Number(m.age);
+    if (ageMin != null && (age == null || age < ageMin)) return false;
+    if (ageMax != null && (age == null || age > ageMax)) return false;
+
+    return true;
+  });
+}
+
+function syncUiFromFilters_() {
+  document.getElementById("f_gender").value = filters.gender || "";
+  document.getElementById("f_age_min").value = filters.age_min || "";
+  document.getElementById("f_age_max").value = filters.age_max || "";
+}
+
+function readFiltersFromUi_() {
+  return {
+    gender: document.getElementById("f_gender").value || "",
+    age_min: document.getElementById("f_age_min").value || "",
+    age_max: document.getElementById("f_age_max").value || ""
+  };
+}
+
+
   async function load() {
     const res = await fetch("./data.json?v=" + Date.now());
     if (!res.ok) throw new Error("data.json HTTP " + res.status);
 
     const data = await res.json();
+allItems = (data.items || []).slice();
+
+// сортировка по priority (как уже делали)
+allItems.sort((a, b) => {
+  const pa = (a.priority == null || a.priority === "") ? 1e9 : Number(a.priority);
+  const pb = (b.priority == null || b.priority === "") ? 1e9 : Number(b.priority);
+  if (pa !== pb) return pa - pb;
+  return String(a.model_id || "").localeCompare(String(b.model_id || ""));
+});
+
+// читаем фильтры из URL и синхроним UI
+filters = readFiltersFromUrl_();
+syncUiFromFilters_();
+render();
+bindFilterUi();
 
     const items = (data.items || []).slice();
 
@@ -49,6 +156,13 @@ items.sort((a, b) => {
   if (pa !== pb) return pa - pb;
   return String(a.model_id || "").localeCompare(String(b.model_id || ""));
 });
+
+    function render() {
+  list.innerHTML = "";
+
+  const items = applyFilters_(allItems, filters);
+
+  document.getElementById("countFound").textContent = String(items.length);
 
 items.forEach(m => {
       const fullName = [m.name].filter(Boolean).join(" ");
@@ -103,6 +217,22 @@ items.forEach(m => {
     list.innerHTML = `<div class="col"><div class="alert alert-danger">${String(err)}</div></div>`;
     console.error(err);
   });
+
+  function bindFilterUi() {
+  document.getElementById("applyBtn").onclick = () => {
+    filters = readFiltersFromUi_();
+    writeFiltersToUrl_(filters);
+    render();
+  };
+
+  document.getElementById("resetBtn").onclick = () => {
+    filters = { gender: "", age_min: "", age_max: "" };
+    writeFiltersToUrl_(filters);
+    syncUiFromFilters_();
+    render();
+  };
+}
+
 </script>
 
 </body>
