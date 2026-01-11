@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-11T16:08:12.324Z",
+  "generated_at": "2026-01-11T16:29:15.210Z",
   "count": 8,
   "items": [
     {
@@ -112,7 +112,7 @@
       "model_id": "102",
       "name": "Алина",
       "surname": "Жукова",
-      "priority": null,
+      "priority": 5,
       "gender": "female",
       "birth_date": "2010-07-14",
       "age": 15,
@@ -277,7 +277,7 @@
       "model_id": "105",
       "name": "Анна",
       "surname": "Окишева",
-      "priority": 6,
+      "priority": 4,
       "gender": "female",
       "birth_date": "2003-07-14",
       "age": 22,
@@ -383,7 +383,7 @@
       "model_id": "106",
       "name": "Алина",
       "surname": "Жукова",
-      "priority": null,
+      "priority": 6,
       "gender": "male",
       "birth_date": "2010-07-14",
       "age": 15,
@@ -492,7 +492,7 @@
       "model_id": "108",
       "name": "Алексей",
       "surname": "Ребежкин",
-      "priority": 5,
+      "priority": 2,
       "gender": "female",
       "birth_date": "2001-07-14",
       "age": 24,
