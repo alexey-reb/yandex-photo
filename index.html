@@ -12,27 +12,27 @@
     object-fit: contain;
     background: #f1f1f1;
     width: 100%;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
     border-radius: 4px 4px 0 0;
   }
   
-  /* Эффект при наведении */
+  /* Увеличиваем картинку внутри своей рамки */
   .model-card-img:hover {
     transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    z-index: 1;
-    position: relative;
   }
   
-  /* Чтобы карточка тоже немного увеличивалась */
+  /* Увеличиваем всю карточку */
   .card {
-    transition: transform 0.3s ease;
-    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: visible;
   }
   
   .card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+    z-index: 5;
+    position: relative;
   }
 </style>
 
