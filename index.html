@@ -64,108 +64,17 @@
   let allItems = [];
   let filters = { gender: "", age_min: "", age_max: "" };
 
-  function readFiltersFromUrl_() {
-  const qs = new URLSearchParams(location.search);
-  return {
-    gender: qs.get("gender") || "",
-    age_min: qs.get("age_min") || "",
-    age_max: qs.get("age_max") || ""
-  };
-}
+  // ... твои функции readFiltersFromUrl_ / writeFiltersToUrl_ / applyFilters_ / syncUiFromFilters_ / readFiltersFromUi_
 
-function writeFiltersToUrl_(f) {
-  const qs = new URLSearchParams(location.search);
+  function render() {
+    list.innerHTML = "";
 
-  // чистим старые значения
-  ["gender","age_min","age_max"].forEach(k => qs.delete(k));
+    const items = applyFilters_(allItems, filters);
+    document.getElementById("countFound").textContent = String(items.length);
 
-  // пишем только непустые
-  if (f.gender) qs.set("gender", f.gender);
-  if (f.age_min !== "" && f.age_min != null) qs.set("age_min", String(f.age_min));
-  if (f.age_max !== "" && f.age_max != null) qs.set("age_max", String(f.age_max));
-
-  const newUrl = location.pathname + (qs.toString() ? "?" + qs.toString() : "");
-  history.replaceState(null, "", newUrl);
-}
-
-function applyFilters_(items, f) {
-  const gender = String(f.gender || "").toLowerCase();
-  const ageMin = f.age_min === "" ? null : Number(f.age_min);
-  const ageMax = f.age_max === "" ? null : Number(f.age_max);
-
-  return items.filter(m => {
-    if (gender) {
-      if (String(m.gender || "").toLowerCase() !== gender) return false;
-    }
-
-    const age = (m.age === null || m.age === undefined || m.age === "") ? null : Number(m.age);
-    if (ageMin != null && (age == null || age < ageMin)) return false;
-    if (ageMax != null && (age == null || age > ageMax)) return false;
-
-    return true;
-  });
-}
-
-function syncUiFromFilters_() {
-  document.getElementById("f_gender").value = filters.gender || "";
-  document.getElementById("f_age_min").value = filters.age_min || "";
-  document.getElementById("f_age_max").value = filters.age_max || "";
-}
-
-function readFiltersFromUi_() {
-  return {
-    gender: document.getElementById("f_gender").value || "",
-    age_min: document.getElementById("f_age_min").value || "",
-    age_max: document.getElementById("f_age_max").value || ""
-  };
-}
-
-
-  async function load() {
-    const res = await fetch("./data.json?v=" + Date.now());
-    if (!res.ok) throw new Error("data.json HTTP " + res.status);
-
-    const data = await res.json();
-allItems = (data.items || []).slice();
-
-// сортировка по priority (как уже делали)
-allItems.sort((a, b) => {
-  const pa = (a.priority == null || a.priority === "") ? 1e9 : Number(a.priority);
-  const pb = (b.priority == null || b.priority === "") ? 1e9 : Number(b.priority);
-  if (pa !== pb) return pa - pb;
-  return String(a.model_id || "").localeCompare(String(b.model_id || ""));
-});
-
-// читаем фильтры из URL и синхроним UI
-filters = readFiltersFromUrl_();
-syncUiFromFilters_();
-render();
-bindFilterUi();
-
-    const items = (data.items || []).slice();
-
-items.sort((a, b) => {
-  const pa = (a.priority === null || a.priority === undefined || a.priority === "")
-    ? 1e9
-    : Number(a.priority);
-
-  const pb = (b.priority === null || b.priority === undefined || b.priority === "")
-    ? 1e9
-    : Number(b.priority);
-
-  if (pa !== pb) return pa - pb;
-  return String(a.model_id || "").localeCompare(String(b.model_id || ""));
-});
-
-    function render() {
-  list.innerHTML = "";
-
-  const items = applyFilters_(allItems, filters);
-
-  document.getElementById("countFound").textContent = String(items.length);
-
-items.forEach(m => {
+    items.forEach(m => {
       const fullName = [m.name].filter(Boolean).join(" ");
+
       const col = document.createElement("div");
       col.className = "col-6 col-md-4 col-lg-3";
 
@@ -173,15 +82,14 @@ items.forEach(m => {
       card.className = "card h-100 shadow-sm";
 
       const img = document.createElement("img");
+      img.className = "card-img-top model-card-img";   // чтобы применился твой CSS
       img.src = m.avatar || "";
       img.alt = fullName || "";
       img.loading = "lazy";
-
       img.style.cursor = "pointer";
       img.addEventListener("click", () => {
-      window.location.href = `model.html?id=${m.model_id}`;
+        window.location.href = `model.html?id=${encodeURIComponent(m.model_id)}`;
       });
-
 
       const body = document.createElement("div");
       body.className = "card-body";
@@ -197,14 +105,8 @@ items.forEach(m => {
         m.height_cm ? `Рост: ${m.height_cm} см` : null
       ].filter(Boolean).join(" • ");
 
-      const a = document.createElement("a");
-      a.href = `model.html?id=${encodeURIComponent(m.model_id)}`;
-      /*a.className = "btn btn-primary btn-sm";
-      a.textContent = "Открыть профиль";*/
-
       body.appendChild(h);
       body.appendChild(p);
-      body.appendChild(a);
 
       card.appendChild(img);
       card.appendChild(body);
@@ -213,26 +115,48 @@ items.forEach(m => {
     });
   }
 
+  function bindFilterUi() {
+    document.getElementById("applyBtn").onclick = () => {
+      filters = readFiltersFromUi_();
+      writeFiltersToUrl_(filters);
+      render();
+    };
+
+    document.getElementById("resetBtn").onclick = () => {
+      filters = { gender: "", age_min: "", age_max: "" };
+      writeFiltersToUrl_(filters);
+      syncUiFromFilters_();
+      render();
+    };
+  }
+
+  async function load() {
+    const res = await fetch("./data.json?v=" + Date.now());
+    if (!res.ok) throw new Error("data.json HTTP " + res.status);
+
+    const data = await res.json();
+    allItems = (data.items || []).slice();
+
+    // сортировка по priority
+    allItems.sort((a, b) => {
+      const pa = (a.priority == null || a.priority === "") ? 1e9 : Number(a.priority);
+      const pb = (b.priority == null || b.priority === "") ? 1e9 : Number(b.priority);
+      if (pa !== pb) return pa - pb;
+      return String(a.model_id || "").localeCompare(String(b.model_id || ""));
+    });
+
+    // читаем фильтры из URL и синхроним UI
+    filters = readFiltersFromUrl_();
+    syncUiFromFilters_();
+
+    bindFilterUi();
+    render();
+  }
+
   load().catch(err => {
     list.innerHTML = `<div class="col"><div class="alert alert-danger">${String(err)}</div></div>`;
     console.error(err);
   });
-
-  function bindFilterUi() {
-  document.getElementById("applyBtn").onclick = () => {
-    filters = readFiltersFromUi_();
-    writeFiltersToUrl_(filters);
-    render();
-  };
-
-  document.getElementById("resetBtn").onclick = () => {
-    filters = { gender: "", age_min: "", age_max: "" };
-    writeFiltersToUrl_(filters);
-    syncUiFromFilters_();
-    render();
-  };
-}
-
 </script>
 
 </body>
