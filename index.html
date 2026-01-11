@@ -35,7 +35,22 @@
 
     const data = await res.json();
 
-    data.items.forEach(m => {
+    const items = (data.items || []).slice();
+
+items.sort((a, b) => {
+  const pa = (a.priority === null || a.priority === undefined || a.priority === "")
+    ? 1e9
+    : Number(a.priority);
+
+  const pb = (b.priority === null || b.priority === undefined || b.priority === "")
+    ? 1e9
+    : Number(b.priority);
+
+  if (pa !== pb) return pa - pb;
+  return String(a.model_id || "").localeCompare(String(b.model_id || ""));
+});
+
+items.forEach(m => {
       const fullName = [m.name].filter(Boolean).join(" ");
       const col = document.createElement("div");
       col.className = "col-6 col-md-4 col-lg-3";
