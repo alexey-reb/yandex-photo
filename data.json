@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T10:18:17.854Z",
+  "generated_at": "2026-06-27T10:34:59.046Z",
   "count": 8,
   "items": [
     {
@@ -75,7 +75,6 @@
         "https://storage.yandexcloud.net/alexreb/101/IMG_1331.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_1339.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_1341.webp",
-        "https://storage.yandexcloud.net/alexreb/101/IMG_1344.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_3531.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_4335.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_4336.webp",
@@ -84,10 +83,11 @@
         "https://storage.yandexcloud.net/alexreb/101/IMG_4340.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_4341.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_4342.webp",
+        "https://storage.yandexcloud.net/alexreb/101/avatar.webp",
         "https://storage.yandexcloud.net/alexreb/101/copy_8FCD1DE3-726C-4404-B30C-A39314140730 (2).webp",
         "https://storage.yandexcloud.net/alexreb/101/copy_C7493A62-FDF0-47DF-83A5-4C27D4156A97 (3).webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/101/17.webp",
+      "avatar": "https://storage.yandexcloud.net/alexreb/101/avatar.webp",
       "shoe_size": 40,
       "eye_color": "green-brown",
       "hair_color": "light blond",
@@ -341,7 +341,6 @@
         "https://storage.yandexcloud.net/alexreb/101/IMG_1331.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_1339.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_1341.webp",
-        "https://storage.yandexcloud.net/alexreb/101/IMG_1344.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_3531.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_4335.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_4336.webp",
@@ -350,10 +349,11 @@
         "https://storage.yandexcloud.net/alexreb/101/IMG_4340.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_4341.webp",
         "https://storage.yandexcloud.net/alexreb/101/IMG_4342.webp",
+        "https://storage.yandexcloud.net/alexreb/101/avatar.webp",
         "https://storage.yandexcloud.net/alexreb/101/copy_8FCD1DE3-726C-4404-B30C-A39314140730 (2).webp",
         "https://storage.yandexcloud.net/alexreb/101/copy_C7493A62-FDF0-47DF-83A5-4C27D4156A97 (3).webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/101/17.webp",
+      "avatar": "https://storage.yandexcloud.net/alexreb/101/avatar.webp",
       "shoe_size": null,
       "eye_color": null,
       "hair_color": null,
