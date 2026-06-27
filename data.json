@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T09:21:56.487Z",
+  "generated_at": "2026-06-27T09:23:42.230Z",
   "count": 8,
   "items": [
     {
@@ -106,9 +106,9 @@
         "https://storage.yandexcloud.net/alexreb/101/ЛераОбрDSC00328 (2).webp"
       ],
       "avatar": "https://storage.yandexcloud.net/alexreb/101/020.webp",
-      "shoe_size": null,
-      "eye_color": null,
-      "hair_color": null,
+      "shoe_size": 40,
+      "eye_color": "greem-brown",
+      "hair_color": "light blond",
       "snaps": null
     },
     {
