@@ -1,19 +1,19 @@
 {
-  "generated_at": "2026-01-11T17:25:46.876Z",
+  "generated_at": "2026-06-27T09:21:56.487Z",
   "count": 8,
   "items": [
     {
       "model_id": "101",
-      "name": "Анна",
-      "surname": "Окишева",
+      "name": "Anna",
+      "surname": "D",
       "priority": 1,
       "gender": "female",
-      "birth_date": "2003-07-14",
-      "age": 22,
-      "height_cm": 180,
-      "bust_cm": 85,
-      "waist_cm": 61,
-      "hips_cm": 91,
+      "birth_date": "2009-01-01",
+      "age": 17,
+      "height_cm": 173,
+      "bust_cm": 83,
+      "waist_cm": 62,
+      "hips_cm": 93,
       "photos_prefix": "https://storage.yandexcloud.net/alexreb/101/",
       "photos": [
         "https://storage.yandexcloud.net/alexreb/101/020.webp",
@@ -105,7 +105,11 @@
         "https://storage.yandexcloud.net/alexreb/101/_916.webp",
         "https://storage.yandexcloud.net/alexreb/101/ЛераОбрDSC00328 (2).webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/101/020.webp"
+      "avatar": "https://storage.yandexcloud.net/alexreb/101/020.webp",
+      "shoe_size": null,
+      "eye_color": null,
+      "hair_color": null,
+      "snaps": null
     },
     {
       "model_id": "102",
@@ -116,7 +120,7 @@
       "birth_date": "2010-07-14",
       "age": 15,
       "height_cm": 174,
-      "bust_cm": 80,
+      "bust_cm": null,
       "waist_cm": 63,
       "hips_cm": 93,
       "photos_prefix": "https://storage.yandexcloud.net/alexreb/102/",
@@ -170,7 +174,11 @@
         "https://storage.yandexcloud.net/alexreb/102/фото 24.webp",
         "https://storage.yandexcloud.net/alexreb/102/фто 2025.webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/102/1.webp"
+      "avatar": "https://storage.yandexcloud.net/alexreb/102/1.webp",
+      "shoe_size": null,
+      "eye_color": null,
+      "hair_color": null,
+      "snaps": null
     },
     {
       "model_id": "103",
@@ -212,7 +220,11 @@
         "https://storage.yandexcloud.net/alexreb/103/asCgp189fAw.webp",
         "https://storage.yandexcloud.net/alexreb/103/vLiLmgAht3E.webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/103/1.webp"
+      "avatar": "https://storage.yandexcloud.net/alexreb/103/1.webp",
+      "shoe_size": null,
+      "eye_color": null,
+      "hair_color": null,
+      "snaps": null
     },
     {
       "model_id": "104",
@@ -268,7 +280,11 @@
         "https://storage.yandexcloud.net/alexreb/104/IMG_8925.webp",
         "https://storage.yandexcloud.net/alexreb/104/IMG_8926.webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/104/IMG_1741.webp"
+      "avatar": "https://storage.yandexcloud.net/alexreb/104/IMG_1741.webp",
+      "shoe_size": null,
+      "eye_color": null,
+      "hair_color": null,
+      "snaps": null
     },
     {
       "model_id": "105",
@@ -373,7 +389,11 @@
         "https://storage.yandexcloud.net/alexreb/101/_916.webp",
         "https://storage.yandexcloud.net/alexreb/101/ЛераОбрDSC00328 (2).webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/101/020.webp"
+      "avatar": "https://storage.yandexcloud.net/alexreb/101/020.webp",
+      "shoe_size": null,
+      "eye_color": null,
+      "hair_color": null,
+      "snaps": null
     },
     {
       "model_id": "106",
@@ -438,7 +458,11 @@
         "https://storage.yandexcloud.net/alexreb/102/фото 24.webp",
         "https://storage.yandexcloud.net/alexreb/102/фто 2025.webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/102/1.webp"
+      "avatar": "https://storage.yandexcloud.net/alexreb/102/1.webp",
+      "shoe_size": null,
+      "eye_color": null,
+      "hair_color": null,
+      "snaps": null
     },
     {
       "model_id": "107",
@@ -480,7 +504,11 @@
         "https://storage.yandexcloud.net/alexreb/103/asCgp189fAw.webp",
         "https://storage.yandexcloud.net/alexreb/103/vLiLmgAht3E.webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/103/1.webp"
+      "avatar": "https://storage.yandexcloud.net/alexreb/103/1.webp",
+      "shoe_size": null,
+      "eye_color": null,
+      "hair_color": null,
+      "snaps": null
     },
     {
       "model_id": "108",
@@ -536,7 +564,11 @@
         "https://storage.yandexcloud.net/alexreb/104/IMG_8925.webp",
         "https://storage.yandexcloud.net/alexreb/104/IMG_8926.webp"
       ],
-      "avatar": "https://storage.yandexcloud.net/alexreb/104/IMG_1741.webp"
+      "avatar": "https://storage.yandexcloud.net/alexreb/104/IMG_1741.webp",
+      "shoe_size": null,
+      "eye_color": null,
+      "hair_color": null,
+      "snaps": null
     }
   ]
 }
