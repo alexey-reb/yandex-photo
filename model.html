@@ -84,6 +84,11 @@
                 <div class="small text-secondary mt-1">ID: <span id="modelId"></span> • Updated: <span id="updatedAt"></span></div>
               </div>
             </div>
+
+            <div class="d-flex gap-2">
+              <a class="btn btn-primary" href="#" id="bookBtn">Book now</a>
+              <a class="btn btn-outline-secondary" href="#" id="contactBtn">Contact</a>
+            </div>
           </div>
 
           <hr class="my-3">
@@ -229,6 +234,10 @@
     } else {
       el("snapsWrap").style.display = "none";
     }
+
+    el("bookBtn").onclick = (e) => { e.preventDefault(); alert("Booking demo — will be connected later."); };
+    el("contactBtn").onclick = (e) => { e.preventDefault(); alert("Contact demo — will be connected later."); };
+  }
 
   function updatePhotoCount() {
     el("photoCount").textContent = `Showing ${Math.min(rendered, photos.length)} of ${photos.length}`;
