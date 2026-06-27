@@ -74,8 +74,12 @@
     <div class="container">
       <div class="card shadow-sm">
         <div class="card-body">
-          <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center justify-content-between">
+          <div class="d-flex flex-column flex-md-row gap-3 align-items-md-start justify-content-between">
+            <!-- Левая часть: кнопка назад + аватар + информация -->
             <div class="d-flex align-items-start gap-3">
+              <!-- Кнопка назад -->
+              <a href="index.html" class="btn btn-outline-secondary btn-sm align-self-start">← Back</a>
+
               <img id="avatar" class="rounded-3 avatar" alt="">
               <div>
                 <div class="small text-secondary">Profile</div>
@@ -85,10 +89,7 @@
               </div>
             </div>
 
-            <div class="d-flex gap-2">
-              <a class="btn btn-primary" href="#" id="bookBtn">Book now</a>
-              <a class="btn btn-outline-secondary" href="#" id="contactBtn">Contact</a>
-            </div>
+            <!-- Правая часть: кнопки удалены -->
           </div>
 
           <hr class="my-3">
@@ -234,9 +235,6 @@
     } else {
       el("snapsWrap").style.display = "none";
     }
-
-    el("bookBtn").onclick = (e) => { e.preventDefault(); alert("Booking demo — will be connected later."); };
-    el("contactBtn").onclick = (e) => { e.preventDefault(); alert("Contact demo — will be connected later."); };
   }
 
   function updatePhotoCount() {
