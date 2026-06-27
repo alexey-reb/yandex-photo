@@ -294,6 +294,9 @@
       const info = [];
       if (m.age != null) info.push(`Age: ${m.age}`);
       if (m.height_cm != null) info.push(`H: ${m.height_cm}cm`);
+      if (m.bust_cm != null && m.waist_cm != null && m.hips_cm != null) {
+      info.push(`${m.bust_cm}–${m.waist_cm}–${m.hips_cm}`);
+}
       if (m.eye_color) info.push(`👁 ${m.eye_color}`);
       if (m.hair_color) info.push(`💇 ${m.hair_color}`);
       if (m.shoe_size != null) info.push(`Shoe: ${m.shoe_size}`);
