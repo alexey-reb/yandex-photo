@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-06-27T09:23:42.230Z",
+  "generated_at": "2026-06-27T09:34:33.637Z",
   "count": 8,
   "items": [
     {
       "model_id": "101",
-      "name": "Anna",
-      "surname": "D",
+      "name": "Anna D",
+      "surname": "",
       "priority": 1,
       "gender": "female",
       "birth_date": "2009-01-01",
@@ -107,14 +107,14 @@
       ],
       "avatar": "https://storage.yandexcloud.net/alexreb/101/020.webp",
       "shoe_size": 40,
-      "eye_color": "greem-brown",
+      "eye_color": "green-brown",
       "hair_color": "light blond",
       "snaps": null
     },
     {
       "model_id": "102",
       "name": "Алина",
-      "surname": "Жукова",
+      "surname": "",
       "priority": 3,
       "gender": "female",
       "birth_date": "2010-07-14",
@@ -183,7 +183,7 @@
     {
       "model_id": "103",
       "name": "Елизавета",
-      "surname": "Парушина",
+      "surname": "",
       "priority": null,
       "gender": "female",
       "birth_date": "2015-07-14",
@@ -229,7 +229,7 @@
     {
       "model_id": "104",
       "name": "Алексей",
-      "surname": "Ребежкин",
+      "surname": "",
       "priority": null,
       "gender": "female",
       "birth_date": "2001-07-14",
@@ -289,7 +289,7 @@
     {
       "model_id": "105",
       "name": "Анна",
-      "surname": "Окишева",
+      "surname": "",
       "priority": 2,
       "gender": "female",
       "birth_date": "2003-07-14",
@@ -398,7 +398,7 @@
     {
       "model_id": "106",
       "name": "Алина",
-      "surname": "Жукова",
+      "surname": "",
       "priority": 4,
       "gender": "male",
       "birth_date": "2010-07-14",
@@ -467,7 +467,7 @@
     {
       "model_id": "107",
       "name": "Елизавета",
-      "surname": "Парушина",
+      "surname": "",
       "priority": null,
       "gender": "male",
       "birth_date": "2015-07-14",
@@ -513,7 +513,7 @@
     {
       "model_id": "108",
       "name": "Алексей",
-      "surname": "Ребежкин",
+      "surname": "",
       "priority": null,
       "gender": "female",
       "birth_date": "2001-07-14",
