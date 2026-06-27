@@ -33,9 +33,6 @@
       font-weight: 600;
       color: #495057;
     }
-    select[multiple] {
-      min-height: 70px;
-    }
   </style>
 </head>
 
@@ -47,7 +44,7 @@
   <div class="filter-section mb-4">
     <div class="row g-3 align-items-end">
       <!-- Gender -->
-      <div class="col-12 col-md-2">
+      <div class="col-6 col-md-2">
         <label class="filter-label">Gender</label>
         <select id="f_gender" class="form-select">
           <option value="">All</option>
@@ -64,32 +61,6 @@
       <div class="col-6 col-md-2">
         <label class="filter-label">Age to</label>
         <input id="f_age_max" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-
-      <!-- Eye Color (multiple) -->
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Eye Color</label>
-        <select id="f_eye_color" class="form-select" multiple>
-          <!-- will be filled from data -->
-        </select>
-      </div>
-
-      <!-- Hair Color (multiple) -->
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Hair Color</label>
-        <select id="f_hair_color" class="form-select" multiple>
-          <!-- will be filled from data -->
-        </select>
-      </div>
-
-      <!-- Shoe Size range (optional) -->
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Shoe size from</label>
-        <input id="f_shoe_min" type="number" class="form-control" min="0" step="0.5" placeholder="—">
-      </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Shoe size to</label>
-        <input id="f_shoe_max" type="number" class="form-control" min="0" step="0.5" placeholder="—">
       </div>
 
       <!-- Height range -->
@@ -132,6 +103,29 @@
         <input id="f_hips_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
 
+      <!-- 
+        Закомментированные фильтры (размер обуви, цвет глаз, цвет волос)
+        Раскомментируйте, если понадобятся позже.
+      -->
+      <!--
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Eye Color</label>
+        <select id="f_eye_color" class="form-select" multiple></select>
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Hair Color</label>
+        <select id="f_hair_color" class="form-select" multiple></select>
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Shoe size from</label>
+        <input id="f_shoe_min" type="number" class="form-control" min="0" step="0.5" placeholder="—">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Shoe size to</label>
+        <input id="f_shoe_max" type="number" class="form-control" min="0" step="0.5" placeholder="—">
+      </div>
+      -->
+
       <!-- Buttons -->
       <div class="col-12 col-md-2 d-flex gap-2 justify-content-md-end">
         <button class="btn btn-primary" id="applyBtn">Apply</button>
@@ -152,20 +146,13 @@
   let filters = {};
 
   // ---- helpers ----
-  function getSelectValues(sel) {
-    return Array.from(sel.selectedOptions).map(o => o.value).filter(v => v !== "");
-  }
-
   function readFiltersFromUrl_() {
     const p = new URLSearchParams(location.search);
     return {
       gender: p.get("gender") || "",
       age_min: p.get("age_min") || "",
       age_max: p.get("age_max") || "",
-      eye_color: p.get("eye_color") ? p.get("eye_color").split(",") : [],
-      hair_color: p.get("hair_color") ? p.get("hair_color").split(",") : [],
-      shoe_min: p.get("shoe_min") || "",
-      shoe_max: p.get("shoe_max") || "",
+      // закомментировано: eye_color, hair_color, shoe_min, shoe_max
       height_min: p.get("height_min") || "",
       height_max: p.get("height_max") || "",
       bust_min: p.get("bust_min") || "",
@@ -182,10 +169,7 @@
     if (f.gender) p.set("gender", f.gender);
     if (f.age_min) p.set("age_min", f.age_min);
     if (f.age_max) p.set("age_max", f.age_max);
-    if (f.eye_color && f.eye_color.length) p.set("eye_color", f.eye_color.join(","));
-    if (f.hair_color && f.hair_color.length) p.set("hair_color", f.hair_color.join(","));
-    if (f.shoe_min) p.set("shoe_min", f.shoe_min);
-    if (f.shoe_max) p.set("shoe_max", f.shoe_max);
+    // закомментировано: eye_color, hair_color, shoe_min, shoe_max
     if (f.height_min) p.set("height_min", f.height_min);
     if (f.height_max) p.set("height_max", f.height_max);
     if (f.bust_min) p.set("bust_min", f.bust_min);
@@ -204,10 +188,7 @@
       gender: document.getElementById("f_gender").value,
       age_min: document.getElementById("f_age_min").value,
       age_max: document.getElementById("f_age_max").value,
-      eye_color: getSelectValues(document.getElementById("f_eye_color")),
-      hair_color: getSelectValues(document.getElementById("f_hair_color")),
-      shoe_min: document.getElementById("f_shoe_min").value,
-      shoe_max: document.getElementById("f_shoe_max").value,
+      // закомментировано
       height_min: document.getElementById("f_height_min").value,
       height_max: document.getElementById("f_height_max").value,
       bust_min: document.getElementById("f_bust_min").value,
@@ -223,15 +204,6 @@
     document.getElementById("f_gender").value = filters.gender || "";
     document.getElementById("f_age_min").value = filters.age_min || "";
     document.getElementById("f_age_max").value = filters.age_max || "";
-
-    // multiple selects: select options that are in filter arrays
-    const eyeSel = document.getElementById("f_eye_color");
-    for (let opt of eyeSel.options) opt.selected = filters.eye_color.includes(opt.value);
-    const hairSel = document.getElementById("f_hair_color");
-    for (let opt of hairSel.options) opt.selected = filters.hair_color.includes(opt.value);
-
-    document.getElementById("f_shoe_min").value = filters.shoe_min || "";
-    document.getElementById("f_shoe_max").value = filters.shoe_max || "";
     document.getElementById("f_height_min").value = filters.height_min || "";
     document.getElementById("f_height_max").value = filters.height_max || "";
     document.getElementById("f_bust_min").value = filters.bust_min || "";
@@ -242,31 +214,10 @@
     document.getElementById("f_hips_max").value = filters.hips_max || "";
   }
 
-  function populateSelectOptions(selId, values, allLabel = "All") {
-    const sel = document.getElementById(selId);
-    const currentSelected = getSelectValues(sel);
-    sel.innerHTML = "";
-    // add a dummy "all" option? but with multiple we don't need.
-    // We'll just add each distinct value.
-    const unique = [...new Set(values.filter(v => v != null && v !== ""))].sort();
-    unique.forEach(v => {
-      const opt = document.createElement("option");
-      opt.value = v;
-      opt.textContent = v;
-      sel.appendChild(opt);
-    });
-    // restore selection if possible
-    for (let opt of sel.options) {
-      if (currentSelected.includes(opt.value)) opt.selected = true;
-    }
-  }
-
   // ---- Filter logic ----
   function applyFilters_(items, f) {
     const amin = f.age_min !== "" ? Number(f.age_min) : null;
     const amax = f.age_max !== "" ? Number(f.age_max) : null;
-    const shoemin = f.shoe_min !== "" ? Number(f.shoe_min) : null;
-    const shoemax = f.shoe_max !== "" ? Number(f.shoe_max) : null;
     const hmin = f.height_min !== "" ? Number(f.height_min) : null;
     const hmax = f.height_max !== "" ? Number(f.height_max) : null;
     const bmin = f.bust_min !== "" ? Number(f.bust_min) : null;
@@ -276,8 +227,7 @@
     const hipmin = f.hips_min !== "" ? Number(f.hips_min) : null;
     const hipmax = f.hips_max !== "" ? Number(f.hips_max) : null;
 
-    const eyeValues = f.eye_color || [];
-    const hairValues = f.hair_color || [];
+    // закомментировано: eye_color, hair_color, shoe_min, shoe_max
 
     return items.filter(m => {
       if (f.gender && m.gender !== f.gender) return false;
@@ -285,10 +235,6 @@
       const age = (m.age === "" || m.age == null) ? null : Number(m.age);
       if (amin != null && (age == null || age < amin)) return false;
       if (amax != null && (age == null || age > amax)) return false;
-
-      const shoe = (m.shoe_size === "" || m.shoe_size == null) ? null : Number(m.shoe_size);
-      if (shoemin != null && (shoe == null || shoe < shoemin)) return false;
-      if (shoemax != null && (shoe == null || shoe > shoemax)) return false;
 
       const height = (m.height_cm === "" || m.height_cm == null) ? null : Number(m.height_cm);
       if (hmin != null && (height == null || height < hmin)) return false;
@@ -306,9 +252,7 @@
       if (hipmin != null && (hips == null || hips < hipmin)) return false;
       if (hipmax != null && (hips == null || hips > hipmax)) return false;
 
-      if (eyeValues.length && !eyeValues.includes(m.eye_color)) return false;
-      if (hairValues.length && !hairValues.includes(m.hair_color)) return false;
-
+      // закомментированная фильтрация по eye, hair, shoe
       return true;
     });
   }
@@ -376,8 +320,6 @@
     document.getElementById("resetBtn").onclick = () => {
       filters = {
         gender: "", age_min: "", age_max: "",
-        eye_color: [], hair_color: [],
-        shoe_min: "", shoe_max: "",
         height_min: "", height_max: "",
         bust_min: "", bust_max: "",
         waist_min: "", waist_max: "",
@@ -405,13 +347,7 @@
       return String(a.model_id || "").localeCompare(String(b.model_id || ""));
     });
 
-    // populate multi-selects with available values
-    const eyeVals = allItems.map(m => m.eye_color).filter(v => v != null && v !== "");
-    const hairVals = allItems.map(m => m.hair_color).filter(v => v != null && v !== "");
-    populateSelectOptions("f_eye_color", eyeVals);
-    populateSelectOptions("f_hair_color", hairVals);
-
-    // read filters from URL and sync UI
+    // читаем фильтры из URL и синхронизируем UI
     filters = readFiltersFromUrl_();
     syncUiFromFilters_();
 
