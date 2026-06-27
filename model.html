@@ -59,13 +59,16 @@
       font-weight: 600;
     }
   </style>
-  // Запрет контекстного меню на всех картинках
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('img').forEach(img => {
-    img.setAttribute('draggable', 'false');
-    img.addEventListener('contextmenu', e => e.preventDefault());
-  });
-});
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('img').forEach(img => {
+        img.setAttribute('draggable', 'false');
+        img.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+        });
+      });
+    });
+  </script>
 </head>
 
 <body class="bg-body-tertiary">
