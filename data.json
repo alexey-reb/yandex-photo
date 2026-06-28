@@ -1,7 +1,97 @@
 {
-  "generated_at": "2026-06-28T13:25:25.598Z",
-  "count": 11,
+  "generated_at": "2026-06-28T13:30:15.385Z",
+  "count": 12,
   "items": [
+    {
+      "model_id": "101",
+      "name": "Anna D",
+      "surname": "",
+      "priority": 1,
+      "gender": "female",
+      "birth_date": "2009-01-01",
+      "age": 17,
+      "height_cm": 173,
+      "bust_cm": 83,
+      "waist_cm": 62,
+      "hips_cm": 93,
+      "photos_prefix": "https://storage.yandexcloud.net/alexreb/101/",
+      "photos": [
+        "https://storage.yandexcloud.net/alexreb/101/17.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2025-12-24 12-35-28.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2025-12-24 12-36-27.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2025-12-24 12-36-48.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2025-12-24 12-36-57.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2025-12-24 12-37-16.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2025-12-24 12-37-25.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2025-12-24 12-37-33.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-01-16 10-57-44.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-01-16 11-19-03.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-01-16 11-19-03_1768551731.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-04 19-24-17.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-04 19-24-46.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-04 19-24-57.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-04 19-25-27.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-04 19-29-17.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-23 20-37-42.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-23 20-38-57.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-23 20-40-02.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-23 20-40-30.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-23 20-42-42.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-29 13-03-54.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-29 13-03-58.webp",
+        "https://storage.yandexcloud.net/alexreb/101/2026-04-29 13-06-44.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-147.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-148.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-149.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-165.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-168.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-169 (1).webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-174.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-175.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-177.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-203.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-204.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-476.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-477.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-478.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-495.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-637.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-640.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-641.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-643.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-644.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-645.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-646.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-648.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-652.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-653.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-659.webp",
+        "https://storage.yandexcloud.net/alexreb/101/FKM-660.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_1277.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_1279.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_1311.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_1327.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_1329.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_1331.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_1339.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_1341.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_3531.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_4335.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_4336.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_4337.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_4338.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_4340.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_4341.webp",
+        "https://storage.yandexcloud.net/alexreb/101/IMG_4342.webp",
+        "https://storage.yandexcloud.net/alexreb/101/avatar.webp",
+        "https://storage.yandexcloud.net/alexreb/101/copy_8FCD1DE3-726C-4404-B30C-A39314140730 (2).webp",
+        "https://storage.yandexcloud.net/alexreb/101/copy_C7493A62-FDF0-47DF-83A5-4C27D4156A97 (3).webp"
+      ],
+      "avatar": "https://storage.yandexcloud.net/alexreb/101/avatar.webp",
+      "shoe_size": 40,
+      "eye_color": "green-brown",
+      "hair_color": "light blond"
+    },
     {
       "model_id": "102",
       "name": "Anna M",
@@ -163,8 +253,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/102/099A7900.webp",
       "shoe_size": 38,
       "eye_color": "green-brown",
-      "hair_color": "brown",
-      "snaps": "https://disk.yandex.ru/d/lV_LvZBnc0Egp"
+      "hair_color": "brown"
     },
     {
       "model_id": "103",
@@ -340,8 +429,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/103/IMG_3924.webp",
       "shoe_size": 39,
       "eye_color": "brown",
-      "hair_color": "blond",
-      "snaps": "https://disk.yandex.ru/d/7Yh7Ja3yMhw62g"
+      "hair_color": "blond"
     },
     {
       "model_id": "104",
@@ -819,8 +907,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/104/0fa4d64d98b1e888f716669e3978d6f7.webp",
       "shoe_size": 40,
       "eye_color": "brown",
-      "hair_color": "dark brown",
-      "snaps": null
+      "hair_color": "dark brown"
     },
     {
       "model_id": "105",
@@ -950,8 +1037,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/105/IMG_0059.webp",
       "shoe_size": 39,
       "eye_color": "gray-blue",
-      "hair_color": "brunette",
-      "snaps": "https://disk.yandex.ru/d/oSioNAXxY99WsQ"
+      "hair_color": "brunette"
     },
     {
       "model_id": "106",
@@ -1107,8 +1193,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/106/780.1.webp",
       "shoe_size": 39,
       "eye_color": "green",
-      "hair_color": "brown",
-      "snaps": "https://disk.yandex.ru/d/i46-itWX-ZbCAA"
+      "hair_color": "brown"
     },
     {
       "model_id": "107",
@@ -1164,8 +1249,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/107/IMG_0967.webp",
       "shoe_size": 38,
       "eye_color": "green-blue",
-      "hair_color": "blond",
-      "snaps": null
+      "hair_color": "blond"
     },
     {
       "model_id": "108",
@@ -1206,8 +1290,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/108/IMG_4139.webp",
       "shoe_size": 38,
       "eye_color": "green-brown",
-      "hair_color": "blond",
-      "snaps": null
+      "hair_color": "blond"
     },
     {
       "model_id": "109",
@@ -1346,8 +1429,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/109/FKM-410.webp",
       "shoe_size": 39,
       "eye_color": "gray-green",
-      "hair_color": "dark blond",
-      "snaps": null
+      "hair_color": "dark blond"
     },
     {
       "model_id": "110",
@@ -1416,8 +1498,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/110/.webp",
       "shoe_size": 39,
       "eye_color": "brown",
-      "hair_color": "dark blond",
-      "snaps": null
+      "hair_color": "dark blond"
     },
     {
       "model_id": "111",
@@ -1506,8 +1587,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/111/099A2935 (1).webp",
       "shoe_size": 37,
       "eye_color": "green-blue",
-      "hair_color": "blond",
-      "snaps": "https://disk.yandex.ru/d/ZGBmvFmLQW23Cg"
+      "hair_color": "blond"
     },
     {
       "model_id": "112",
@@ -1560,8 +1640,7 @@
       "avatar": "https://storage.yandexcloud.net/alexreb/112/099A3604.webp",
       "shoe_size": 39,
       "eye_color": "brown",
-      "hair_color": "blond",
-      "snaps": null
+      "hair_color": "blond"
     }
   ]
 }
