@@ -58,6 +58,13 @@
     .detail-item .value {
       font-weight: 600;
     }
+    .info-note {
+      font-size: 0.9rem;
+      color: #6c757d;
+      font-style: italic;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -88,7 +95,6 @@
                 <div class="small text-secondary mt-1">ID: <span id="modelId"></span> • Updated: <span id="updatedAt"></span></div>
               </div>
             </div>
-
             <!-- Правая часть: кнопки удалены -->
           </div>
 
@@ -103,10 +109,11 @@
             <div class="detail-item"><div class="label">Shoe size</div><div class="value" id="shoe">—</div></div>
             <div class="detail-item"><div class="label">Eye color</div><div class="value" id="eye">—</div></div>
             <div class="detail-item"><div class="label">Hair color</div><div class="value" id="hair">—</div></div>
-            <div class="detail-item" id="snapsWrap" style="display:none;">
-              <div class="label">Snaps</div>
-              <div class="value"><a id="snapsLink" href="#" target="_blank" rel="noreferrer">Open</a></div>
-            </div>
+          </div>
+
+          <!-- Новая строка с текстом вместо Snaps -->
+          <div class="info-note">
+            Full portfolio and snaps available upon request.
           </div>
         </div>
       </div>
@@ -192,7 +199,7 @@
       shoe_size: item.shoe_size,
       eye_color: item.eye_color,
       hair_color: item.hair_color,
-      snaps: item.snaps,
+      // snaps больше не используется
       avatar: item.avatar,
       portfolio: item.photos || []
     };
@@ -228,13 +235,6 @@
     el("shoe").textContent = model.shoe_size ?? "—";
     el("eye").textContent = model.eye_color || "—";
     el("hair").textContent = model.hair_color || "—";
-
-    if (model.snaps) {
-      el("snapsWrap").style.display = "block";
-      el("snapsLink").href = model.snaps;
-    } else {
-      el("snapsWrap").style.display = "none";
-    }
   }
 
   function updatePhotoCount() {
