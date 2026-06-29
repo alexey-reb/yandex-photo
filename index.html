@@ -464,16 +464,30 @@
     const langParam = urlParams.get('lang');
     
     if (langParam) {
-      const currentCookie = getCookie('googtrans');
-      const expectedCookieValue = '/en/' + langParam;
+      // Сначала пытаемся обновить куки (для подстраховки)
+      setLangCookies(langParam);
       
-      if (currentCookie !== expectedCookieValue) {
-        setLangCookies(langParam);
-        window.location.reload();
-      }
+      // Ждем инициализации селекта Google и принудительно переключаем его без перезагрузки
+      const runTranslation = () => {
+        const googleSelect = document.querySelector('.goog-te-combo');
+        if (googleSelect) {
+          googleSelect.value = langCodeSelection(langParam);
+          googleSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+          // Если Google Translate еще грузится, пробуем снова через 100мс
+          setTimeout(runTranslation, 100);
+        }
+      };
+      runTranslation();
     }
   }
 
+  // Вспомогательная функция для проверки точного кода (например, если передали zh вместо zh-CN)
+  function langCodeSelection(lang) {
+    if (lang === 'zh') return 'zh-CN';
+    return lang;
+  }
+  
   function setLangCookies(langCode) {
     // Очищаем старые локальные куки во избежание конфликтов хостов
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
