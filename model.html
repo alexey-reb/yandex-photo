@@ -122,22 +122,17 @@
 <body class="bg-body-tertiary">
 
 <main class="container-fluid my-4">
-
   <div class="container">
     <div id="err" class="mb-3" style="display:none;"></div>
   </div>
 
-  <!-- PROFILE -->
   <section class="mb-4">
     <div class="container">
       <div class="card shadow-sm">
         <div class="card-body">
           <div class="d-flex flex-column flex-md-row gap-3 align-items-md-start justify-content-between">
-            <!-- Левая часть: кнопка назад + аватар + информация -->
             <div class="d-flex align-items-start gap-3">
-              <!-- Кнопка назад -->
               <a href="#" onclick="const l=new URLSearchParams(window.location.search).get('lang'); window.location.href=l?'index.html?lang='+l:'index.html'; return false;" class="btn btn-outline-secondary btn-sm align-self-start">← Back</a>
-
               <img id="avatar" class="rounded-3 avatar" alt="">
               <div>
                 <div class="small text-secondary">Profile</div>
@@ -146,7 +141,6 @@
                 <div class="small text-secondary mt-1">ID: <span id="modelId"></span> • Updated: <span id="updatedAt"></span></div>
               </div>
             </div>
-            <!-- Правая часть: кнопки удалены -->
           </div>
 
           <hr class="my-3">
@@ -162,7 +156,6 @@
             <div class="detail-item"><div class="label">Hair color</div><div class="value" id="hair">—</div></div>
           </div>
 
-          <!-- Новая строка с текстом вместо Snaps -->
           <div class="info-note">
             Full portfolio and snaps available upon request.
           </div>
@@ -171,7 +164,6 @@
     </div>
   </section>
 
-  <!-- PORTFOLIO -->
   <section>
     <div class="container-fluid">
       <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3 px-2">
@@ -190,13 +182,10 @@
       <div class="py-3 text-center text-secondary small" id="loadingHint" style="display:none;">Loading more…</div>
     </div>
   </section>
-
 </main>
 
-<!-- Кнопка "Наверх" -->
 <button id="scrollTopBtn" title="Вверх" aria-label="Наверх">↑</button>
 
-<!-- MODAL -->
 <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
@@ -258,7 +247,6 @@
     };
   }
 
-  // ====== state ======
   let photos = [];
   let basePhotos = [];
   let currentIndex = 0;
@@ -411,11 +399,8 @@
     }
   })();
 
-  // ===== Кнопка "Наверх" (универсальная для мобильных) =====
   const scrollBtn = document.getElementById('scrollTopBtn');
-
   function toggleScrollBtn() {
-    // Универсальный способ получить позицию скролла
     const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if (scrollY > 300) {
       scrollBtn.classList.add('show');
@@ -423,21 +408,15 @@
       scrollBtn.classList.remove('show');
     }
   }
-
-  // Слушаем все возможные события прокрутки
   window.addEventListener('scroll', toggleScrollBtn);
   window.addEventListener('load', toggleScrollBtn);
   window.addEventListener('touchmove', toggleScrollBtn);
 
   scrollBtn.addEventListener('click', function() {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 </script>
 
-<div id="google_translate_element" style="position:absolute; opacity:0; width:0; height:0; overflow:hidden; pointer-events:none;"></div>
 <div id="google_translate_element" style="position:absolute; opacity:0; width:0; height:0; overflow:hidden; pointer-events:none;"></div>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script>
@@ -449,7 +428,6 @@
       autoDisplay: false
     }, 'google_translate_element');
     
-    // Изолируем элементы интерфейса от перевода, чтобы не ломать кнопки
     const nativeControls = [el('shuffleBtn'), el('resetBtn'), el('prevBtn'), el('nextBtn'), el('openOriginal'), el('photoModal')];
     nativeControls.forEach(control => {
       if (control) control.classList.add('notranslate');
@@ -463,50 +441,29 @@
     const langParam = urlParams.get('lang');
     
     if (langParam) {
-      // Пытаемся записать куки (для обычного режима вне iframe)
       setLangCookies(langParam);
       
-      // Ждем загрузки элементов Google и переключаем язык без перезагрузки
       const runTranslation = () => {
         const googleSelect = document.querySelector('.goog-te-combo');
         if (googleSelect) {
           googleSelect.value = langCodeSelection(langParam);
           googleSelect.dispatchEvent(new Event('change', { bubbles: true }));
         } else {
-          setTimeout(runTranslation, 100); // Пробуем снова через 100мс
+          setTimeout(runTranslation, 100);
         }
       };
       runTranslation();
     }
   }
 
-  // Вспомогательная функция для проверки точного кода
   function langCodeSelection(lang) {
     if (lang === 'zh') return 'zh-CN';
     return lang;
   }
 
-  // Вспомогательная функция для проверки точного кода (например, если передали zh вместо zh-CN)
-  function langCodeSelection(lang) {
-    if (lang === 'zh') return 'zh-CN';
-    return lang;
-  }    const urlParams = new URLSearchParams(window.location.search);
-    const langParam = urlParams.get('lang');
-    
-    if (langParam) {
-      const currentCookie = getCookie('googtrans');
-      const expectedCookieValue = '/en/' + langParam;
-      
-      if (currentCookie !== expectedCookieValue) {
-        setLangCookies(langParam);
-        window.location.reload();
-      }
-    }
-
   function setLangCookies(langCode) {
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
-
     document.cookie = "googtrans=/en/" + langCode + "; path=/";
     
     const hostParts = window.location.hostname.split('.');
@@ -514,12 +471,6 @@
       const baseDomain = hostParts.slice(-2).join('.');
       document.cookie = "googtrans=/en/" + langCode + "; path=/; domain=." + baseDomain;
     }
-  }
-
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
   }
 </script>
 </body>
