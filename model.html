@@ -428,13 +428,60 @@
       autoDisplay: false
     }, 'google_translate_element');
     
-    const nativeControls = [el('shuffleBtn'), el('resetBtn'), el('prevBtn'), el('nextBtn'), el('openOriginal'), el('photoModal')];
-    nativeControls.forEach(control => {
-      if (control) control.classList.add('notranslate');
-    });
+    // Добавляем класс классам управления, если это model.html
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    if (shuffleBtn) {
+      const nativeControls = [el('shuffleBtn'), el('resetBtn'), el('prevBtn'), el('nextBtn'), el('openOriginal'), el('photoModal')];
+      nativeControls.forEach(control => { if (control) control.classList.add('notranslate'); });
+    }
 
+    // Инициализируем проверку языка
     checkLanguageUrlParam();
   }
+
+  // Принудительная активация перевода через селектор Google
+  function forceTranslateTo(langParam) {
+    if (!langParam) return;
+    const targetLang = langParam === 'zh' ? 'zh-CN' : langParam;
+    
+    const runTranslation = () => {
+      const googleSelect = document.querySelector('.goog-te-combo');
+      if (googleSelect) {
+        if (googleSelect.value !== targetLang) {
+          googleSelect.value = targetLang;
+          googleSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      } else {
+        setTimeout(runTranslation, 50); // Мягкий шаг ожидания
+      }
+    };
+    runTranslation();
+  }
+
+  function checkLanguageUrlParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const langParam = urlParams.get('lang');
+    if (langParam) {
+      setLangCookies(langParam); // Оставляем для работы вне iframe (напрямую на github)
+      forceTranslateTo(langParam);
+    }
+  }
+
+  function setLangCookies(langCode) {
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+    document.cookie = "googtrans=/en/" + langCode + "; path=/";
+  }
+
+  // СЛУШАТЕЛЬ СООБЩЕНИЙ ИЗ ОСНОВНОГО САЙТА (РЕШАЕТ ПРОБЛЕМУ IFRAME)
+  window.addEventListener('message', function(event) {
+    // Для безопасности можно раскомментировать строчку ниже и вписать ваш домен:
+    // if (event.origin !== 'https://fk-models.ru') return;
+
+    if (event.data && event.data.type === 'SET_LANG') {
+      forceTranslateTo(event.data.lang);
+    }
+  });
 
   function checkLanguageUrlParam() {
     const urlParams = new URLSearchParams(window.location.search);
