@@ -165,7 +165,7 @@
                     <option value="zh-CN">🇨🇳 中文</option>
                     <option value="tr">🇹🇷 Türkçe</option>
                     <option value="ar">🇸🇦 العربية</option>
-                    <option value="jv">🇮🇩 Basa Jawa</option>
+                    <option value="ja">🇯🇵 日本語</option>
                   </select>
                 </div>
                 <div class="text-secondary" id="subtitle"></div>
@@ -249,7 +249,7 @@
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({
       pageLanguage: 'en',
-      includedLanguages: 'en,ru,zh-CN,tr,ar,jv',
+      includedLanguages: 'en,ru,zh-CN,tr,ar,ja',
       layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
       autoDisplay: false
     }, 'google_translate_element');
@@ -258,7 +258,7 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-  // ====== Языковая часть (та же, что в index) ======
+  // ====== Языковая часть (исправленная) ======
   (function() {
     const langSelect = document.getElementById('langSelect');
 
@@ -268,24 +268,26 @@
       'zh-CN': '/en/zh-CN',
       'tr': '/en/tr',
       'ar': '/en/ar',
-      'jv': '/en/jv'
+      'ja': '/en/ja'
     };
+
+    function clearGoogleTranslateCookies() {
+      document.cookie.split(';').forEach(cookie => {
+        const name = cookie.split('=')[0].trim();
+        if (name.startsWith('googtrans') || name.startsWith('__gads') || name.startsWith('_ga')) {
+          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+        }
+      });
+    }
 
     function getCurrentLang() {
       const urlParams = new URLSearchParams(window.location.search);
-      let googtrans = urlParams.get('googtrans');
-      if (googtrans) {
-        const parts = googtrans.split('/');
-        if (parts.length === 3) {
-          const target = parts[2];
-          for (let [key, value] of Object.entries(langMap)) {
-            if (value === '/en/' + target) return key;
-          }
-          return target;
-        }
+      const langParam = urlParams.get('lang');
+      if (langParam && langMap[langParam]) {
+        return langParam;
       }
-      const lang = urlParams.get('lang');
-      if (lang && langMap[lang]) return lang;
+
       const cookie = document.cookie.split('; ').find(row => row.startsWith('googtrans='));
       if (cookie) {
         const val = cookie.split('=')[1];
@@ -293,11 +295,28 @@
         if (parts.length === 3) {
           const target = parts[2];
           for (let [key, value] of Object.entries(langMap)) {
-            if (value === '/en/' + target) return key;
+            if (value === '/en/' + target) {
+              return key;
+            }
           }
           return target;
         }
       }
+
+      const googtransParam = urlParams.get('googtrans');
+      if (googtransParam) {
+        const parts = googtransParam.split('/');
+        if (parts.length === 3) {
+          const target = parts[2];
+          for (let [key, value] of Object.entries(langMap)) {
+            if (value === '/en/' + target) {
+              return key;
+            }
+          }
+          return target;
+        }
+      }
+
       return 'en';
     }
 
@@ -307,27 +326,19 @@
     langSelect.addEventListener('change', function() {
       const lang = this.value;
       if (lang && langMap[lang]) {
+        clearGoogleTranslateCookies();
+
         const url = new URL(window.location);
         if (lang === 'en') {
           url.searchParams.delete('googtrans');
           url.searchParams.delete('lang');
         } else {
           url.searchParams.set('googtrans', langMap[lang]);
-          url.searchParams.delete('lang');
+          url.searchParams.set('lang', lang);
         }
         window.location.href = url.toString();
       }
     });
-
-    const urlLang = new URLSearchParams(window.location.search).get('lang');
-    if (urlLang && langMap[urlLang] && urlLang !== 'en') {
-      if (!new URLSearchParams(window.location.search).has('googtrans')) {
-        const url = new URL(window.location);
-        url.searchParams.set('googtrans', langMap[urlLang]);
-        url.searchParams.delete('lang');
-        window.location.href = url.toString();
-      }
-    }
   })();
 
   // ====== Остальной код (модель, портфолио) ======
