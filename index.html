@@ -464,6 +464,533 @@
     const langParam = urlParams.get('lang');
     
     if (langParam) {
+      // Сначала записываем куки для подстраховки
+      setLangCookies(langParam);
+      
+      // Запускаем циклическую проверку: ждем, пока Google Translate создаст свой выпадающий список
+      const runTranslation = () => {
+        const googleSelect = document.querySelector('.goog-te-combo');
+        
+        if (googleSelect) {
+          // Если нашли селект — выбираем нужный язык
+          googleSelect.value = langCodeSelection(langParam);
+          // Триггерим событие изменения, чтобы Google понял, что язык выбран и пора переводить
+          googleSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+          // Если Google Translate еще загружается, повторяем попытку через 100 миллисекунд
+          setTimeout(runTranslation, 100);
+        }
+      };
+      
+      // Стартуем ожидание
+      runTranslation();
+    }
+  }
+
+  // Вспомогательная функция для проверки точного кода (например, если передали zh вместо zh-CN)
+  function langCodeSelection(lang) {
+    if (lang === 'zh') return 'zh-CN';
+    return lang;
+  }
+  
+  function setLangCookies(langCode) {
+    // Очищаем старые локальные куки во избежание конфликтов хостов
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+
+    // Записываем куку универсально (для текущего пути и корневого домена)
+    document.cookie = "googtrans=/en/" + langCode + "; path=/";
+    
+    // Вычисляем базовый домен (чтобы работало и на поддоменах типа www.)
+    const hostParts = window.location.hostname.split('.');
+    if (hostParts.length >= 2) {
+      const baseDomain = hostParts.slice(-2).join('.');
+      document.cookie = "googtrans=/en/" + langCode + "; path=/; domain=." + baseDomain;
+    }
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  function changeLanguage(langCode) {
+    setLangCookies(langCode);
+    
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', langCode);
+    
+    window.location.href = url.toString();
+  }
+</script>
+</body>
+</html><!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Model Catalog - Mother agency FK Models</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .model-card-img {
+      height: 40vw;
+      max-height: 360px;
+      min-height: 240px;
+      object-fit: contain;
+      background: #f1f1f1;
+    }
+    .card { overflow: hidden; }
+    .model-card-img {
+      transition: transform 0.35s ease;
+    }
+    .card:hover .model-card-img {
+      transform: scale(1.05) translateY(-4px);
+    }
+    .filter-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem 1rem 0.5rem;
+      box-shadow: 0 .125rem .25rem rgba(0,0,0,.05);
+    }
+    .filter-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    /* Кнопка "Наверх" */
+    #scrollTopBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #0d6efd;
+      color: #fff;
+      border: none;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: opacity 0.3s, transform 0.3s;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+    }
+    #scrollTopBtn.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    #scrollTopBtn:hover {
+      background: #0b5ed7;
+      transform: scale(1.05);
+    }
+    @media (max-width: 576px) {
+      #scrollTopBtn {
+        bottom: 20px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+      }
+    }
+
+    /* Профессиональное скрытие элементов Google Translate (не ломает DOM) */
+    .goog-te-banner-frame, .goog-te-gadget-icon, .skiptranslate, iframe[id*="translate"] {
+      display: none !important;
+    }
+    body {
+      top: 0 !important;
+    }
+    .goog-text-highlight {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+    
+    /* Делаем оригинальный контейнер технически видимым для браузера, но скрытым от глаз */
+    #google_translate_element {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="bg-body-tertiary">
+
+<div class="container my-4">
+<h1 class="mb-4">Model Catalog - Mother agency FK Models</h1>
+  
+  <div class="d-flex justify-content-end mb-3 gap-2">
+    <div id="google_translate_element" style="position:absolute; opacity:0; width:0; height:0; overflow:hidden; pointer-events:none;"></div>
+    
+    <div class="dropdown notranslate">
+      <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        🌐 Language
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('en'); return false;">English</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru'); return false;">Русский</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('ar'); return false;">العربية (Saudi Arabia)</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh-CN'); return false;">中文 (Chinese)</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('ja'); return false;">日本語 (Japanese)</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('tr'); return false;">Türkçe</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('de'); return false;">Deutsch</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('es'); return false;">Español</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="filter-section mb-4">
+    <div class="row g-3 align-items-end">
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Gender</label>
+        <select id="f_gender" class="form-select">
+          <option value="">All</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+        </select>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Age from</label>
+        <input id="f_age_min" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Age to</label>
+        <input id="f_age_max" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Height (cm) from</label>
+        <input id="f_height_min" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Height to</label>
+        <input id="f_height_max" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Bust (cm) from</label>
+        <input id="f_bust_min" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Bust to</label>
+        <input id="f_bust_max" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Waist (cm) from</label>
+        <input id="f_waist_min" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Waist to</label>
+        <input id="f_waist_max" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Hips (cm) from</label>
+        <input id="f_hips_min" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="filter-label">Hips to</label>
+        <input id="f_hips_max" type="number" class="form-control" min="0" step="1" placeholder="—">
+      </div>
+
+      <div class="col-12 col-md-2 d-flex gap-2 justify-content-md-end">
+        <button class="btn btn-primary" id="applyBtn">Apply</button>
+        <button class="btn btn-outline-secondary" id="resetBtn">Reset</button>
+        <div class="ms-md-2 small text-secondary align-self-center">
+          Found: <span id="countFound">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="list" class="row g-4"></div>
+</div>
+
+<button id="scrollTopBtn" title="Вверх" aria-label="Наверх">↑</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const list = document.getElementById("list");
+  let allItems = [];
+  let filters = {};
+
+  // ---- helpers ----
+  function readFiltersFromUrl_() {
+    const p = new URLSearchParams(location.search);
+    return {
+      gender: p.get("gender") || "",
+      age_min: p.get("age_min") || "",
+      age_max: p.get("age_max") || "",
+      height_min: p.get("height_min") || "",
+      height_max: p.get("height_max") || "",
+      bust_min: p.get("bust_min") || "",
+      bust_max: p.get("bust_max") || "",
+      waist_min: p.get("waist_min") || "",
+      waist_max: p.get("waist_max") || "",
+      hips_min: p.get("hips_min") || "",
+      hips_max: p.get("hips_max") || ""
+    };
+  }
+
+  function writeFiltersToUrl_(f) {
+    const p = new URLSearchParams();
+    if (f.gender) p.set("gender", f.gender);
+    if (f.age_min) p.set("age_min", f.age_min);
+    if (f.age_max) p.set("age_max", f.age_max);
+    if (f.height_min) p.set("height_min", f.height_min);
+    if (f.height_max) p.set("height_max", f.height_max);
+    if (f.bust_min) p.set("bust_min", f.bust_min);
+    if (f.bust_max) p.set("bust_max", f.bust_max);
+    if (f.waist_min) p.set("waist_min", f.waist_min);
+    if (f.waist_max) p.set("waist_max", f.waist_max);
+    if (f.hips_min) p.set("hips_min", f.hips_min);
+    if (f.hips_max) p.set("hips_max", f.hips_max);
+
+    const qs = p.toString();
+    history.replaceState(null, "", qs ? "?" + qs : location.pathname);
+  }
+
+  function readFiltersFromUi_() {
+    return {
+      gender: document.getElementById("f_gender").value,
+      age_min: document.getElementById("f_age_min").value,
+      age_max: document.getElementById("f_age_max").value,
+      height_min: document.getElementById("f_height_min").value,
+      height_max: document.getElementById("f_height_max").value,
+      bust_min: document.getElementById("f_bust_min").value,
+      bust_max: document.getElementById("f_bust_max").value,
+      waist_min: document.getElementById("f_waist_min").value,
+      waist_max: document.getElementById("f_waist_max").value,
+      hips_min: document.getElementById("f_hips_min").value,
+      hips_max: document.getElementById("f_hips_max").value
+    };
+  }
+
+  function syncUiFromFilters_() {
+    document.getElementById("f_gender").value = filters.gender || "";
+    document.getElementById("f_age_min").value = filters.age_min || "";
+    document.getElementById("f_age_max").value = filters.age_max || "";
+    document.getElementById("f_height_min").value = filters.height_min || "";
+    document.getElementById("f_height_max").value = filters.height_max || "";
+    document.getElementById("f_bust_min").value = filters.bust_min || "";
+    document.getElementById("f_bust_max").value = filters.bust_max || "";
+    document.getElementById("f_waist_min").value = filters.waist_min || "";
+    document.getElementById("f_waist_max").value = filters.waist_max || "";
+    document.getElementById("f_hips_min").value = filters.hips_min || "";
+    document.getElementById("f_hips_max").value = filters.hips_max || "";
+  }
+
+  // ---- Filter logic ----
+  function applyFilters_(items, f) {
+    const amin = f.age_min !== "" ? Number(f.age_min) : null;
+    const amax = f.age_max !== "" ? Number(f.age_max) : null;
+    const hmin = f.height_min !== "" ? Number(f.height_min) : null;
+    const hmax = f.height_max !== "" ? Number(f.height_max) : null;
+    const bmin = f.bust_min !== "" ? Number(f.bust_min) : null;
+    const bmax = f.bust_max !== "" ? Number(f.bust_max) : null;
+    const wmin = f.waist_min !== "" ? Number(f.waist_min) : null;
+    const wmax = f.waist_max !== "" ? Number(f.waist_max) : null;
+    const hipmin = f.hips_min !== "" ? Number(f.hips_min) : null;
+    const hipmax = f.hips_max !== "" ? Number(f.hips_max) : null;
+
+    return items.filter(m => {
+      if (f.gender && m.gender !== f.gender) return false;
+
+      const age = (m.age === "" || m.age == null) ? null : Number(m.age);
+      if (amin != null && (age == null || age < amin)) return false;
+      if (amax != null && (age == null || age > amax)) return false;
+
+      const height = (m.height_cm === "" || m.height_cm == null) ? null : Number(m.height_cm);
+      if (hmin != null && (height == null || height < hmin)) return false;
+      if (hmax != null && (height == null || height > hmax)) return false;
+
+      const bust = (m.bust_cm === "" || m.bust_cm == null) ? null : Number(m.bust_cm);
+      if (bmin != null && (bust == null || bust < bmin)) return false;
+      if (bmax != null && (bust == null || bust > bmax)) return false;
+
+      const waist = (m.waist_cm === "" || m.waist_cm == null) ? null : Number(m.waist_cm);
+      if (wmin != null && (waist == null || waist < wmin)) return false;
+      if (wmax != null && (waist == null || waist > wmax)) return false;
+
+      const hips = (m.hips_cm === "" || m.hips_cm == null) ? null : Number(m.hips_cm);
+      if (hipmin != null && (hips == null || hips < hipmin)) return false;
+      if (hipmax != null && (hips == null || hips > hipmax)) return false;
+
+      return true;
+    });
+  }
+
+  // ---- Render ----
+  function render() {
+    list.innerHTML = "";
+    const items = applyFilters_(allItems, filters);
+    document.getElementById("countFound").textContent = String(items.length);
+
+    items.forEach(m => {
+      const fullName = [m.name].filter(Boolean).join(" ");
+
+      const col = document.createElement("div");
+      col.className = "col-6 col-md-4 col-lg-3";
+
+      const card = document.createElement("div");
+      card.className = "card h-100 shadow-sm";
+
+      const img = document.createElement("img");
+      img.className = "card-img-top model-card-img";
+      img.src = m.avatar || "";
+      img.alt = fullName || "";
+      img.loading = "lazy";
+      img.style.cursor = "pointer";
+      img.addEventListener("click", () => {
+      const currentLang = new URLSearchParams(window.location.search).get('lang');
+      if (currentLang) {
+        window.location.href = `model.html?id=${encodeURIComponent(m.model_id)}&lang=${encodeURIComponent(currentLang)}`;
+      } else {
+        window.location.href = `model.html?id=${encodeURIComponent(m.model_id)}`;
+      }
+      });
+      img.onerror = function() {
+        if (m.photos && m.photos.length) {
+          this.src = m.photos[0];
+        } else {
+          this.src = "";
+        }
+      };
+
+      const body = document.createElement("div");
+      body.className = "card-body";
+
+      const h = document.createElement("h5");
+      h.className = "card-title notranslate";
+      h.textContent = fullName;
+
+      const p = document.createElement("p");
+      p.className = "card-text text-secondary small";
+      const info = [];
+      if (m.age != null) info.push(`Age: ${m.age}`);
+      if (m.height_cm != null) info.push(`H: ${m.height_cm}cm`);
+      if (m.bust_cm != null && m.waist_cm != null && m.hips_cm != null) {
+        info.push(`${m.bust_cm}–${m.waist_cm}–${m.hips_cm}`);
+      }
+      if (m.eye_color) info.push(`👁 ${m.eye_color}`);
+      if (m.hair_color) info.push(`💇 ${m.hair_color}`);
+      if (m.shoe_size != null) info.push(`Shoe: ${m.shoe_size}`);
+      p.textContent = info.join(" • ");
+
+      body.appendChild(h);
+      body.appendChild(p);
+
+      card.appendChild(img);
+      card.appendChild(body);
+      col.appendChild(card);
+      list.appendChild(col);
+    });
+  }
+
+  // ---- UI binds ----
+  function bindFilterUi() {
+    document.getElementById("applyBtn").onclick = () => {
+      filters = readFiltersFromUi_();
+      writeFiltersToUrl_(filters);
+      render();
+    };
+
+    document.getElementById("resetBtn").onclick = () => {
+      filters = {
+        gender: "", age_min: "", age_max: "",
+        height_min: "", height_max: "",
+        bust_min: "", bust_max: "",
+        waist_min: "", waist_max: "",
+        hips_min: "", hips_max: ""
+      };
+      writeFiltersToUrl_(filters);
+      syncUiFromFilters_();
+      render();
+    };
+  }
+
+  // ---- Load data ----
+  async function load() {
+    const res = await fetch("./data.json?v=" + Date.now());
+    if (!res.ok) throw new Error("data.json HTTP " + res.status);
+
+    const data = await res.json();
+    allItems = (data.items || []).slice();
+
+    allItems.sort((a, b) => {
+      const pa = (a.priority == null || a.priority === "") ? 1e9 : Number(a.priority);
+      const pb = (b.priority == null || b.priority === "") ? 1e9 : Number(b.priority);
+      if (pa !== pb) return pa - pb;
+      return String(a.model_id || "").localeCompare(String(b.model_id || ""));
+    });
+
+    filters = readFiltersFromUrl_();
+    syncUiFromFilters_();
+
+    bindFilterUi();
+    render();
+  }
+
+  load().catch(err => {
+    list.innerHTML = `<div class="col"><div class="alert alert-danger">${String(err)}</div></div>`;
+    console.error(err);
+  });
+
+  const scrollBtn = document.getElementById('scrollTopBtn');
+
+  function toggleScrollBtn() {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    if (scrollY > 300) {
+      scrollBtn.classList.add('show');
+    } else {
+      scrollBtn.classList.remove('show');
+    }
+  }
+
+  window.addEventListener('scroll', toggleScrollBtn);
+  window.addEventListener('load', toggleScrollBtn);
+  window.addEventListener('touchmove', toggleScrollBtn);
+
+  scrollBtn.addEventListener('click', function() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+</script>
+
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'ru,en,ar,zh-CN,ja,tr,de,es',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+    }, 'google_translate_element');
+    
+    checkLanguageUrlParam();
+  }
+
+  function checkLanguageUrlParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const langParam = urlParams.get('lang');
+    
+    if (langParam) {
       // Сначала пытаемся обновить куки (для подстраховки)
       setLangCookies(langParam);
       
