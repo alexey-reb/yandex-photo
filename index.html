@@ -73,7 +73,6 @@
       }
     }
 
-    /* Языковой выпадающий список */
     .lang-switcher {
       display: flex;
       align-items: center;
@@ -127,12 +126,11 @@
         <option value="zh-CN">🇨🇳 中文</option>
         <option value="tr">🇹🇷 Türkçe</option>
         <option value="ar">🇸🇦 العربية</option>
-        <option value="jv">🇮🇩 Basa Jawa</option>
+        <option value="ja">🇯🇵 日本語</option>
       </select>
     </div>
   </div>
 
-  <!-- Остальной HTML (фильтры, список) без изменений -->
   <div class="filter-section mb-4">
     <div class="row g-3 align-items-end">
       <div class="col-6 col-md-2">
@@ -204,7 +202,7 @@
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({
       pageLanguage: 'en',
-      includedLanguages: 'en,ru,zh-CN,tr,ar,jv',
+      includedLanguages: 'en,ru,zh-CN,tr,ar,ja',
       layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
       autoDisplay: false
     }, 'google_translate_element');
@@ -213,45 +211,37 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-  // ====== Языковая часть ======
+  // ====== Языковая часть (исправленная) ======
   (function() {
     const langSelect = document.getElementById('langSelect');
 
-    // Маппинг языков для googtrans
     const langMap = {
-      'en': '/en/en',   // исходный язык всегда en, поэтому для английского оставляем en->en
+      'en': '/en/en',
       'ru': '/en/ru',
       'zh-CN': '/en/zh-CN',
       'tr': '/en/tr',
       'ar': '/en/ar',
-      'jv': '/en/jv'
+      'ja': '/en/ja'
     };
 
-    // Получаем текущий язык из URL (параметр googtrans или lang)
+    // Удаляем все cookies Google Translate
+    function clearGoogleTranslateCookies() {
+      document.cookie.split(';').forEach(cookie => {
+        const name = cookie.split('=')[0].trim();
+        if (name.startsWith('googtrans') || name.startsWith('__gads') || name.startsWith('_ga')) {
+          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+        }
+      });
+    }
+
     function getCurrentLang() {
       const urlParams = new URLSearchParams(window.location.search);
-      let googtrans = urlParams.get('googtrans');
-      if (googtrans) {
-        // googtrans имеет вид /en/ru, извлекаем целевой язык
-        const parts = googtrans.split('/');
-        if (parts.length === 3) {
-          const target = parts[2];
-          // Проверяем, есть ли такой язык в нашем списке
-          for (let [key, value] of Object.entries(langMap)) {
-            if (value === '/en/' + target) {
-              return key;
-            }
-          }
-          // Если не найден, но язык поддерживается Google, вернем его как есть
-          return target;
-        }
+      const langParam = urlParams.get('lang');
+      if (langParam && langMap[langParam]) {
+        return langParam;
       }
-      // Проверяем параметр lang
-      const lang = urlParams.get('lang');
-      if (lang && langMap[lang]) {
-        return lang;
-      }
-      // Проверяем cookie googtrans
+
       const cookie = document.cookie.split('; ').find(row => row.startsWith('googtrans='));
       if (cookie) {
         const val = cookie.split('=')[1];
@@ -266,43 +256,43 @@
           return target;
         }
       }
-      // По умолчанию английский
+
+      const googtransParam = urlParams.get('googtrans');
+      if (googtransParam) {
+        const parts = googtransParam.split('/');
+        if (parts.length === 3) {
+          const target = parts[2];
+          for (let [key, value] of Object.entries(langMap)) {
+            if (value === '/en/' + target) {
+              return key;
+            }
+          }
+          return target;
+        }
+      }
+
       return 'en';
     }
 
-    // Устанавливаем выбранный язык в select
     const currentLang = getCurrentLang();
     langSelect.value = currentLang;
 
-    // Обработчик изменения языка
     langSelect.addEventListener('change', function() {
       const lang = this.value;
       if (lang && langMap[lang]) {
-        const googtransValue = langMap[lang];
-        // Если текущий язык совпадает с исходным (en), удаляем googtrans
+        clearGoogleTranslateCookies();
+
         const url = new URL(window.location);
         if (lang === 'en') {
           url.searchParams.delete('googtrans');
           url.searchParams.delete('lang');
         } else {
-          url.searchParams.set('googtrans', googtransValue);
-          url.searchParams.delete('lang');
+          url.searchParams.set('googtrans', langMap[lang]);
+          url.searchParams.set('lang', lang);
         }
         window.location.href = url.toString();
       }
     });
-
-    // Поддержка параметра ?lang=ru (альтернативный способ)
-    const urlLang = new URLSearchParams(window.location.search).get('lang');
-    if (urlLang && langMap[urlLang] && urlLang !== 'en') {
-      // если уже есть googtrans, не перезаписываем
-      if (!new URLSearchParams(window.location.search).has('googtrans')) {
-        const url = new URL(window.location);
-        url.searchParams.set('googtrans', langMap[urlLang]);
-        url.searchParams.delete('lang');
-        window.location.href = url.toString();
-      }
-    }
   })();
 
   // ====== Основная логика (фильтры, рендер) ======
