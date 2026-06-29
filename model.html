@@ -65,6 +65,46 @@
       margin-top: 0.5rem;
       text-align: center;
     }
+
+    /* Кнопка "Наверх" */
+    #scrollTopBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #0d6efd;
+      color: #fff;
+      border: none;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: opacity 0.3s, transform 0.3s;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+    }
+    #scrollTopBtn.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    #scrollTopBtn:hover {
+      background: #0b5ed7;
+      transform: scale(1.05);
+    }
+    @media (max-width: 576px) {
+      #scrollTopBtn {
+        bottom: 20px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 
@@ -142,6 +182,9 @@
 
 </main>
 
+<!-- Кнопка "Наверх" -->
+<button id="scrollTopBtn" title="Вверх" aria-label="Наверх">↑</button>
+
 <!-- MODAL -->
 <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -199,7 +242,6 @@
       shoe_size: item.shoe_size,
       eye_color: item.eye_color,
       hair_color: item.hair_color,
-      // snaps больше не используется
       avatar: item.avatar,
       portfolio: item.photos || []
     };
@@ -223,9 +265,16 @@
     el("modelId").textContent = model.id;
     el("updatedAt").textContent = model.updated_at;
 
-    el("avatar").src = model.avatar || "";
-    el("avatar").alt = model.name;
-    el("avatar").onerror = () => { el("avatar").src = ""; };
+    const avatarImg = el("avatar");
+    avatarImg.src = model.avatar || "";
+    avatarImg.alt = model.name;
+    avatarImg.onerror = function() {
+      if (model.portfolio && model.portfolio.length) {
+        this.src = model.portfolio[0];
+      } else {
+        this.src = "";
+      }
+    };
 
     el("age").textContent = model.age ?? "—";
     el("height").textContent = model.height != null ? model.height + " cm" : "—";
@@ -350,6 +399,19 @@
       showErr(e);
     }
   })();
+
+  // ===== Кнопка "Наверх" =====
+  const scrollBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 300) {
+      scrollBtn.classList.add('show');
+    } else {
+      scrollBtn.classList.remove('show');
+    }
+  });
+  scrollBtn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 </script>
 </body>
 </html>
