@@ -329,7 +329,12 @@
       img.loading = "lazy";
       img.style.cursor = "pointer";
       img.addEventListener("click", () => {
+      const currentLang = new URLSearchParams(window.location.search).get('lang');
+      if (currentLang) {
+        window.location.href = `model.html?id=${encodeURIComponent(m.model_id)}&lang=${encodeURIComponent(currentLang)}`;
+      } else {
         window.location.href = `model.html?id=${encodeURIComponent(m.model_id)}`;
+      }
       });
       img.onerror = function() {
         if (m.photos && m.photos.length) {
@@ -442,18 +447,15 @@
 </script>
 
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script>
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({
       pageLanguage: 'en',
-      // Список поддерживаемых кодов языков
       includedLanguages: 'ru,en,ar,zh-CN,ja,tr,de,es',
       layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
       autoDisplay: false
     }, 'google_translate_element');
     
-    // Проверяем параметр ?lang= в URL при открытии страницы
     checkLanguageUrlParam();
   }
 
@@ -473,8 +475,19 @@
   }
 
   function setLangCookies(langCode) {
+    // Очищаем старые локальные куки во избежание конфликтов хостов
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+
+    // Записываем куку универсально (для текущего пути и корневого домена)
     document.cookie = "googtrans=/en/" + langCode + "; path=/";
-    document.cookie = "googtrans=/en/" + langCode + "; domain=" + window.location.hostname + "; path=/";
+    
+    // Вычисляем базовый домен (чтобы работало и на поддоменах типа www.)
+    const hostParts = window.location.hostname.split('.');
+    if (hostParts.length >= 2) {
+      const baseDomain = hostParts.slice(-2).join('.');
+      document.cookie = "googtrans=/en/" + langCode + "; path=/; domain=." + baseDomain;
+    }
   }
 
   function getCookie(name) {
@@ -486,7 +499,6 @@
   function changeLanguage(langCode) {
     setLangCookies(langCode);
     
-    // Сохраняем текущие фильтры в URL, меняя/добавляя только параметр lang
     const url = new URL(window.location.href);
     url.searchParams.set('lang', langCode);
     
