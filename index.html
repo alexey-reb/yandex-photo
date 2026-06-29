@@ -1,40 +1,71 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Model Catalog - Mother agency FK Models</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Model Profile</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    .model-card-img {
-      height: 40vw;
-      max-height: 360px;
-      min-height: 240px;
+    .masonry { column-gap: 1rem; column-count: 1; }
+    @media (min-width: 576px) { .masonry { column-count: 2; } }
+    @media (min-width: 992px) { .masonry { column-count: 3; } }
+    @media (min-width: 1200px){ .masonry { column-count: 4; } }
+
+    .masonry-item { break-inside: avoid; margin-bottom: 1rem; }
+    .photo-card {
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 .25rem .75rem rgba(0,0,0,.05);
+      background: #fff;
+    }
+    .masonry img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #f3f3f3;
+      cursor: zoom-in;
+    }
+    .modal-img {
+      max-width: 90vw;
+      max-height: 80vh;
+      width: auto;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      object-fit: contain;
+      background: #f3f3f3;
+    }
+    .avatar {
+      width: 96px;
+      height: 96px;
       object-fit: contain;
       background: #f1f1f1;
     }
-    .card { overflow: hidden; }
-    .model-card-img {
-      transition: transform 0.35s ease;
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+      gap: 0.5rem 1rem;
     }
-    .card:hover .model-card-img {
-      transform: scale(1.05) translateY(-4px);
+    .detail-item .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #6c757d;
+      letter-spacing: 0.3px;
     }
-    .filter-section {
-      background: #fff;
-      border-radius: 12px;
-      padding: 1rem 1rem 0.5rem;
-      box-shadow: 0 .125rem .25rem rgba(0,0,0,.05);
-    }
-    .filter-label {
-      font-size: 0.85rem;
+    .detail-item .value {
       font-weight: 600;
-      color: #495057;
+    }
+    .info-note {
+      font-size: 0.9rem;
+      color: #6c757d;
+      font-style: italic;
+      margin-top: 0.5rem;
+      text-align: center;
     }
 
-    /* Кнопка "Наверх" */
     #scrollTopBtn {
       position: fixed;
       bottom: 30px;
@@ -75,12 +106,6 @@
       }
     }
 
-    /* Языковой выпадающий список */
-    .lang-switcher {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
     .lang-select {
       padding: 4px 8px;
       border-radius: 6px;
@@ -90,23 +115,20 @@
       cursor: pointer;
       outline: none;
       transition: border-color 0.2s;
+      margin-left: 8px;
       -webkit-appearance: none;
       appearance: none;
     }
     .lang-select:hover {
       border-color: #0d6efd;
     }
-    .lang-select option {
-      padding: 4px 8px;
-    }
-    .header-row {
+    .profile-header {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      gap: 8px;
     }
-    .header-row h1 {
+    .profile-header .h4 {
       margin-bottom: 0;
     }
 
@@ -121,84 +143,106 @@
 
 <body class="bg-body-tertiary">
 
-<div class="container my-4">
-  <div class="header-row">
-    <h1>Model Catalog - Mother agency FK Models</h1>
-    <div class="lang-switcher">
-      <select id="langSelect" class="lang-select">
-        <option value="en">🇬🇧 English</option>
-        <option value="ru">🇷🇺 Русский</option>
-      </select>
-    </div>
+<main class="container-fluid my-4">
+
+  <div class="container">
+    <div id="err" class="mb-3" style="display:none;"></div>
   </div>
 
-  <!-- Фильтры (без изменений) -->
-  <div class="filter-section mb-4">
-    <div class="row g-3 align-items-end">
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Gender</label>
-        <select id="f_gender" class="form-select">
-          <option value="">All</option>
-          <option value="female">Female</option>
-          <option value="male">Male</option>
-        </select>
+  <section class="mb-4">
+    <div class="container">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex flex-column flex-md-row gap-3 align-items-md-start justify-content-between">
+            <div class="d-flex align-items-start gap-3">
+              <a href="index.html" class="btn btn-outline-secondary btn-sm align-self-start">← Back</a>
+
+              <img id="avatar" class="rounded-3 avatar" alt="">
+              <div>
+                <div class="small text-secondary">Profile</div>
+                <div class="profile-header">
+                  <div class="h4 mb-0" id="name"></div>
+                  <select id="langSelect" class="lang-select">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                  </select>
+                </div>
+                <div class="text-secondary" id="subtitle"></div>
+                <div class="small text-secondary mt-1">ID: <span id="modelId"></span> • Updated: <span id="updatedAt"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-3">
+
+          <div class="detail-grid">
+            <div class="detail-item"><div class="label">Age</div><div class="value" id="age">—</div></div>
+            <div class="detail-item"><div class="label">Height</div><div class="value" id="height">—</div></div>
+            <div class="detail-item"><div class="label">Bust</div><div class="value" id="bust">—</div></div>
+            <div class="detail-item"><div class="label">Waist</div><div class="value" id="waist">—</div></div>
+            <div class="detail-item"><div class="label">Hips</div><div class="value" id="hips">—</div></div>
+            <div class="detail-item"><div class="label">Shoe size</div><div class="value" id="shoe">—</div></div>
+            <div class="detail-item"><div class="label">Eye color</div><div class="value" id="eye">—</div></div>
+            <div class="detail-item"><div class="label">Hair color</div><div class="value" id="hair">—</div></div>
+          </div>
+
+          <div class="info-note">
+            Full portfolio and snaps available upon request.
+          </div>
+        </div>
       </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Age from</label>
-        <input id="f_age_min" type="number" class="form-control" min="0" step="1" placeholder="—">
+    </div>
+  </section>
+
+  <section>
+    <div class="container-fluid">
+      <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3 px-2">
+        <div>
+          <h2 class="h5 mb-0">Portfolio</h2>
+          <div class="text-secondary small" id="photoCount"></div>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary btn-sm" id="shuffleBtn">Shuffle</button>
+          <button class="btn btn-outline-secondary btn-sm" id="resetBtn">Reset</button>
+        </div>
       </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Age to</label>
-        <input id="f_age_max" type="number" class="form-control" min="0" step="1" placeholder="—">
+
+      <div id="masonry" class="masonry px-2"></div>
+      <div id="sentinel" style="height: 1px;"></div>
+      <div class="py-3 text-center text-secondary small" id="loadingHint" style="display:none;">Loading more…</div>
+    </div>
+  </section>
+
+</main>
+
+<button id="scrollTopBtn" title="Вверх" aria-label="Наверх">↑</button>
+
+<!-- MODAL -->
+<div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Height (cm) from</label>
-        <input id="f_height_min" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Height to</label>
-        <input id="f_height_max" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Bust (cm) from</label>
-        <input id="f_bust_min" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Bust to</label>
-        <input id="f_bust_max" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Waist (cm) from</label>
-        <input id="f_waist_min" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Waist to</label>
-        <input id="f_waist_max" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Hips (cm) from</label>
-        <input id="f_hips_min" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-      <div class="col-6 col-md-2">
-        <label class="filter-label">Hips to</label>
-        <input id="f_hips_max" type="number" class="form-control" min="0" step="1" placeholder="—">
-      </div>
-      <div class="col-12 col-md-2 d-flex gap-2 justify-content-md-end">
-        <button class="btn btn-primary" id="applyBtn">Apply</button>
-        <button class="btn btn-outline-secondary" id="resetBtn">Reset</button>
-        <div class="ms-md-2 small text-secondary align-self-center">
-          Found: <span id="countFound">0</span>
+      <div class="modal-body">
+        <img id="modalImg" class="modal-img" alt="">
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="text-secondary small" id="modalIndex"></div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" id="prevBtn">←</button>
+            <button class="btn btn-outline-secondary btn-sm" id="nextBtn">→</button>
+            <a class="btn btn-primary btn-sm" id="openOriginal" href="#" target="_blank" rel="noreferrer">Open original</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div id="list" class="row g-4"></div>
 </div>
 
-<button id="scrollTopBtn" title="Вверх" aria-label="Наверх">↑</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Google Translate (скрытый виджет) -->
+<!-- Google Translate -->
 <div id="google_translate_element" style="display:none;"></div>
 <script type="text/javascript">
   function googleTranslateElementInit() {
@@ -213,17 +257,15 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-  // ====== Языковая часть (работает на мобильных) ======
+  // ====== Языковая часть (аналогично index) ======
   (function() {
     const langSelect = document.getElementById('langSelect');
 
-    // Маппинг языков
     const langMap = {
       'en': '/en/en',
       'ru': '/en/ru'
     };
 
-    // Функция для получения текущего языка из URL или cookie
     function getCurrentLang() {
       const urlParams = new URLSearchParams(window.location.search);
       let googtrans = urlParams.get('googtrans');
@@ -254,11 +296,9 @@
       return 'en';
     }
 
-    // Устанавливаем выбранный язык в select
     const currentLang = getCurrentLang();
     langSelect.value = currentLang;
 
-    // Обработчик изменения языка
     langSelect.addEventListener('change', function() {
       const lang = this.value;
       if (lang && langMap[lang]) {
@@ -274,7 +314,6 @@
       }
     });
 
-    // Поддержка параметра ?lang=ru (для ссылок)
     const urlLang = new URLSearchParams(window.location.search).get('lang');
     if (urlLang && langMap[urlLang] && urlLang !== 'en') {
       if (!new URLSearchParams(window.location.search).has('googtrans')) {
@@ -286,228 +325,199 @@
     }
   })();
 
-  // ====== Основная логика (фильтры, рендер) ======
-  const list = document.getElementById("list");
-  let allItems = [];
-  let filters = {};
+  // ====== Основной код (модель, портфолио) ======
+  const el = id => document.getElementById(id);
 
-  function readFiltersFromUrl_() {
-    const p = new URLSearchParams(location.search);
-    return {
-      gender: p.get("gender") || "",
-      age_min: p.get("age_min") || "",
-      age_max: p.get("age_max") || "",
-      height_min: p.get("height_min") || "",
-      height_max: p.get("height_max") || "",
-      bust_min: p.get("bust_min") || "",
-      bust_max: p.get("bust_max") || "",
-      waist_min: p.get("waist_min") || "",
-      waist_max: p.get("waist_max") || "",
-      hips_min: p.get("hips_min") || "",
-      hips_max: p.get("hips_max") || ""
-    };
+  function showErr(e) {
+    const box = el("err");
+    box.style.display = "block";
+    box.innerHTML = `<div class="alert alert-danger mb-0">${String(e)}</div>`;
   }
 
-  function writeFiltersToUrl_(f) {
-    const p = new URLSearchParams();
-    if (f.gender) p.set("gender", f.gender);
-    if (f.age_min) p.set("age_min", f.age_min);
-    if (f.age_max) p.set("age_max", f.age_max);
-    if (f.height_min) p.set("height_min", f.height_min);
-    if (f.height_max) p.set("height_max", f.height_max);
-    if (f.bust_min) p.set("bust_min", f.bust_min);
-    if (f.bust_max) p.set("bust_max", f.bust_max);
-    if (f.waist_min) p.set("waist_min", f.waist_min);
-    if (f.waist_max) p.set("waist_max", f.waist_max);
-    if (f.hips_min) p.set("hips_min", f.hips_min);
-    if (f.hips_max) p.set("hips_max", f.hips_max);
+  async function loadModelFromJson() {
+    const id = new URLSearchParams(location.search).get("id");
+    if (!id) throw new Error("Missing ?id parameter. Example: model.html?id=101");
 
-    const qs = p.toString();
-    history.replaceState(null, "", qs ? "?" + qs : location.pathname);
-  }
-
-  function readFiltersFromUi_() {
-    return {
-      gender: document.getElementById("f_gender").value,
-      age_min: document.getElementById("f_age_min").value,
-      age_max: document.getElementById("f_age_max").value,
-      height_min: document.getElementById("f_height_min").value,
-      height_max: document.getElementById("f_height_max").value,
-      bust_min: document.getElementById("f_bust_min").value,
-      bust_max: document.getElementById("f_bust_max").value,
-      waist_min: document.getElementById("f_waist_min").value,
-      waist_max: document.getElementById("f_waist_max").value,
-      hips_min: document.getElementById("f_hips_min").value,
-      hips_max: document.getElementById("f_hips_max").value
-    };
-  }
-
-  function syncUiFromFilters_() {
-    document.getElementById("f_gender").value = filters.gender || "";
-    document.getElementById("f_age_min").value = filters.age_min || "";
-    document.getElementById("f_age_max").value = filters.age_max || "";
-    document.getElementById("f_height_min").value = filters.height_min || "";
-    document.getElementById("f_height_max").value = filters.height_max || "";
-    document.getElementById("f_bust_min").value = filters.bust_min || "";
-    document.getElementById("f_bust_max").value = filters.bust_max || "";
-    document.getElementById("f_waist_min").value = filters.waist_min || "";
-    document.getElementById("f_waist_max").value = filters.waist_max || "";
-    document.getElementById("f_hips_min").value = filters.hips_min || "";
-    document.getElementById("f_hips_max").value = filters.hips_max || "";
-  }
-
-  function applyFilters_(items, f) {
-    const amin = f.age_min !== "" ? Number(f.age_min) : null;
-    const amax = f.age_max !== "" ? Number(f.age_max) : null;
-    const hmin = f.height_min !== "" ? Number(f.height_min) : null;
-    const hmax = f.height_max !== "" ? Number(f.height_max) : null;
-    const bmin = f.bust_min !== "" ? Number(f.bust_min) : null;
-    const bmax = f.bust_max !== "" ? Number(f.bust_max) : null;
-    const wmin = f.waist_min !== "" ? Number(f.waist_min) : null;
-    const wmax = f.waist_max !== "" ? Number(f.waist_max) : null;
-    const hipmin = f.hips_min !== "" ? Number(f.hips_min) : null;
-    const hipmax = f.hips_max !== "" ? Number(f.hips_max) : null;
-
-    return items.filter(m => {
-      if (f.gender && m.gender !== f.gender) return false;
-
-      const age = (m.age === "" || m.age == null) ? null : Number(m.age);
-      if (amin != null && (age == null || age < amin)) return false;
-      if (amax != null && (age == null || age > amax)) return false;
-
-      const height = (m.height_cm === "" || m.height_cm == null) ? null : Number(m.height_cm);
-      if (hmin != null && (height == null || height < hmin)) return false;
-      if (hmax != null && (height == null || height > hmax)) return false;
-
-      const bust = (m.bust_cm === "" || m.bust_cm == null) ? null : Number(m.bust_cm);
-      if (bmin != null && (bust == null || bust < bmin)) return false;
-      if (bmax != null && (bust == null || bust > bmax)) return false;
-
-      const waist = (m.waist_cm === "" || m.waist_cm == null) ? null : Number(m.waist_cm);
-      if (wmin != null && (waist == null || waist < wmin)) return false;
-      if (wmax != null && (waist == null || waist > wmax)) return false;
-
-      const hips = (m.hips_cm === "" || m.hips_cm == null) ? null : Number(m.hips_cm);
-      if (hipmin != null && (hips == null || hips < hipmin)) return false;
-      if (hipmax != null && (hips == null || hips > hipmax)) return false;
-
-      return true;
-    });
-  }
-
-  function render() {
-    list.innerHTML = "";
-    const items = applyFilters_(allItems, filters);
-    document.getElementById("countFound").textContent = String(items.length);
-
-    items.forEach(m => {
-      const fullName = [m.name].filter(Boolean).join(" ");
-
-      const col = document.createElement("div");
-      col.className = "col-6 col-md-4 col-lg-3";
-
-      const card = document.createElement("div");
-      card.className = "card h-100 shadow-sm";
-
-      const img = document.createElement("img");
-      img.className = "card-img-top model-card-img";
-      img.src = m.avatar || "";
-      img.alt = fullName || "";
-      img.loading = "lazy";
-      img.style.cursor = "pointer";
-      img.addEventListener("click", () => {
-        window.location.href = `model.html?id=${encodeURIComponent(m.model_id)}`;
-      });
-      img.onerror = function() {
-        if (m.photos && m.photos.length) {
-          this.src = m.photos[0];
-        } else {
-          this.src = "";
-        }
-      };
-
-      const body = document.createElement("div");
-      body.className = "card-body";
-
-      const h = document.createElement("h5");
-      h.className = "card-title";
-      h.textContent = fullName;
-
-      const p = document.createElement("p");
-      p.className = "card-text text-secondary small";
-      const info = [];
-      if (m.age != null) info.push(`Age: ${m.age}`);
-      if (m.height_cm != null) info.push(`H: ${m.height_cm}cm`);
-      if (m.bust_cm != null && m.waist_cm != null && m.hips_cm != null) {
-        info.push(`${m.bust_cm}–${m.waist_cm}–${m.hips_cm}`);
-      }
-      if (m.eye_color) info.push(`👁 ${m.eye_color}`);
-      if (m.hair_color) info.push(`💇 ${m.hair_color}`);
-      if (m.shoe_size != null) info.push(`Shoe: ${m.shoe_size}`);
-      p.textContent = info.join(" • ");
-
-      body.appendChild(h);
-      body.appendChild(p);
-
-      card.appendChild(img);
-      card.appendChild(body);
-      col.appendChild(card);
-      list.appendChild(col);
-    });
-  }
-
-  function bindFilterUi() {
-    document.getElementById("applyBtn").onclick = () => {
-      filters = readFiltersFromUi_();
-      writeFiltersToUrl_(filters);
-      render();
-    };
-
-    document.getElementById("resetBtn").onclick = () => {
-      filters = {
-        gender: "", age_min: "", age_max: "",
-        height_min: "", height_max: "",
-        bust_min: "", bust_max: "",
-        waist_min: "", waist_max: "",
-        hips_min: "", hips_max: ""
-      };
-      writeFiltersToUrl_(filters);
-      syncUiFromFilters_();
-      render();
-    };
-  }
-
-  async function load() {
     const res = await fetch("./data.json?v=" + Date.now());
     if (!res.ok) throw new Error("data.json HTTP " + res.status);
 
     const data = await res.json();
-    allItems = (data.items || []).slice();
+    const item = (data.items || []).find(x => String(x.model_id) === String(id));
+    if (!item) throw new Error("Model not found: " + id);
 
-    allItems.sort((a, b) => {
-      const pa = (a.priority == null || a.priority === "") ? 1e9 : Number(a.priority);
-      const pb = (b.priority == null || b.priority === "") ? 1e9 : Number(b.priority);
-      if (pa !== pb) return pa - pb;
-      return String(a.model_id || "").localeCompare(String(b.model_id || ""));
-    });
-
-    filters = readFiltersFromUrl_();
-    syncUiFromFilters_();
-
-    bindFilterUi();
-    render();
+    return {
+      id: item.model_id,
+      name: [item.name].filter(Boolean).join(" "),
+      updated_at: data.generated_at || "",
+      age: item.age,
+      height: item.height_cm,
+      bust: item.bust_cm,
+      waist: item.waist_cm,
+      hips: item.hips_cm,
+      shoe_size: item.shoe_size,
+      eye_color: item.eye_color,
+      hair_color: item.hair_color,
+      avatar: item.avatar,
+      portfolio: item.photos || []
+    };
   }
 
-  load().catch(err => {
-    list.innerHTML = `<div class="col"><div class="alert alert-danger">${String(err)}</div></div>`;
-    console.error(err);
-  });
+  let photos = [];
+  let basePhotos = [];
+  let currentIndex = 0;
+  const BATCH_SIZE = 24;
+  let rendered = 0;
+  let io = null;
 
-  // ===== Кнопка "Наверх" (исправлена для мобильных) =====
+  function renderProfile(model) {
+    document.title = model.name + " — Profile";
+    el("name").textContent = model.name;
+    el("subtitle").textContent = [
+      model.age != null ? `Age: ${model.age}` : null,
+      model.height != null ? `Height: ${model.height} cm` : null
+    ].filter(Boolean).join(" • ");
+    el("modelId").textContent = model.id;
+    el("updatedAt").textContent = model.updated_at;
+
+    const avatarImg = el("avatar");
+    avatarImg.src = model.avatar || "";
+    avatarImg.alt = model.name;
+    avatarImg.onerror = function() {
+      if (model.portfolio && model.portfolio.length) {
+        this.src = model.portfolio[0];
+      } else {
+        this.src = "";
+      }
+    };
+
+    el("age").textContent = model.age ?? "—";
+    el("height").textContent = model.height != null ? model.height + " cm" : "—";
+    el("bust").textContent = model.bust != null ? model.bust + " cm" : "—";
+    el("waist").textContent = model.waist != null ? model.waist + " cm" : "—";
+    el("hips").textContent = model.hips != null ? model.hips + " cm" : "—";
+    el("shoe").textContent = model.shoe_size ?? "—";
+    el("eye").textContent = model.eye_color || "—";
+    el("hair").textContent = model.hair_color || "—";
+  }
+
+  function updatePhotoCount() {
+    el("photoCount").textContent = `Showing ${Math.min(rendered, photos.length)} of ${photos.length}`;
+  }
+
+  function openModal(idx) {
+    currentIndex = idx;
+    const url = photos[currentIndex];
+    el("modalTitle").textContent = model.name;
+    el("modalImg").src = url;
+    el("modalImg").alt = model.name;
+    el("modalIndex").textContent = `${currentIndex + 1} / ${photos.length}`;
+    el("openOriginal").href = url;
+    bootstrap.Modal.getOrCreateInstance(el("photoModal")).show();
+  }
+
+  function step(delta) {
+    if (!photos.length) return;
+    currentIndex = (currentIndex + delta + photos.length) % photos.length;
+    openModal(currentIndex);
+  }
+
+  function appendPhoto(url, idx) {
+    const wrap = document.createElement("div");
+    wrap.className = "masonry-item";
+    const card = document.createElement("div");
+    card.className = "photo-card";
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.src = url;
+    img.alt = model.name;
+    img.onerror = () => { wrap.remove(); };
+    img.addEventListener("click", () => openModal(idx));
+    card.appendChild(img);
+    wrap.appendChild(card);
+    el("masonry").appendChild(wrap);
+  }
+
+  function renderNextBatch() {
+    const hint = el("loadingHint");
+    hint.style.display = "block";
+    const start = rendered;
+    const end = Math.min(rendered + BATCH_SIZE, photos.length);
+    for (let i = start; i < end; i++) {
+      appendPhoto(photos[i], i);
+    }
+    rendered = end;
+    updatePhotoCount();
+    hint.style.display = "none";
+    if (rendered >= photos.length && io) {
+      io.disconnect();
+      io = null;
+    }
+  }
+
+  function setupInfiniteScroll() {
+    if (io) io.disconnect();
+    io = new IntersectionObserver((entries) => {
+      if (entries.some(e => e.isIntersecting)) {
+        if (rendered < photos.length) renderNextBatch();
+      }
+    }, { root: null, rootMargin: "800px 0px", threshold: 0.01 });
+    io.observe(el("sentinel"));
+  }
+
+  function resetMasonryAndLazy() {
+    el("masonry").innerHTML = "";
+    rendered = 0;
+    updatePhotoCount();
+    setupInfiniteScroll();
+    renderNextBatch();
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function bindControls() {
+    el("prevBtn").onclick = () => step(-1);
+    el("nextBtn").onclick = () => step(1);
+    document.addEventListener("keydown", (e) => {
+      if (!el("photoModal").classList.contains("show")) return;
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+    });
+    el("shuffleBtn").onclick = () => {
+      photos = shuffle([...photos]);
+      resetMasonryAndLazy();
+    };
+    el("resetBtn").onclick = () => {
+      photos = [...basePhotos];
+      resetMasonryAndLazy();
+    };
+  }
+
+  (async () => {
+    try {
+      window.model = await loadModelFromJson();
+      basePhotos = [...model.portfolio];
+      photos = [...basePhotos];
+
+      renderProfile(model);
+      bindControls();
+      resetMasonryAndLazy();
+    } catch (e) {
+      console.error(e);
+      showErr(e);
+    }
+  })();
+
+  // ===== Кнопка "Наверх" (универсальная для мобильных) =====
   const scrollBtn = document.getElementById('scrollTopBtn');
 
   function toggleScrollBtn() {
-    // Универсальный способ получить позицию скролла
     const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if (scrollY > 300) {
       scrollBtn.classList.add('show');
@@ -516,18 +526,12 @@
     }
   }
 
-  // Слушаем скролл
   window.addEventListener('scroll', toggleScrollBtn);
-  // На случай, если страница загрузилась с уже прокрученным положением
   window.addEventListener('load', toggleScrollBtn);
-  // Для мобильных иногда нужно также слушать touchmove
   window.addEventListener('touchmove', toggleScrollBtn);
 
   scrollBtn.addEventListener('click', function() {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 </script>
 </body>
