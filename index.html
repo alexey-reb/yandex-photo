@@ -34,6 +34,7 @@
       color: #495057;
     }
 
+    /* Кнопка "Наверх" */
     #scrollTopBtn {
       position: fixed;
       bottom: 30px;
@@ -73,26 +74,34 @@
       }
     }
 
+    /* Языковые кнопки */
     .lang-switcher {
       display: flex;
-      align-items: center;
       gap: 8px;
+      align-items: center;
     }
-    .lang-select {
-      padding: 4px 8px;
-      border-radius: 6px;
-      border: 1px solid #ced4da;
-      background: #fff;
+    .lang-btn {
+      background: none;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      padding: 4px 10px;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
+      opacity: 0.6;
+      text-decoration: none;
+      color: #212529;
     }
-    .lang-select:hover {
+    .lang-btn:hover {
+      opacity: 1;
+      background: #f0f0f0;
+    }
+    .lang-btn.active {
+      opacity: 1;
       border-color: #0d6efd;
-    }
-    .lang-select option {
-      padding: 4px 8px;
+      background: #e7f1ff;
+      cursor: default;
     }
     .header-row {
       display: flex;
@@ -105,6 +114,7 @@
       margin-bottom: 0;
     }
 
+    /* Скрываем стандартный виджет Google Translate */
     .goog-te-banner-frame, .goog-te-gadget, .skiptranslate {
       display: none !important;
     }
@@ -120,19 +130,14 @@
   <div class="header-row">
     <h1>Model Catalog - Mother agency FK Models</h1>
     <div class="lang-switcher">
-      <select id="langSelect" class="lang-select">
-        <option value="en">🇬🇧 English</option>
-        <option value="ru">🇷🇺 Русский</option>
-        <option value="zh-CN">🇨🇳 中文</option>
-        <option value="tr">🇹🇷 Türkçe</option>
-        <option value="ar">🇸🇦 العربية</option>
-        <option value="ja">🇯🇵 日本語</option>
-      </select>
+      <a href="#" class="lang-btn active" data-lang="en">🇬🇧 EN</a>
+      <a href="#" class="lang-btn" data-lang="ru">🇷🇺 RU</a>
     </div>
   </div>
 
   <div class="filter-section mb-4">
     <div class="row g-3 align-items-end">
+      <!-- Gender -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Gender</label>
         <select id="f_gender" class="form-select">
@@ -141,6 +146,8 @@
           <option value="male">Male</option>
         </select>
       </div>
+
+      <!-- Age range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Age from</label>
         <input id="f_age_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -149,6 +156,8 @@
         <label class="filter-label">Age to</label>
         <input id="f_age_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
+
+      <!-- Height range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Height (cm) from</label>
         <input id="f_height_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -157,6 +166,8 @@
         <label class="filter-label">Height to</label>
         <input id="f_height_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
+
+      <!-- Bust range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Bust (cm) from</label>
         <input id="f_bust_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -165,6 +176,8 @@
         <label class="filter-label">Bust to</label>
         <input id="f_bust_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
+
+      <!-- Waist range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Waist (cm) from</label>
         <input id="f_waist_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -173,6 +186,8 @@
         <label class="filter-label">Waist to</label>
         <input id="f_waist_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
+
+      <!-- Hips range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Hips (cm) from</label>
         <input id="f_hips_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -181,6 +196,8 @@
         <label class="filter-label">Hips to</label>
         <input id="f_hips_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
+
+      <!-- Buttons -->
       <div class="col-12 col-md-2 d-flex gap-2 justify-content-md-end">
         <button class="btn btn-primary" id="applyBtn">Apply</button>
         <button class="btn btn-outline-secondary" id="resetBtn">Reset</button>
@@ -194,15 +211,16 @@
   <div id="list" class="row g-4"></div>
 </div>
 
+<!-- Кнопка "Наверх" -->
 <button id="scrollTopBtn" title="Вверх" aria-label="Наверх">↑</button>
 
-<!-- Google Translate (скрытый) -->
+<!-- Google Translate (скрытый виджет) -->
 <div id="google_translate_element" style="display:none;"></div>
 <script type="text/javascript">
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({
       pageLanguage: 'en',
-      includedLanguages: 'en,ru,zh-CN,tr,ar,ja',
+      includedLanguages: 'en,ru',
       layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
       autoDisplay: false
     }, 'google_translate_element');
@@ -211,87 +229,84 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-  // ====== Языковая часть (исправленная) ======
+  // ====== Языковая часть ======
   (function() {
-    const langSelect = document.getElementById('langSelect');
+    // Получаем текущий язык из URL (параметр googtrans или lang)
+    const urlParams = new URLSearchParams(window.location.search);
+    let lang = urlParams.get('lang');
+    let googtrans = urlParams.get('googtrans');
 
-    const langMap = {
-      'en': '/en/en',
-      'ru': '/en/ru',
-      'zh-CN': '/en/zh-CN',
-      'tr': '/en/tr',
-      'ar': '/en/ar',
-      'ja': '/en/ja'
-    };
-
-    // Удаляем все cookies Google Translate
-    function clearGoogleTranslateCookies() {
-      document.cookie.split(';').forEach(cookie => {
-        const name = cookie.split('=')[0].trim();
-        if (name.startsWith('googtrans') || name.startsWith('__gads') || name.startsWith('_ga')) {
-          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
-        }
-      });
+    // Если есть параметр lang, преобразуем его в googtrans
+    if (lang) {
+      if (lang === 'ru') {
+        googtrans = '/en/ru';
+      } else if (lang === 'en') {
+        googtrans = '/ru/en';
+      }
+      // Если googtrans уже есть, он приоритетнее
+      if (!googtrans) {
+        // Перезагружаем с googtrans
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('googtrans', googtrans);
+        newUrl.searchParams.delete('lang');
+        window.location.href = newUrl.toString();
+        return;
+      }
     }
 
-    function getCurrentLang() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const langParam = urlParams.get('lang');
-      if (langParam && langMap[langParam]) {
-        return langParam;
+    // Если googtrans есть, активируем перевод
+    if (googtrans) {
+      // Устанавливаем cookie для Google Translate
+      document.cookie = 'googtrans=' + googtrans + '; path=/';
+      // Также добавляем параметр в URL, если его нет
+      const url = new URL(window.location);
+      if (!url.searchParams.has('googtrans')) {
+        url.searchParams.set('googtrans', googtrans);
+        window.history.replaceState({}, '', url);
       }
+    }
 
+    // Функция для переключения языка
+    window.switchLanguage = function(langCode) {
+      let googtransValue;
+      if (langCode === 'ru') {
+        googtransValue = '/en/ru';
+      } else if (langCode === 'en') {
+        googtransValue = '/ru/en';
+      } else {
+        return;
+      }
+      const url = new URL(window.location);
+      url.searchParams.set('googtrans', googtransValue);
+      url.searchParams.delete('lang');
+      window.location.href = url.toString();
+    };
+
+    // Определяем текущий язык для подсветки кнопки
+    function getCurrentLang() {
       const cookie = document.cookie.split('; ').find(row => row.startsWith('googtrans='));
       if (cookie) {
         const val = cookie.split('=')[1];
-        const parts = val.split('/');
-        if (parts.length === 3) {
-          const target = parts[2];
-          for (let [key, value] of Object.entries(langMap)) {
-            if (value === '/en/' + target) {
-              return key;
-            }
-          }
-          return target;
-        }
+        if (val === '/en/ru') return 'ru';
+        if (val === '/ru/en') return 'en';
       }
-
-      const googtransParam = urlParams.get('googtrans');
-      if (googtransParam) {
-        const parts = googtransParam.split('/');
-        if (parts.length === 3) {
-          const target = parts[2];
-          for (let [key, value] of Object.entries(langMap)) {
-            if (value === '/en/' + target) {
-              return key;
-            }
-          }
-          return target;
-        }
-      }
-
+      // По умолчанию английский
       return 'en';
     }
 
+    // Навешиваем обработчики на кнопки
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const lang = this.dataset.lang;
+        window.switchLanguage(lang);
+      });
+    });
+
+    // Подсвечиваем активную кнопку
     const currentLang = getCurrentLang();
-    langSelect.value = currentLang;
-
-    langSelect.addEventListener('change', function() {
-      const lang = this.value;
-      if (lang && langMap[lang]) {
-        clearGoogleTranslateCookies();
-
-        const url = new URL(window.location);
-        if (lang === 'en') {
-          url.searchParams.delete('googtrans');
-          url.searchParams.delete('lang');
-        } else {
-          url.searchParams.set('googtrans', langMap[lang]);
-          url.searchParams.set('lang', lang);
-        }
-        window.location.href = url.toString();
-      }
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === currentLang);
     });
   })();
 
