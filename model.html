@@ -105,6 +105,17 @@
         font-size: 20px;
       }
     }
+    /* Профессиональное скрытие элементов Google Translate (не ломает DOM) */
+    .goog-te-banner-frame, .goog-te-gadget-icon, .skiptranslate, iframe[id*="translate"] {
+      display: none !important;
+    }
+    body {
+      top: 0 !important;
+    }
+    .goog-text-highlight {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
   </style>
 </head>
 
@@ -425,6 +436,8 @@
     });
   });
 </script>
+
+<div id="google_translate_element" style="position:absolute; opacity:0; width:0; height:0; overflow:hidden; pointer-events:none;"></div>
 <div id="google_translate_element" style="position:absolute; opacity:0; width:0; height:0; overflow:hidden; pointer-events:none;"></div>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script>
@@ -436,6 +449,12 @@
       autoDisplay: false
     }, 'google_translate_element');
     
+    // Изолируем элементы интерфейса от перевода, чтобы не ломать кнопки
+    const nativeControls = [el('shuffleBtn'), el('resetBtn'), el('prevBtn'), el('nextBtn'), el('openOriginal'), el('photoModal')];
+    nativeControls.forEach(control => {
+      if (control) control.classList.add('notranslate');
+    });
+
     checkLanguageUrlParam();
   }
 
