@@ -73,21 +73,58 @@
         font-size: 20px;
       }
     }
+
+    /* Профессиональное скрытие элементов Google Translate (не ломает DOM) */
+    .goog-te-banner-frame, .goog-te-gadget-icon, .skiptranslate, iframe[id*="translate"] {
+      display: none !important;
+    }
+    body {
+      top: 0 !important;
+    }
+    .goog-text-highlight {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+    
+    /* Делаем оригинальный контейнер технически видимым для браузера, но скрытым от глаз */
+    #google_translate_element {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
   </style>
 </head>
 
 <body class="bg-body-tertiary">
 
 <div class="container my-4">
-  <h1 class="mb-4">Model Catalog - Mother agency FK Models</h1>
+<h1 class="mb-4">Model Catalog - Mother agency FK Models</h1>
   
-  <div class="d-flex justify-content-end mb-3">
-  <div id="google_translate_element"></div>
+  <div class="d-flex justify-content-end mb-3 gap-2">
+    <div id="google_translate_element" style="position:absolute; opacity:0; width:0; height:0; overflow:hidden; pointer-events:none;"></div>
+    
+    <div class="dropdown notranslate">
+      <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        🌐 Language
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('en'); return false;">English</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('ru'); return false;">Русский</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('ar'); return false;">العربية (Saudi Arabia)</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh-CN'); return false;">中文 (Chinese)</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('ja'); return false;">日本語 (Japanese)</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('tr'); return false;">Türkçe</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('de'); return false;">Deutsch</a></li>
+        <li><a class="dropdown-item" href="#" onclick="changeLanguage('es'); return false;">Español</a></li>
+      </ul>
+    </div>
   </div>
 
   <div class="filter-section mb-4">
     <div class="row g-3 align-items-end">
-      <!-- Gender -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Gender</label>
         <select id="f_gender" class="form-select">
@@ -97,7 +134,6 @@
         </select>
       </div>
 
-      <!-- Age range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Age from</label>
         <input id="f_age_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -107,7 +143,6 @@
         <input id="f_age_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
 
-      <!-- Height range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Height (cm) from</label>
         <input id="f_height_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -117,7 +152,6 @@
         <input id="f_height_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
 
-      <!-- Bust range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Bust (cm) from</label>
         <input id="f_bust_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -127,7 +161,6 @@
         <input id="f_bust_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
 
-      <!-- Waist range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Waist (cm) from</label>
         <input id="f_waist_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -137,7 +170,6 @@
         <input id="f_waist_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
 
-      <!-- Hips range -->
       <div class="col-6 col-md-2">
         <label class="filter-label">Hips (cm) from</label>
         <input id="f_hips_min" type="number" class="form-control" min="0" step="1" placeholder="—">
@@ -147,7 +179,6 @@
         <input id="f_hips_max" type="number" class="form-control" min="0" step="1" placeholder="—">
       </div>
 
-      <!-- Buttons -->
       <div class="col-12 col-md-2 d-flex gap-2 justify-content-md-end">
         <button class="btn btn-primary" id="applyBtn">Apply</button>
         <button class="btn btn-outline-secondary" id="resetBtn">Reset</button>
@@ -161,8 +192,9 @@
   <div id="list" class="row g-4"></div>
 </div>
 
-<!-- Кнопка "Наверх" -->
 <button id="scrollTopBtn" title="Вверх" aria-label="Наверх">↑</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
   const list = document.getElementById("list");
@@ -299,7 +331,6 @@
       img.addEventListener("click", () => {
         window.location.href = `model.html?id=${encodeURIComponent(m.model_id)}`;
       });
-      // fallback на первое фото, если avatar не загрузился
       img.onerror = function() {
         if (m.photos && m.photos.length) {
           this.src = m.photos[0];
@@ -312,7 +343,7 @@
       body.className = "card-body";
 
       const h = document.createElement("h5");
-      h.className = "card-title";
+      h.className = "card-title notranslate";
       h.textContent = fullName;
 
       const p = document.createElement("p");
@@ -368,7 +399,6 @@
     const data = await res.json();
     allItems = (data.items || []).slice();
 
-    // sort by priority
     allItems.sort((a, b) => {
       const pa = (a.priority == null || a.priority === "") ? 1e9 : Number(a.priority);
       const pb = (b.priority == null || b.priority === "") ? 1e9 : Number(b.priority);
@@ -376,7 +406,6 @@
       return String(a.model_id || "").localeCompare(String(b.model_id || ""));
     });
 
-    // читаем фильтры из URL и синхронизируем UI
     filters = readFiltersFromUrl_();
     syncUiFromFilters_();
 
@@ -389,11 +418,9 @@
     console.error(err);
   });
 
-  // ===== Кнопка "Наверх" (универсальная для мобильных) =====
   const scrollBtn = document.getElementById('scrollTopBtn');
 
   function toggleScrollBtn() {
-    // Универсальный способ получить позицию скролла
     const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     if (scrollY > 300) {
       scrollBtn.classList.add('show');
@@ -402,7 +429,6 @@
     }
   }
 
-  // Слушаем все возможные события прокрутки
   window.addEventListener('scroll', toggleScrollBtn);
   window.addEventListener('load', toggleScrollBtn);
   window.addEventListener('touchmove', toggleScrollBtn);
@@ -414,16 +440,58 @@
     });
   });
 </script>
+
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script>
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({
-      pageLanguage: 'en', // Исходный язык сайта
-      includedLanguages: 'ru,en,zh-CN,es,de,fr,it', // Языки для перевода (можно расширить)
+      pageLanguage: 'en',
+      // Список поддерживаемых кодов языков
+      includedLanguages: 'ru,en,ar,zh-CN,ja,tr,de,es',
       layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
       autoDisplay: false
     }, 'google_translate_element');
+    
+    // Проверяем параметр ?lang= в URL при открытии страницы
+    checkLanguageUrlParam();
+  }
+
+  function checkLanguageUrlParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const langParam = urlParams.get('lang');
+    
+    if (langParam) {
+      const currentCookie = getCookie('googtrans');
+      const expectedCookieValue = '/en/' + langParam;
+      
+      if (currentCookie !== expectedCookieValue) {
+        setLangCookies(langParam);
+        window.location.reload();
+      }
+    }
+  }
+
+  function setLangCookies(langCode) {
+    document.cookie = "googtrans=/en/" + langCode + "; path=/";
+    document.cookie = "googtrans=/en/" + langCode + "; domain=" + window.location.hostname + "; path=/";
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  function changeLanguage(langCode) {
+    setLangCookies(langCode);
+    
+    // Сохраняем текущие фильтры в URL, меняя/добавляя только параметр lang
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', langCode);
+    
+    window.location.href = url.toString();
   }
 </script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
