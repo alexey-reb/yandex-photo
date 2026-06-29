@@ -66,7 +66,6 @@
       text-align: center;
     }
 
-    /* Кнопка "Наверх" */
     #scrollTopBtn {
       position: fixed;
       bottom: 30px;
@@ -86,6 +85,7 @@
       opacity: 0;
       transform: translateY(20px);
       pointer-events: none;
+      -webkit-tap-highlight-color: transparent;
     }
     #scrollTopBtn.show {
       opacity: 1;
@@ -106,40 +106,27 @@
       }
     }
 
-    .lang-switcher {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .lang-btn {
-      background: none;
-      border: 2px solid transparent;
-      border-radius: 4px;
-      padding: 4px 10px;
+    .lang-select {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #ced4da;
+      background: #fff;
       font-size: 16px;
-      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
-      opacity: 0.6;
-      text-decoration: none;
-      color: #212529;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-left: 8px;
+      -webkit-appearance: none;
+      appearance: none;
     }
-    .lang-btn:hover {
-      opacity: 1;
-      background: #f0f0f0;
-    }
-    .lang-btn.active {
-      opacity: 1;
+    .lang-select:hover {
       border-color: #0d6efd;
-      background: #e7f1ff;
-      cursor: default;
     }
     .profile-header {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.5rem;
+      gap: 8px;
     }
     .profile-header .h4 {
       margin-bottom: 0;
@@ -162,7 +149,6 @@
     <div id="err" class="mb-3" style="display:none;"></div>
   </div>
 
-  <!-- PROFILE -->
   <section class="mb-4">
     <div class="container">
       <div class="card shadow-sm">
@@ -176,10 +162,10 @@
                 <div class="small text-secondary">Profile</div>
                 <div class="profile-header">
                   <div class="h4 mb-0" id="name"></div>
-                  <div class="lang-switcher ms-2">
-                    <a href="#" class="lang-btn active" data-lang="en">🇬🇧 EN</a>
-                    <a href="#" class="lang-btn" data-lang="ru">🇷🇺 RU</a>
-                  </div>
+                  <select id="langSelect" class="lang-select">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                  </select>
                 </div>
                 <div class="text-secondary" id="subtitle"></div>
                 <div class="small text-secondary mt-1">ID: <span id="modelId"></span> • Updated: <span id="updatedAt"></span></div>
@@ -208,7 +194,6 @@
     </div>
   </section>
 
-  <!-- PORTFOLIO -->
   <section>
     <div class="container-fluid">
       <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3 px-2">
@@ -230,7 +215,6 @@
 
 </main>
 
-<!-- Кнопка "Наверх" -->
 <button id="scrollTopBtn" title="Вверх" aria-label="Наверх">↑</button>
 
 <!-- MODAL -->
@@ -258,7 +242,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Google Translate (скрытый виджет) -->
+<!-- Google Translate -->
 <div id="google_translate_element" style="display:none;"></div>
 <script type="text/javascript">
   function googleTranslateElementInit() {
@@ -273,69 +257,75 @@
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-  // ====== Языковая часть (такая же как в index) ======
+  // ====== Языковая часть (аналогично index) ======
   (function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    let lang = urlParams.get('lang');
-    let googtrans = urlParams.get('googtrans');
+    const langSelect = document.getElementById('langSelect');
 
-    if (lang) {
-      if (lang === 'ru') googtrans = '/en/ru';
-      else if (lang === 'en') googtrans = '/ru/en';
-      if (!googtrans) {
-        const newUrl = new URL(window.location);
-        newUrl.searchParams.set('googtrans', googtrans);
-        newUrl.searchParams.delete('lang');
-        window.location.href = newUrl.toString();
-        return;
-      }
-    }
-
-    if (googtrans) {
-      document.cookie = 'googtrans=' + googtrans + '; path=/';
-      const url = new URL(window.location);
-      if (!url.searchParams.has('googtrans')) {
-        url.searchParams.set('googtrans', googtrans);
-        window.history.replaceState({}, '', url);
-      }
-    }
-
-    window.switchLanguage = function(langCode) {
-      let googtransValue;
-      if (langCode === 'ru') googtransValue = '/en/ru';
-      else if (langCode === 'en') googtransValue = '/ru/en';
-      else return;
-      const url = new URL(window.location);
-      url.searchParams.set('googtrans', googtransValue);
-      url.searchParams.delete('lang');
-      window.location.href = url.toString();
+    const langMap = {
+      'en': '/en/en',
+      'ru': '/en/ru'
     };
 
     function getCurrentLang() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let googtrans = urlParams.get('googtrans');
+      if (googtrans) {
+        const parts = googtrans.split('/');
+        if (parts.length === 3) {
+          const target = parts[2];
+          for (let [key, value] of Object.entries(langMap)) {
+            if (value === '/en/' + target) return key;
+          }
+          return target;
+        }
+      }
+      const lang = urlParams.get('lang');
+      if (lang && langMap[lang]) return lang;
       const cookie = document.cookie.split('; ').find(row => row.startsWith('googtrans='));
       if (cookie) {
         const val = cookie.split('=')[1];
-        if (val === '/en/ru') return 'ru';
-        if (val === '/ru/en') return 'en';
+        const parts = val.split('/');
+        if (parts.length === 3) {
+          const target = parts[2];
+          for (let [key, value] of Object.entries(langMap)) {
+            if (value === '/en/' + target) return key;
+          }
+          return target;
+        }
       }
       return 'en';
     }
 
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const lang = this.dataset.lang;
-        window.switchLanguage(lang);
-      });
+    const currentLang = getCurrentLang();
+    langSelect.value = currentLang;
+
+    langSelect.addEventListener('change', function() {
+      const lang = this.value;
+      if (lang && langMap[lang]) {
+        const url = new URL(window.location);
+        if (lang === 'en') {
+          url.searchParams.delete('googtrans');
+          url.searchParams.delete('lang');
+        } else {
+          url.searchParams.set('googtrans', langMap[lang]);
+          url.searchParams.delete('lang');
+        }
+        window.location.href = url.toString();
+      }
     });
 
-    const currentLang = getCurrentLang();
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.lang === currentLang);
-    });
+    const urlLang = new URLSearchParams(window.location.search).get('lang');
+    if (urlLang && langMap[urlLang] && urlLang !== 'en') {
+      if (!new URLSearchParams(window.location.search).has('googtrans')) {
+        const url = new URL(window.location);
+        url.searchParams.set('googtrans', langMap[urlLang]);
+        url.searchParams.delete('lang');
+        window.location.href = url.toString();
+      }
+    }
   })();
 
-  // ====== Остальной код (модель, портфолио) ======
+  // ====== Основной код (модель, портфолио) ======
   const el = id => document.getElementById(id);
 
   function showErr(e) {
@@ -524,15 +514,22 @@
     }
   })();
 
-  // ===== Кнопка "Наверх" =====
+  // ===== Кнопка "Наверх" (универсальная для мобильных) =====
   const scrollBtn = document.getElementById('scrollTopBtn');
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 300) {
+
+  function toggleScrollBtn() {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    if (scrollY > 300) {
       scrollBtn.classList.add('show');
     } else {
       scrollBtn.classList.remove('show');
     }
-  });
+  }
+
+  window.addEventListener('scroll', toggleScrollBtn);
+  window.addEventListener('load', toggleScrollBtn);
+  window.addEventListener('touchmove', toggleScrollBtn);
+
   scrollBtn.addEventListener('click', function() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
