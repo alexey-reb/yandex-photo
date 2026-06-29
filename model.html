@@ -125,7 +125,7 @@
             <!-- Левая часть: кнопка назад + аватар + информация -->
             <div class="d-flex align-items-start gap-3">
               <!-- Кнопка назад -->
-              <a href="index.html" class="btn btn-outline-secondary btn-sm align-self-start">← Back</a>
+              <a href="#" onclick="const l=new URLSearchParams(window.location.search).get('lang'); window.location.href=l?'index.html?lang='+l:'index.html'; return false;" class="btn btn-outline-secondary btn-sm align-self-start">← Back</a>
 
               <img id="avatar" class="rounded-3 avatar" alt="">
               <div>
@@ -424,6 +424,54 @@
       behavior: 'smooth'
     });
   });
+</script>
+<div id="google_translate_element" style="position:absolute; opacity:0; width:0; height:0; overflow:hidden; pointer-events:none;"></div>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'ru,en,ar,zh-CN,ja,tr,de,es',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+    }, 'google_translate_element');
+    
+    checkLanguageUrlParam();
+  }
+
+  function checkLanguageUrlParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const langParam = urlParams.get('lang');
+    
+    if (langParam) {
+      const currentCookie = getCookie('googtrans');
+      const expectedCookieValue = '/en/' + langParam;
+      
+      if (currentCookie !== expectedCookieValue) {
+        setLangCookies(langParam);
+        window.location.reload();
+      }
+    }
+  }
+
+  function setLangCookies(langCode) {
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+
+    document.cookie = "googtrans=/en/" + langCode + "; path=/";
+    
+    const hostParts = window.location.hostname.split('.');
+    if (hostParts.length >= 2) {
+      const baseDomain = hostParts.slice(-2).join('.');
+      document.cookie = "googtrans=/en/" + langCode + "; path=/; domain=." + baseDomain;
+    }
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
 </script>
 </body>
 </html>
