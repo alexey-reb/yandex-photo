@@ -400,17 +400,29 @@
     }
   })();
 
-  // ===== Кнопка "Наверх" =====
+  // ===== Кнопка "Наверх" (универсальная для мобильных) =====
   const scrollBtn = document.getElementById('scrollTopBtn');
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 300) {
+
+  function toggleScrollBtn() {
+    // Универсальный способ получить позицию скролла
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    if (scrollY > 300) {
       scrollBtn.classList.add('show');
     } else {
       scrollBtn.classList.remove('show');
     }
-  });
+  }
+
+  // Слушаем все возможные события прокрутки
+  window.addEventListener('scroll', toggleScrollBtn);
+  window.addEventListener('load', toggleScrollBtn);
+  window.addEventListener('touchmove', toggleScrollBtn);
+
   scrollBtn.addEventListener('click', function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   });
 </script>
 </body>
