@@ -463,22 +463,27 @@
     const langParam = urlParams.get('lang');
     
     if (langParam) {
-      // Сначала пытаемся обновить куки (для подстраховки)
+      // Пытаемся записать куки (для обычного режима вне iframe)
       setLangCookies(langParam);
       
-      // Ждем инициализации селекта Google и принудительно переключаем его без перезагрузки
+      // Ждем загрузки элементов Google и переключаем язык без перезагрузки
       const runTranslation = () => {
         const googleSelect = document.querySelector('.goog-te-combo');
         if (googleSelect) {
           googleSelect.value = langCodeSelection(langParam);
           googleSelect.dispatchEvent(new Event('change', { bubbles: true }));
         } else {
-          // Если Google Translate еще грузится, пробуем снова через 100мс
-          setTimeout(runTranslation, 100);
+          setTimeout(runTranslation, 100); // Пробуем снова через 100мс
         }
       };
       runTranslation();
     }
+  }
+
+  // Вспомогательная функция для проверки точного кода
+  function langCodeSelection(lang) {
+    if (lang === 'zh') return 'zh-CN';
+    return lang;
   }
 
   // Вспомогательная функция для проверки точного кода (например, если передали zh вместо zh-CN)
